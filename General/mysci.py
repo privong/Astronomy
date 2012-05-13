@@ -158,7 +158,7 @@ def fitsopen(file,mode='readonly',ext=0,trim=0,quiet=True):
     return -1
 
   if not(quiet):
-    print file+" opened successfully with dimensions "+str(idata.shape)
+    print file+" HDU("+str(ext)+") opened successfully with dimensions "+str(idata.shape)
 
   return idata
 # End Useful functions
@@ -195,7 +195,32 @@ def Telload(file,Tel='none',mode='readonly',quiet=True):
     ff=numpy.concatenate((ext1,ext2),axis=1)
 
     return ff
+  elif Tel=="90Prime":
+    if not(quiet):
+      print "Loading FITS file for the Bok 90Prime imager."
+    # Bok 90Prime images have 17 HDU objects. 1 for the overall file and 1 for
+    # each amplifier
+    # stack these into a 3D array and return it? handle the calibration files
+    # in the same way?
 
+    # first, figure out how many HDUs there are...
+    frame=pyfits.open(file)
+    nHDU=len(frame)-1 # ditch the overall HDU
+    frame.close()
+    # load the first frame to get us started
+    ext1=fitsopen(file,mode=mode,quiet=quiet,ext=1,trim=0)
+    shape=ext1.shape
+    ext1=ext1.reshape((1,shape[0],shape[1]))
+    ext2=fitsopen(file,mode=mode,quiet=quiet,ext=2,trim=0)
+    shape=ext2.shape
+    ext2=ext2.reshape((1,shape[0],shape[1]))
+    ff=numpy.concatenate((ext1,ext2),axis=0)
+    for hdu in range(3,nHDU+1,1):
+      extt=fitsopen(file,mode=mode,quiet=quiet,ext=hdu,trim=0)
+      shape=extt.shape
+      extt=extt.reshape((1,shape[0],shape[1]))
+      ff=numpy.concatenate((ff,extt),axis=0)
+    return ff
 
 # End Wrapper Functions
 ###############################################################################
