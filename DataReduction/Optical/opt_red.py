@@ -319,6 +319,10 @@ for filter in filters:
       frame=pyfits.open(fname,mode='update')
       frame[0].header.add_history(datenow+' - Bias and flat field corrected')
       for hdu in range(1,len(frame)):
+        if args.verbose:
+          sys.stderr.write("Writing HDU "+str(hdu)+" with mean: "+str(numpy.mean(data[hdu-1]))+'\t')
+          sys.stderr.write(str(idata[hdu-1,:,:].shape)+'\t')
+          sys.stderr.write(str(idata[hdu-1,:,:].dtype)+'\n')
         frame[hdu].header['BZERO']=0.0	# set this so it doesn't rescale data
         frame[hdu].data=numpy.transpose(idata[hdu-1,:,:])
       frame.close()
