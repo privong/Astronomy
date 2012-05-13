@@ -2,7 +2,10 @@ This contains various astronomy scripts I've written for my data analysis and pr
 
 Directories:
 
-General/		- general use files, other scripts may depend on files in here
-Observing/		- scripts related to observations
-DataReduction/		- data reduction scripts (often, pipelines)
 DataAnalysis/		- assist with processing/analysis of reduced data
+DataReduction/		- data reduction scripts (often, pipelines)
+General/		- general use files, other scripts may depend on files 
+			  in here
+Observing/		- scripts related to observations
+SimulationTools/	- Scripts related to analyzing outputs of simulations
+			  currently this includes the zeno nbody/sph code.
