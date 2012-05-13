@@ -325,5 +325,4 @@ for filter in filters:
       sys.stderr.write('Success.\n')
   i=i+1
 
-
 sys.stderr.write('Finished processing '+str(i)+' object frames.\n\n')
