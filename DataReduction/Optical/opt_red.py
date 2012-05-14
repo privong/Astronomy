@@ -97,13 +97,18 @@ else:
     idata=mysci.Telload(image,Tel=args.telescope,quiet=not(args.verbose))
     idata=idata.reshape((1,idata.shape[0],idata.shape[1],idata.shape[2]))
     if bframes.ndim<2:
-      bframes.resize((1,idata.shape[0],idata.shape[1],idata.shape[2]))
+      #bframes.resize((1,idata.shape[0],idata.shape[1],idata.shape[2]))
       bframes=idata.copy()
     else:
       bframes=numpy.concatenate((bframes,idata),axis=0)
     stddev.append(numpy.std(idata))
-    mean.append(numpy.mean(idata))
+    mean.append(numpy.mean(idata)) # this is wrong for large files unless the
+				   # data are converted to float64
+				   # since this isn't necessary for the other
+				   # steps, we won't do it
     median.append(numpy.median(idata))
+    if args.verbose:
+      sys.stderr.write('\nMean: '+str(numpy.mean(idata))+'\tMedian: '+str(numpy.median(idata))+'\Stddev: '+str(numpy.std(idata))+'\n')
     sys.stderr.write('.')
   
   sys.stderr.write('\n')
@@ -111,12 +116,11 @@ else:
   if args.plot:
     # plot diagonstics
     fig=plt.figure()
-    plt.scatter(range(len(mean)),mean,color='red',label='Mean')
+    #plt.scatter(range(len(mean)),mean,color='red',label='Mean')
     plt.scatter(range(len(median)),median,color='blue',label='Median')
     plt.scatter(range(len(stddev)),stddev,color='green',label='Stddev')
     plt.legend()
     plt.show()
-  
   # right now take all the frames, we'll deal with dropping frames later
   mbias=numpy.mean(bframes,axis=0)
   if args.verbose:
@@ -293,7 +297,7 @@ for filter in filters:
 del fframes
 
 ## now process the individual object frames, going by filter
-sys.stderr.write('\n\nProcessing object frames (bias and flat)\n')
+sys.stderr.write('\n\nProcessing object frames (bias and flat correction)\n')
 i=0
 for filter in filters:
   sys.stderr.write('Filter: '+filter)
@@ -329,4 +333,4 @@ for filter in filters:
       sys.stderr.write('Success.\n')
   i=i+1
 
-sys.stderr.write('Finished processing '+str(i)+' object frames.\n\n')
+sys.stderr.write('Finished processing '+str(i)+' filters.\n\n')
