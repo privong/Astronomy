@@ -9,7 +9,7 @@ parser.add_argument('--savefig',action='store',type=str,default=False,help='Figu
 parser.add_argument('--pmass',action='store',type=float,default=1,help='Mass of new star clusters in simulation units. Defaults to 1.')
 parser.add_argument('--tscl',action='store',type=float,default=1,help='Time Scaling (Myr)')
 parser.add_argument('--Mscl',action='store',type=float,default=1,help='Mass Scaling (GM_sun)')
-parser.add_argument('--nbin',default='80',action='store',help='Number of bins to use')
+parser.add_argument('--nbin',default='100',action='store',help='Number of bins to use')
 parser.add_argument('--title',default='Star Formation Rates',action='store',type=str,help='Plot title, must be enclosed in quotes.')
 args=parser.parse_args()
 
@@ -25,9 +25,16 @@ else:
   pylab.xlabel('t (sim units)')
 
 if args.Mscl!=1:
-  pylab.ylabel('dM$_*$/dt (M$_{\odot}$ yr$^{-1}$)')
+  if args.pmass!=1:
+    pylab.ylabel('dM$_*$/dt (M$_{\odot}$ yr$^{-1}$)')
+  else:
+    sys.stderr.write("Surely your gas particles don't all have masses of 1 in sim units??\n")
+    sys.exit()
 else:
-  pylab.ylabel('dN$_*$/dt (Particles yr$^{-1}$)')
+  if args.pmass==1:
+    pylab.ylabel('dN$_*$/dt (Particles yr$^{-1}$)')
+  else:
+    pylab.ylabel('dM$_*$/dat (Mass yr$^{-1}$, sim units)')
 
 # import the time for each cluster and the local SFR
 data=[(pylab.loadtxt(filename,usecols=(2,3)),filename) for filename in args.starlog]
