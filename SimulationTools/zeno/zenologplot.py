@@ -43,12 +43,6 @@ if args.output:
 else:
   rname=args.logfile.split('.log')[0]+'-energy.pdf'
 
-lineno=0
-# open the first 15 lines
-while lineno<15:
-  infile.readline()
-  lineno+=1
-
 lhead=0
 # read the meat of the data and write it out, continuing until the end
 # this records: time, Nstep, freqmax, freqavg, Etot, Eint, Ekin, Epot, Erad,
@@ -65,36 +59,25 @@ Erad=numpy.array([])
 Jtot=numpy.array([])
 Vcom=numpy.array([])
 Cputot=numpy.array([])
-while infile.readline():
-  # thie whole section should be improved to be smarter about what values it's
-  # copying into. make use of the labels above the values man!
-  tline=infile.readline().split()
-  time=numpy.append(time,float(tline[1]))
-  Nstep=numpy.append(Nstep,int(tline[3]))
-  junkit=infile.readline()
-  junkit=infile.readline()
-  junkit=infile.readline()
-  blank=infile.readline()
-  junkit=infile.readline()
-  label2v=infile.readline().split()
-  freqmax=numpy.append(freqmax,float(label2v[6]))
-  freqavg=numpy.append(freqavg,float(label2v[7]))
-  blank=infile.readline()
-  junkit=infile.readline()
-  label3v=infile.readline().split()
-  Etot=numpy.append(Etot,float(label3v[0]))
-  Eint=numpy.append(Eint,float(label3v[1]))
-  Ekin=numpy.append(Ekin,float(label3v[2]))
-  Epot=numpy.append(Epot,float(label3v[3]))
-  Erad=numpy.append(Erad,float(label3v[4]))
-  Jtot=numpy.append(Jtot,float(label3v[5]))
-  Vcom=numpy.append(Vcom,float(label3v[6]))
-  Cputot=numpy.append(Cputot,float(label3v[7]))
-  blank=infile.readline()
-  if not(re.search('----',infile.read(5))):
-    #print "we wrote an output file!"
-    fline=infile.readline()
-    blank=infile.readline()
+while 1:
+  tline=infile.readline()
+  if not tline:
+    break
+  if re.search('time:',tline):
+    # extract the exact time
+    tline=tline.split()
+    time=numpy.append(time,float(tline[1]))
+    Nstep=numpy.append(Nstep,int(tline[3]))
+  elif re.search('Etot',tline):
+    # get the next line and add other information to the stack
+    tline=infile.readline().split()
+    Etot=numpy.append(Etot,float(tline[1]))
+    Eint=numpy.append(Eint,float(tline[2]))
+    Ekin=numpy.append(Ekin,float(tline[3]))
+    Epot=numpy.append(Epot,float(tline[4]))
+    Erad=numpy.append(Erad,float(tline[5]))
+    Jtot=numpy.append(Jtot,float(tline[6]))
+    Vcom=numpy.append(Vcom,float(tline[7]))
 
 infile.close()
 
