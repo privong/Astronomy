@@ -27,7 +27,7 @@ else:
 if args.Mscl!=1:
   pylab.ylabel('dM$_*$/dt (M$_{\odot}$ yr$^{-1}$)')
 else:
-  pylab.ylabel('dN$_*$/dt (Particles yr$^{-1}$')
+  pylab.ylabel('dN$_*$/dt (Particles yr$^{-1}$)')
 
 # import the time for each cluster and the local SFR
 data=[(pylab.loadtxt(filename,usecols=(2,3)),filename) for filename in args.starlog]
