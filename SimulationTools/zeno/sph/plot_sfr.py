@@ -1,4 +1,4 @@
-#!/sw/bin/python2.7
+#!/usr/bin/python
 
 import pylab
 import argparse,sys
@@ -6,9 +6,9 @@ import argparse,sys
 parser=argparse.ArgumentParser(description="Read in the starlog files, bin them and plot the star formation rate as a function of time. Optionally takes arguments for mass and time scaling if you want to plot it in physical units.")
 parser.add_argument('starlog',type=str,nargs='*',help='List of 1 or more starlog files in the zeno format.')
 parser.add_argument('--savefig',action='store',type=str,default=False,help='Figure will be saved to this filename if given.')
-parser.add_argument('--pmass',action='store',type=float,default=9.53674e-07,help='Mass of new star clusters in simulation units. Defaults to 9.53674e-07.')
-parser.add_argument('--tscl',action='store',type=float,default=1,help='Time Scaling (Myr')
-parser.add_argument('--Mscl',action='store',type=float,default=1,help='Mass Scaling (GM_sun')
+parser.add_argument('--pmass',action='store',type=float,default=1,help='Mass of new star clusters in simulation units. Defaults to 1.')
+parser.add_argument('--tscl',action='store',type=float,default=1,help='Time Scaling (Myr)')
+parser.add_argument('--Mscl',action='store',type=float,default=1,help='Mass Scaling (GM_sun)')
 parser.add_argument('--nbin',default='80',action='store',help='Number of bins to use')
 parser.add_argument('--title',default='Star Formation Rates',action='store',type=str,help='Plot title, must be enclosed in quotes.')
 args=parser.parse_args()
@@ -22,12 +22,12 @@ sys.stderr.write('Found '+str(len(args.starlog))+' star log files.\n')
 if args.tscl!=1:
   pylab.xlabel('t (Myr)')
 else:
-  pylab.xlabel('t')
+  pylab.xlabel('t (sim units)')
 
 if args.Mscl!=1:
   pylab.ylabel('dM$_*$/dt (M$_{\odot}$ yr$^{-1}$)')
 else:
-  pylab.ylabel('dM$_*$/dt')
+  pylab.ylabel('dN$_*$/dt (Particles yr$^{-1}$')
 
 # import the time for each cluster and the local SFR
 data=[(pylab.loadtxt(filename,usecols=(2,3)),filename) for filename in args.starlog]
