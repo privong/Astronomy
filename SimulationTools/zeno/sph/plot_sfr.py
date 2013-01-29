@@ -19,23 +19,6 @@ if len(args.starlog)<1:
 
 sys.stderr.write('Found '+str(len(args.starlog))+' star log files.\n')
 
-if args.tscl!=1:
-  pylab.xlabel('t (Myr)')
-else:
-  pylab.xlabel('t (sim units)')
-
-if args.Mscl!=1:
-  if args.pmass!=1:
-    pylab.ylabel('dM$_*$/dt (M$_{\odot}$ yr$^{-1}$)')
-  else:
-    sys.stderr.write("Surely your gas particles don't all have masses of 1 in sim units??\n")
-    sys.exit()
-else:
-  if args.pmass==1:
-    pylab.ylabel('dN$_*$/dt (Particles yr$^{-1}$)')
-  else:
-    pylab.ylabel('dM$_*$/dat (Mass yr$^{-1}$, sim units)')
-
 # import the time for each cluster and the local SFR
 data=[(pylab.loadtxt(filename,usecols=(2,3)),filename) for filename in args.starlog]
 
@@ -45,8 +28,27 @@ junk,mybins=pylab.histogram(data[0][0][:,0],bins=int(args.nbin))
 # histogram the data
 binned=[(pylab.histogram(dat[:,0],bins=mybins),label) for dat,label in data]
 
-# convert data to dN/dt
-SFR=[((clusters[0].astype(float)/(clusters[1][1]-clusters[1][0])),clusters[1]+(clusters[1][1]-clusters[1][0])/2.,label) for clusters,label in binned]
+# set the axis labels and make adjustments to the data
+if args.tscl!=1:
+  pylab.xlabel('t (Myr)')
+  # convert the times to have 0 be pericenter passage (t=2 in sim units)
+  SFR=[((clusters[0].astype(float)/(clusters[1][1]-clusters[1][0])),clusters[1]-2.0+(clusters[1][1]-clusters[1][0])/2.,label) for clusters,label in binned]
+else:
+  pylab.xlabel('t (sim units)')
+  # convert data to dN/dt
+  SFR=[((clusters[0].astype(float)/(clusters[1][1]-clusters[1][0])),clusters[1]+(clusters[1][1]-clusters[1][0])/2.,label) for clusters,label in binned]
+
+if args.Mscl!=1:
+  if args.pmass!=1:
+    pylab.ylabel('dM$_*$/dt (M$_{\odot}$ yr$^{-1}$)')
+  else:
+    sys.stderr.write("Surely your gas particles don't all have masses of 1 in sim units??\n")
+    sys.exit()
+else:
+  if args.pmass==1:
+    pylab.ylabel('dN$_*$/dt (Particles time$^{-1}$)')
+  else:
+    pylab.ylabel('dM$_*$/dat (Mass time$^{-1}$, sim units)')
 
 for pl1,pl2,label in SFR:
     # plot the SFR with scalings
