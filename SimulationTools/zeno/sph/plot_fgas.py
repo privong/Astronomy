@@ -48,6 +48,8 @@ for inst,label in data:
     # plot the SFR with scalings
   if args.tscl==1:
     pylab.plot(inst[:,0],inst[:,2]/(inst[:,1]+inst[:,2]),label=label)
+  else:
+    pylab.plot(args.tscl*(inst[:,0]-2.0),inst[:,2]/(inst[:,1]+inst[:,2]),label=label)
     
 pylab.legend(fontsize='x-small',frameon=False)
 pylab.title(args.title)
