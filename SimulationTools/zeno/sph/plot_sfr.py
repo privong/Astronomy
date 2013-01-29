@@ -10,6 +10,7 @@ parser.add_argument('--pmass',action='store',type=float,default=1,help='Mass of 
 parser.add_argument('--tscl',action='store',type=float,default=1,help='Time Scaling (Myr)')
 parser.add_argument('--Mscl',action='store',type=float,default=1,help='Mass Scaling (GM_sun)')
 parser.add_argument('--nbin',default='100',action='store',help='Number of bins to use')
+parser.add_argument('--labels',default='',action='store',help='Comma separated labels for the plot items. Must be as many labels as files added.')
 parser.add_argument('--title',default='Star Formation Rates',action='store',type=str,help='Plot title, must be enclosed in quotes.')
 args=parser.parse_args()
 
@@ -17,10 +18,21 @@ if len(args.starlog)<1:
   sys.stderr.write('Error, you must specify at least 1 starlog file\n\n')
   sys.exit(-1)
 
+if args.labels=='':
+  args.labels=args.starlog
+else:
+  if len(args.labels.split(','))!=len(args.starlog):
+    sys.stderr.write('Error, you must provide a number of labels equal to the number of starlog files.\n')
+    sys.exit(-1)
+  else:
+    args.labels=args.labels.split(', ')
+
+spec=zip(args.starlog,args.labels)
+
 sys.stderr.write('Found '+str(len(args.starlog))+' star log files.\n')
 
 # import the time for each cluster and the local SFR
-data=[(pylab.loadtxt(filename,usecols=(2,3)),filename) for filename in args.starlog]
+data=[(pylab.loadtxt(filename,usecols=(2,3)),label) for filename,label in spec]
 
 # base the bin size on the first file
 junk,mybins=pylab.histogram(data[0][0][:,0],bins=int(args.nbin))
