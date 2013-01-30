@@ -17,9 +17,6 @@ def Idkit_moms(cube,moms=[0],exclude=[0],chrange=[0],center=[0],pixrange=0):
   Outputs CASA images using the cube root name, with moment number and
  	projection appended to the image.
         e.g.: cube_XV-mom0.image	- XV moment 0 CASA image
- 
-  Last modified: 18 May 2011 by George Privon gcp8y@virginia.edu
-  (Requires CASA 3.2.0 to use exportfits with optical velocity)
   """
 
   # list of projections we want
