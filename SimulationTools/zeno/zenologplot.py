@@ -25,7 +25,7 @@ parser.add_argument('-Erad',action='store_true',default=False,help='Plot Erad')
 parser.add_argument('-fixErad',action='store_true',default=False,help='Fix the Erad and Etot budgeting due to a sign error (only needed for sphcode-1.3a runs)')
 parser.add_argument('--density',action='store',help='Overplot density vs time from this file (normalized to the maximum density)')
 parser.add_argument('--output',action='store',default=False,help='Specify the name of the output file (default is to change the log file suffix to .pdf)')
-parser.add_argument('-screen',action='store_true',default=False,help='Plot to the screen instead of writing to a file')
+parser.add_argument('--savefig',action='store',type=str,default=False,help='Figure will be saved to this filename if given.')
 parser.add_argument('--version',action='version',version='%(prog)s '+VERSION+' ('+VERSIONDATE+')')
 args=parser.parse_args()
 
@@ -38,10 +38,6 @@ elif not(args.Etot) and not(args.Ekin) and not(args.Epot) and not(args.Eint) and
   sys.exit(-1)
 
 infile=open(args.logfile,'r')
-if args.output:
-  rname=args.output
-else:
-  rname=args.logfile.split('.log')[0]+'-energy.pdf'
 
 lhead=0
 # read the meat of the data and write it out, continuing until the end
@@ -126,8 +122,8 @@ if args.Etot:
   plt.ylabel('E$_{tot}$ [simulation units]')
   plt.legend(loc='upper right',frameon=False)
 plt.title(args.logfile+' - Energy')
-if args.screen:
-  plt.show()
+if args.savefig:
+  plt.savefig(args.savefig)
+  print "Plot saved to: "+args.savefig
 else:
-  plt.savefig(rname,format='pdf')
-  print "Plot saved to: "+rname
+  plt.show()
