@@ -1,14 +1,16 @@
 # Idkit_regions.py
 
-def Idkit_regions(imagelist,poslist):
+def Idkit_regions(imagelist,poslist,XML=False):
   """
   Take an input data file of positions and velocities, generate CASA region
-  XML files to overlay on the moment maps in the casa viewer
+  files to overlay on the moment maps in the casa viewer
 
   Inputs:
     - imagelist	- list/tuple with the images listed in order (XY, XV, VY)
     - poslist	- file with tabulation of positions and velocities for 
 		dynamical tracers
+    - XML	- If true, revert to old-style CASA XML region files. (defualt:
+		false).
 
   poslist is of the form (tab-separated):
   RA    Dec     code    vcenter [voff1] [voff2]
@@ -21,10 +23,14 @@ def Idkit_regions(imagelist,poslist):
   (all velocities are assumed to be in the optical defn)
 
   Outputs
-   _XY.xml      - regions for XY projection
-   _XV.xml      - regions for XV projection
-   _VY.xml      - regions for VY projection
+   _XY.reg/xml  - regions for XY projection
+   _XV.reg/xml  - regions for XV projection
+   _VY.reg/xml  - regions for VY projection
   """
+  if XML:
+    fsuffix='.xml'
+  else:
+    fsuffix='.reg'
   # read in the coordinate information from the position list
   posfile=open(poslist,'r')
   pos=[]	# list of dictionaries
@@ -60,34 +66,37 @@ def Idkit_regions(imagelist,poslist):
     if re.search("XY",proj):
       # sky plane projection, XML file of RA and Dec
       print "Found sky plane projection (XY)"
-      outfile=open(proot+'.xml','w')
-      Idkit_XMLheader(outfile)
+      outfile=open(proot+fsuffix,'w')
+      Idkit_header(outfile,XML=XML)
       for obj in pos:
 	# loop over objects in memory, write to an xml file
-        Idkit_XMLobj(coords,outfile,'XY',obj)
-      Idkit_XMLfooter(outfile)
+        if XML: Idkit_XMLobj(coords,outfile,'XY',obj)
+        else: Idkit_CRTFobj(coords,outfile,'XY',obj)
+      Idkit_footer(outfile,XML=XML)
       outfile.close()
     elif re.search("XV",proj):
       # velocity vs RA
       print "Found PV diagram (XV)"
-      outfile=open(proot+'.xml','w')
-      Idkit_XMLheader(outfile)
+      outfile=open(proot+fsuffix,'w')
+      Idkit_header(outfile,XML=XML)
       for obj in pos:
         # loop over objects in memory, write to an xml file
 	if obj['vel']!=0:
-          Idkit_XMLobj(coords,outfile,'XV',obj)
-      Idkit_XMLfooter(outfile)
+          if XML: Idkit_XMLobj(coords,outfile,'XV',obj)
+          else: Idkit_CRTFobj(coords,outfile,'XY',obj)
+      Idkit_footer(outfile,XML=XML)
       outfile.close()
     elif re.search("VY",proj):
       # Dec vs velocity
       print "Found PV diagram (VY)"
-      outfile=open(proot+'.xml','w')
-      Idkit_XMLheader(outfile)
+      outfile=open(proot+fsuffix,'w')
+      Idkit_header(outfile,XML=XML)
       for obj in pos:
         # loop over objects in memory, write to an xml file
 	if obj['vel']!=0:
-          Idkit_XMLobj(coords,outfile,'VY',obj)
-      Idkit_XMLfooter(outfile)
+          if XML: Idkit_XMLobj(coords,outfile,'VY',obj)
+          else: Idkit_CRTFobj(coords,outfile,'XY',obj)
+      Idkit_footer(outfile,XML=XML)
       outfile.close()
     else:
       print "ERROR: unknown projection type for file "+proj+". Ignoring and moving to next file."
@@ -112,8 +121,11 @@ def decDec(Dec):
     return float(Decs[0])+float(Decs[1])/60.+float(Decs[2])/3600.
 
 # write XML file header
-def Idkit_XMLheader(outfile):
-  outfile.write('<casaviewer-shapes version="1.0" >\n <shape-options>\n')
+def Idkit_header(outfile,XML=false):
+  if XML:
+    outfile.write('<casaviewer-shapes version="1.0" >\n <shape-options>\n')
+  else:
+    outfile.write('#CRTFv0\n')
   return 0
 
 # write the XML for a specific region
@@ -215,8 +227,36 @@ def Idkit_XMLobj(coords,outfile,proj,obj):
   
   return 0
 
+# generate CRTFv0 region files
+def Idkit_CRTFobj(coords,outfile,proj,obj):
+  label=obj['code']
+  if obj['code']=='g1':
+    color='cyan'
+  elif obj['code']=='g2':
+    color='magenta'
+  elif obj['code']=='s':
+    color='yellow'
+  else:
+    sys.stderr.write('ERROR: unknown object code. Coloring this object red.\n')
+    color='red'
 
-# write XML file footer
-def Idkit_XMLfooter(outfile):
-  outfile.write(' </shape-options>\n</casaviewer-shapes>\n')
+  if proj=='XY':	# Crosses at the center positions
+    outfile.write('symbol [['+str(decRA(obj['RA']))+', '+str(decDec(obj['Dec']))+'], {\'+\'}] coord=J2000, corr=[I], color='+color+'\n')
+
+  elif proj=='XV':
+    (pRA,pDec,pVel1,pStokes)=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),coords.velocitytofrequency(value=obj['vlow'],doppler='optical',velunit='km/s'),'I'])['numeric']
+    pVel2=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),coords.velocitytofrequency(value=obj['vhigh'],doppler='optical',velunit='km/s'),'I'])['numeric'][2]
+    outfile.write('line [['+str(pRA)+','+str(pVel1)+'], ['+str(pRA)+','+str(pVel2)+']] linewidth=1, color='+color+'\n') 
+
+  elif proj=='VY':
+    (pRA,pDec,pVel1,pStokes)=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),coords.velocitytofrequency(value=obj['vlow'],doppler='optical',velunit='km/s'),'I'])['numeric']
+    pVel2=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),coords.velocitytofrequency(value=obj['vhigh'],doppler='optical',velunit='km/s'),'I'])['numeric'][2]
+    outfile.write('line [['+str(pVel1)+','+str(pDec)+'], ['+str(pVel2)+','+str(pDec)+']] linewidth=1, color='+color+'\n')
+
+  return 0
+
+# write file footer
+def Idkit_footer(outfile,XML=false):
+  if XML:
+    outfile.write(' </shape-options>\n</casaviewer-shapes>\n')
   return 0
