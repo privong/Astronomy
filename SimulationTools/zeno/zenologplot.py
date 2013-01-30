@@ -25,7 +25,7 @@ parser.add_argument('-Erad',action='store_true',default=False,help='Plot Erad')
 parser.add_argument('-fixErad',action='store_true',default=False,help='Fix the Erad and Etot budgeting due to a sign error (only needed for sphcode-1.3a runs)')
 parser.add_argument('--density',action='store',help='Overplot density vs time from this file (normalized to the maximum density)')
 parser.add_argument('--output',action='store',default=False,help='Specify the name of the output file (default is to change the log file suffix to .pdf)')
-parser.add_argument('-screen',action='store_true',default=False,help='Plot to the screen instead of writing to a file')
+parser.add_argument('--savefig',action='store',type=str,default=False,help='Figure will be saved to this filename if given.')
 parser.add_argument('--version',action='version',version='%(prog)s '+VERSION+' ('+VERSIONDATE+')')
 args=parser.parse_args()
 
@@ -38,16 +38,6 @@ elif not(args.Etot) and not(args.Ekin) and not(args.Epot) and not(args.Eint) and
   sys.exit(-1)
 
 infile=open(args.logfile,'r')
-if args.output:
-  rname=args.output
-else:
-  rname=args.logfile.split('.log')[0]+'-energy.pdf'
-
-lineno=0
-# open the first 15 lines
-while lineno<15:
-  infile.readline()
-  lineno+=1
 
 lhead=0
 # read the meat of the data and write it out, continuing until the end
@@ -65,36 +55,25 @@ Erad=numpy.array([])
 Jtot=numpy.array([])
 Vcom=numpy.array([])
 Cputot=numpy.array([])
-while infile.readline():
-  # thie whole section should be improved to be smarter about what values it's
-  # copying into. make use of the labels above the values man!
-  tline=infile.readline().split()
-  time=numpy.append(time,float(tline[1]))
-  Nstep=numpy.append(Nstep,int(tline[3]))
-  junkit=infile.readline()
-  junkit=infile.readline()
-  junkit=infile.readline()
-  blank=infile.readline()
-  junkit=infile.readline()
-  label2v=infile.readline().split()
-  freqmax=numpy.append(freqmax,float(label2v[6]))
-  freqavg=numpy.append(freqavg,float(label2v[7]))
-  blank=infile.readline()
-  junkit=infile.readline()
-  label3v=infile.readline().split()
-  Etot=numpy.append(Etot,float(label3v[0]))
-  Eint=numpy.append(Eint,float(label3v[1]))
-  Ekin=numpy.append(Ekin,float(label3v[2]))
-  Epot=numpy.append(Epot,float(label3v[3]))
-  Erad=numpy.append(Erad,float(label3v[4]))
-  Jtot=numpy.append(Jtot,float(label3v[5]))
-  Vcom=numpy.append(Vcom,float(label3v[6]))
-  Cputot=numpy.append(Cputot,float(label3v[7]))
-  blank=infile.readline()
-  if not(re.search('----',infile.read(5))):
-    #print "we wrote an output file!"
-    fline=infile.readline()
-    blank=infile.readline()
+while 1:
+  tline=infile.readline()
+  if not tline:
+    break
+  if re.search('time:',tline):
+    # extract the exact time
+    tline=tline.split()
+    time=numpy.append(time,float(tline[1]))
+    Nstep=numpy.append(Nstep,int(tline[3]))
+  elif re.search('Etot',tline):
+    # get the next line and add other information to the stack
+    tline=infile.readline().split()
+    Etot=numpy.append(Etot,float(tline[1]))
+    Eint=numpy.append(Eint,float(tline[2]))
+    Ekin=numpy.append(Ekin,float(tline[3]))
+    Epot=numpy.append(Epot,float(tline[4]))
+    Erad=numpy.append(Erad,float(tline[5]))
+    Jtot=numpy.append(Jtot,float(tline[6]))
+    Vcom=numpy.append(Vcom,float(tline[7]))
 
 infile.close()
 
@@ -143,8 +122,8 @@ if args.Etot:
   plt.ylabel('E$_{tot}$ [simulation units]')
   plt.legend(loc='upper right',frameon=False)
 plt.title(args.logfile+' - Energy')
-if args.screen:
-  plt.show()
+if args.savefig:
+  plt.savefig(args.savefig)
+  print "Plot saved to: "+args.savefig
 else:
-  plt.savefig(rname,format='pdf')
-  print "Plot saved to: "+rname
+  plt.show()
