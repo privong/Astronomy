@@ -9,8 +9,8 @@ def Idkit_regions(imagelist,poslist,XML=False):
     - imagelist	- list/tuple with the images listed in order (XY, XV, VY)
     - poslist	- file with tabulation of positions and velocities for 
 		dynamical tracers
-    - XML	- If true, revert to old-style CASA XML region files. (defualt:
-		false).
+    - XML	- If true, revert to old-style CASA XML region files. (default:
+		false). Note that XML region files are not supported in 4.0.0.
 
   poslist is of the form (tab-separated):
   RA    Dec     code    vcenter [voff1] [voff2]
@@ -30,6 +30,7 @@ def Idkit_regions(imagelist,poslist,XML=False):
   if XML:
     fsuffix='.xml'
   else:
+    sys.stderr.write('You have selected to use the CASA region format. Currently (4.0.0) it does not utilize the full complement of options (http://casaguides.nrao.edu/index.php?title=CASA_Region_Format). As a result, only the XY region will be written out.\n\n')
     fsuffix='.reg'
   # read in the coordinate information from the position list
   posfile=open(poslist,'r')
@@ -83,7 +84,8 @@ def Idkit_regions(imagelist,poslist,XML=False):
         # loop over objects in memory, write to an xml file
 	if obj['vel']!=0:
           if XML: Idkit_XMLobj(coords,outfile,'XV',obj)
-          else: Idkit_CRTFobj(coords,outfile,'XY',obj)
+          #else: Idkit_CRTFobj(coords,outfile,'XV',obj)
+          else: sys.stderr.write('Lines not supported by CASA region files, skipping XV information.\n')
       Idkit_footer(outfile,XML=XML)
       outfile.close()
     elif re.search("VY",proj):
@@ -95,7 +97,8 @@ def Idkit_regions(imagelist,poslist,XML=False):
         # loop over objects in memory, write to an xml file
 	if obj['vel']!=0:
           if XML: Idkit_XMLobj(coords,outfile,'VY',obj)
-          else: Idkit_CRTFobj(coords,outfile,'XY',obj)
+          #else: Idkit_CRTFobj(coords,outfile,'VY',obj)
+          else: sys.stderr.write('Lines not supported by CASA region files, skipping VY information.\n')
       Idkit_footer(outfile,XML=XML)
       outfile.close()
     else:
