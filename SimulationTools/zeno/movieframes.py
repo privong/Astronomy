@@ -86,7 +86,7 @@ for snap in snaps:
       os.system('snapcollect tempsnap.dat - | snapsift - - sieve="'+sieve+'" | snapset - - x="x/'+str(args.zoom)+'" y="y/'+str(args.zoom)+'" produce=BodyType,Uinternal,Mass type=0x60 uint=0.00001 m=0.00001 z=0 | sphcode_u - tmpimg.dat tstop=0 outputs=Position,SmoothLength')
     else: 
       os.system('snapcollect tempsnap.dat - | snapsift - - sieve="'+sieve+'" | snapset - - produce=BodyType,Uinternal,Mass type=0x60 uint=0.00001 m=0.00001 z=0 | sphcode_u - tmpimg.dat tstop=0 outputs=Position,SmoothLength')
-    if args.dm or args.gdisk:
+    if args.DM or args.gdisk:
       # keep the rendering fuzzy
       os.system('snapset tmpimg.dat - aux=0.0001 produce=Aux | snapsmooth - '+oname+' value=bright threedim=false zval=2.0')
     else:
