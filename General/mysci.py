@@ -5,6 +5,8 @@
 # Last Modified: 08 February 2012 by George C. Privon
 # gcp8y@virginia.edu
 #
+# NOTE: This should probably be mostly deprecated in favor of the astropy
+# constants module!
 
 import sys,pyfits,numpy,os,re
 
