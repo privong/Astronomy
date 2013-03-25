@@ -11,3 +11,7 @@ General/		- general use files, other scripts may depend on files
 Observing/		- scripts related to observations
 SimulationTools/	- Scripts related to analyzing outputs of simulations
 			  currently this includes the zeno nbody/sph code.
+
+Dependencies:
+
+Most of the scripts depend on standard python libraries (numpy, scipy) and sometimes, the astropy library. These can all be installed via pip.

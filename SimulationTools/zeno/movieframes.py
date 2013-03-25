@@ -1,8 +1,7 @@
-#!/sw/bin/python2.6
+#!/sw/bin/python2.7
 #
 # Generate images from zeno sph/treecode simulations for making movies
 #
-# George Privon, gcp8y@virginia.edu, 06 July 2012
 #
 # you can turn this into a movie with something like:
 # ffmpeg -r 120 -i s001_00%02d-gdisk.pgm test.mp4
@@ -13,9 +12,6 @@
 
 import sys,re,argparse,os,glob
 
-VERSION='0.1a'
-VERSIONDATE='19 July 2012'
-
 # set up command line arguments
 parser=argparse.ArgumentParser(description='Generate pgm images of subsets of a zeno N-body snapshot. Assumes first file has BodyType information in it.')
 parser.add_argument('snaps',type=str,nargs='+',help='snapshots to image')
@@ -24,8 +20,8 @@ parser.add_argument('-sdisk',action='store_true',default=False,help='Select stel
 parser.add_argument('-sbulge',action='store_true',default=False,help='Select stellar bulge particles')
 parser.add_argument('-gdisk',action='store_true',default=False,help='Select gas disk particles')
 parser.add_argument('--zoom',action='store',default=False,help='Zoom in (<1) or out (>1) by the factor specified')
+parser.add_argument('--angle',action='store',default=False,help='Viewing angle as a tuple. (be sure to escape the parentheses with a \'\\\').')
 parser.add_argument('--viewfile=',action='store',default=False,help='Specify a view file to rotate the snapshots prior to generating the images. [NOT YET IMPLEMENTED].')
-parser.add_argument('--version',action='version',version='%(prog)s '+VERSION+' ('+VERSIONDATE+')')
 args=parser.parse_args()
 
 #if args.viewfile:
@@ -88,10 +84,21 @@ for snap in snaps:
     os.system('csf '+snaps[0]+' ./tempsnap.dat')
     os.system('csf '+snap+' ./tempsnap.dat append=t')
     if args.zoom:
-      os.system('snapcollect tempsnap.dat - | snapsift - - sieve="'+sieve+'" | snapset - - x="x/'+str(args.zoom)+'" y="y/'+str(args.zoom)+'" produce=BodyType,Uinternal,Mass type=0x60 uint=0.00001 m=0.00001 z=0 | sphcode_u - tmpimg.dat tstop=0 outputs=Position,SmoothLength')
-    else: 
-      os.system('snapcollect tempsnap.dat - | snapsift - - sieve="'+sieve+'" | snapset - - produce=BodyType,Uinternal,Mass type=0x60 uint=0.00001 m=0.00001 z=0 | sphcode_u - tmpimg.dat tstop=0 outputs=Position,SmoothLength')
-    os.system('snapset tmpimg.dat - aux=0.0001 produce=Aux | snapsmooth - '+oname+' value=bright threedim=false zval=2.0')
+      zfac=args.zoom
+    else:
+      zfac=1.0
+    if args.angle:
+      angle=tuple(float(v) for v in re.findall("[\-\.0-9]+", args.angle))
+    else:
+      angle=(0,0,0)
+    print angle
+    os.system('snapcollect tempsnap.dat - | snapsift - - sieve="'+sieve+'" | snaprotate - - thetax='+str(angle[0])+' thetay='+str(angle[1])+' thetaz='+str(angle[2])+' | snapset - - x="x/'+str(zfac)+'" y="y/'+str(zfac)+'" produce=BodyType,Uinternal,Mass type=0x60 uint=0.00001 m=0.00001 z=0 | sphcode_u - tmpimg.dat tstop=0 outputs=Position,SmoothLength')
+    if args.DM or args.gdisk:
+      # keep the rendering fuzzy
+      os.system('snapset tmpimg.dat - aux=0.0001 produce=Aux | snapsmooth - '+oname+' value=rho threedim=false zval=2.0')
+    else:
+      # keep the particles as points
+      os.system('snapset tmpimg.dat - smooth=0.002 aux=0.0001 produce=Aux | snapsmooth - '+oname+' value=rho threedim=false zval=2.0')
   
     # delete our temp files
     if os.path.exists('tmpimg.dat'):

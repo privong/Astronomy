@@ -8,7 +8,7 @@
 # - allow user to specify telescope on the command line
 # - Enable selection of which flat fields you should use to make the master flat
 
-import pyfits
+from astropy.io import fits as pyfits
 import numpy
 import sys,os,re,glob,shutil,datetime
 import matplotlib.pyplot as plt

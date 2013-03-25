@@ -15,7 +15,8 @@
 # Usage:
 # luci_select.py [OPTIONS] filelist
 
-import pyfits,sys,getopt,os,re,glob
+import sys,getopt,os,re,glob
+from astropy.io import fits as pyfits
 
 def usage():
   sys.stderr.write('Usage:\n')
