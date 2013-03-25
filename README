@@ -1,5 +1,7 @@
 This contains various astronomy scripts I've written for my data analysis and processing. Some of them may be more widely useful. However, I provide no guarantee that they will even run, much less provide useable results.
 
+If you use these scripts or derivates of them in publications, I would appreciate a mention in the acknowledgements as well as a (digital) copy of the paper.
+
 Directories:
 
 DataAnalysis/		- assist with processing/analysis of reduced data
