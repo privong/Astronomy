@@ -6,11 +6,41 @@ from astropy.io import fits
 import sys,argparse,os
 import numpy as np
 
+################################################################################
+def search_adj(cube,pos,nadj,minval):
+  count=0
+  # deal with edge points
+  xlim=cube.shape[0]
+  ylim=cube.shape[1]
+  if pos[0]!=0:
+    if (cube[pos[0]-1,pos[1],pos[2],pos[3]]>minval): count=count+1
+  if pos[0]!=xlim-1:
+    if (cube[pos[0]+1,pos[1],pos[2],pos[3]]>minval): count=count+1
+  if pos[1]!=0:
+    if (cube[pos[0],pos[1]-1,pos[2],pos[3]]>minval): count=count+1
+  if pos[1]!=ylim-1:
+    if (cube[pos[0],pos[1]+1,pos[2],pos[3]]>minval): count=count+1
+  if pos[0]!=xlim-1 and pos[1]!=ylim-1:
+    if (cube[pos[0]+1,pos[1]+1,pos[2],pos[3]]>minval): count=count+1
+  if pos[0]!=0 and pos[1]!=0:
+    if (cube[pos[0]-1,pos[1]-1,pos[2],pos[3]]>minval): count=count+1
+  if pos[0]!=0 and pos[1]!=ylim-1:
+    if (cube[pos[0]-1,pos[1]+1,pos[2],pos[3]]>minval): count=count+1
+  if pos[0]!=xlim-1 and pos[1]!=0:
+    if (cube[pos[0]+1,pos[1]-1,pos[2],pos[3]]>minval): count=count+1
+  
+  if count>=nadj:
+    return nadj
+  else:
+    return 0 
+################################################################################
+
 parser=argparse.ArgumentParser(description='Create a mask for a data cube')
 parser.add_argument('cube',type=str,default=False,help='Data cube to mask')
 parser.add_argument('-rms',type=float,default=-1,help='RMS noise')
 parser.add_argument('-SN',type=float,default=-1,help='SN to use for individual pixels (Default: -1, accept all pixels).')
 parser.add_argument('-SNJ',type=float,default=-1,help='SN to use for pixels detected in >1 adjacent channels (Default: -1, option disabled).')
+parser.add_argument('-spatial',type=int,default=0,help='Require at adjacent pixel to also exceed the SNJ threshold? (NOT YET IMPLEMENTED)')
 args=parser.parse_args()
 
 if args.cube:
@@ -29,7 +59,7 @@ else:
 if args.SN==1:
   print "No SN specified, accepting all pixels."
 if args.SNJ==-1:
-  print "Not taking into account pixels adjacent in frequency space."
+  print "Not taking into account pixels adjacent in frequency pace."
 
 # let's get a move on
 if os.path.isfile(args.cube):
@@ -66,11 +96,20 @@ for v in range(0,nchan,2):	# double assign goodness
     for y in range(imsize[1]):
       if v!=(nchan-1):
         if (wdata[x,y,v,0]>args.rms*args.SNJ) and (wdata[x,y,v+1,0]>args.rms*args.SNJ):
-          adjmask[x,y,v,0]=adjmask[x,y,v+1,0]=1
+	  if args.spatial:
+            # search spatially adjacent pixels
+            if search_adj(wdata,(x,y,v,0),args.spatial,args.rms*args.SNJ) or search_adj(wdata,(x,y,v+1,0),args.spatial,args.rms*args.SNJ):
+              adjmask[x,y,v,0]=adjmask[x,y,v+1,0]=1
+          else:
+            adjmask[x,y,v,0]=adjmask[x,y,v+1,0]=1
       else:
         # just do a left compare
         if (wdata[x,y,v,0]>args.rms*args.SNJ) and (wdata[x,y,v-1,0]>args.rms*args.SNJ):
-          adjmask[x,y,v,0]=1
+          if args.spatial:
+            if search_adj(wdata,(x,y,v,0),args.spatial,args.rms*args.SNJ):
+              adjmask[x,y,v,0]=1
+          else:
+            adjmask[x,y,v,0]=1
 
 # combine the masks
 fmask=np.ones((imsize[0],imsize[1],nchan,nstokes))*np.logical_or(mask,adjmask)
@@ -86,3 +125,4 @@ cube[0].header['comment']='SN='+str(args.SN)+' SNJ='+str(args.SNJ)+' RMS='+str(a
 cube.writeto(ofname)
 
 cube.close()
+
