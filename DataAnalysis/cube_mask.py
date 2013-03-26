@@ -59,7 +59,9 @@ else:
 if args.SN==1:
   print "No SN specified, accepting all pixels."
 if args.SNJ==-1:
-  print "Not taking into account pixels adjacent in frequency pace."
+  print "Not taking into account pixels adjacent in frequency space."
+if args.spatial:
+  print "Pixels must have at least "+str(args.spatial)+" adjacent pixels exceeding SN of "+str(args.SNJ)
 
 # let's get a move on
 if os.path.isfile(args.cube):
@@ -125,4 +127,3 @@ cube[0].header['comment']='SN='+str(args.SN)+' SNJ='+str(args.SNJ)+' RMS='+str(a
 cube.writeto(ofname)
 
 cube.close()
-
