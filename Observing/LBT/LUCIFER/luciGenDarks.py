@@ -7,7 +7,8 @@
 # Version 0.1
 # Last modified: 08 June 2011 by George Privon gcp8y@virginia.edu
 
-import os,pyfits,glob,sys,re
+import os,glob,sys,re
+from astropy.io import fits as pyfits
 from datetime import datetime
 
 def usage():

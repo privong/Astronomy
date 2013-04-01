@@ -1,48 +1,10 @@
 # mysci.py
 #
 # George's python module of useful scientific things.
-#
-# Last Modified: 08 February 2012 by George C. Privon
-# gcp8y@virginia.edu
-#
 
-import sys,pyfits,numpy,os,re
+import sys,numpy,os,re
+from astropy.io import fits as pyfits
 
-###############################################################################
-# CGS constants
-# from http://www.astro.wisc.edu/~dolan/constants.html
-# Retreived: 16 October 2011
-c	= 2.99792458e10		# cm s^-1		Speed of Light
-h	= 6.6260755e-27		# erg s			Planck Constant
-hbar	= 1.05457266e-27	# erg s			/2pi
-G	= 6.67259e-8		# cm^3 g^-1 s^-2	Grav constant
-e	= 4.8032068e-10		# esu			electron charge
-eV	= 1.6021772e-12		# erg			Electron Volt
-m_e	= 9.1093897e-28		# g			electron mass
-m_p	= 1.6726231e-24		# g			proton mass
-m_n	= 1.6749286e-24		# g			neutron mass
-amu	= 1.6605402e-24		# g			atomic mass unit
-N_A	= 6.0221367e23		# -			Avagadro's Number
-k	= 1.380658e-16		# erg K^-1		Boltzmann Constant
-a	= 7.5646e-15		# erg cm^-3 K^-4	Radiation density const
-sigma	= 5.67051e-5		# erg cm^-2 K^-4 s^-1	Stefan-Boltzmann const
-alpha	= 7.29735308e-3		# -			Fine Structure const
-rhyd	= 2.1798741e-11		# erg			Rhydberg const
-
-# End CGS constants
-###############################################################################
-
-###############################################################################
-# Astronomical Constants
-# from http://www.astro.wisc.edu/~dolan/constants.html
-# Retreived: 16 October 2011
-AU	= 1.496e13		# cm			Astronomical Unit
-pc	= 3.086e18		# cm			Parsec
-ly	= 9.463e17		# cm			Light-year
-M_sun	= 1.99e33		# g			Solar Mass
-R_sun   = 6.96e10		# cm			Solar Radius
-L_sun	= 3.9e33		# erg s^-1		Solar Luminosity
-T_sun	= 5.789e3		# K			Solar Temperature (surf)
 # Solar System Measurements, given as a dictionary
 # mass - g, radius - cm, period - yr, semi-major axis - cm, eccentrcity
 ssys={'sun'	:{'mass':1.99e33, 'radius':6.96e10, 'period':0,'sma':0,'e':0},

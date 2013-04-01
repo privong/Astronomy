@@ -5,8 +5,9 @@
 # generate a comparison set of histograms for original data with calibrated data
 # or a comparison file
 
-import numpy,pyfits,glob
+import numpy,glob
 import matplotlib.pyplot as plt
+from astropy.io import fits as pyfits
 
 def hicomp(files,compfile=False,hrange=(0,65000),corrfac=1):
 
