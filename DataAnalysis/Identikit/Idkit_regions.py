@@ -244,7 +244,7 @@ def Idkit_CRTFobj(coords,outfile,proj,obj):
     color='red'
 
   if proj=='XY':	# Crosses at the center positions
-    outfile.write('symbol [['+str(decRA(obj['RA']))+', '+str(decDec(obj['Dec']))+'], {\'+\'}] coord=J2000, corr=[I], color='+color+'\n')
+    outfile.write('symbol [['+str(decRA(obj['RA']))+', '+str(decDec(obj['Dec']))+'], +] coord=J2000, corr=[I], color='+color+'\n')
 
   elif proj=='XV':
     (pRA,pDec,pVel1,pStokes)=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),coords.velocitytofrequency(value=obj['vlow'],doppler='optical',velunit='km/s'),'I'])['numeric']
