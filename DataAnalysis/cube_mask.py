@@ -96,7 +96,7 @@ adjmask=np.zeros((imsize[0],imsize[1],nchan,nstokes))
 for v in range(0,nchan,2):	# double assign goodness
   for x in range(imsize[0]):
     for y in range(imsize[1]):
-      if v!=(nchan-1):
+      if v!=(nchan-1):	# compare chanel+1
         if (wdata[x,y,v,0]>args.rms*args.SNJ) and (wdata[x,y,v+1,0]>args.rms*args.SNJ):
 	  if args.spatial:
             # search spatially adjacent pixels
@@ -104,6 +104,14 @@ for v in range(0,nchan,2):	# double assign goodness
               adjmask[x,y,v,0]=adjmask[x,y,v+1,0]=1
           else:
             adjmask[x,y,v,0]=adjmask[x,y,v+1,0]=1
+      if v!=0:		# compare chanel-1
+        if (wdata[x,y,v,0]>args.rms*args.SNJ) and (wdata[x,y,v-1,0]>args.rms*args.SNJ):
+	  if args.spatial:
+            # search spatially adjacent pixels
+            if search_adj(wdata,(x,y,v,0),args.spatial,args.rms*args.SNJ) or search_adj(wdata,(x,y,v-1,0),args.spatial,args.rms*args.SNJ):
+              adjmask[x,y,v,0]=adjmask[x,y,v-1,0]=1
+          else:
+            adjmask[x,y,v,0]=adjmask[x,y,v-1,0]=1
       else:
         # just do a left compare
         if (wdata[x,y,v,0]>args.rms*args.SNJ) and (wdata[x,y,v-1,0]>args.rms*args.SNJ):
