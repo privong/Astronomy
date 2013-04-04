@@ -92,7 +92,7 @@ mask=np.logical_or(masku,maskl)
 
 adjmask=np.zeros((imsize[0],imsize[1],nchan,nstokes))
 
-# now loop over the cube and look for adjacenent pixels
+# now loop over the cube and look for adjacent pixels
 for v in range(0,nchan,2):	# double assign goodness
   for x in range(imsize[0]):
     for y in range(imsize[1]):
