@@ -244,17 +244,17 @@ def Idkit_CRTFobj(coords,outfile,proj,obj):
     color='red'
 
   if proj=='XY':	# Crosses at the center positions
-    outfile.write('symbol [['+str(decRA(obj['RA']))+', '+str(decDec(obj['Dec']))+'], +] coord=J2000, corr=[I], color='+color+'\n')
+    outfile.write('symbol [['+str(decRA(obj['RA']))+'deg, '+str(decDec(obj['Dec']))+'deg], +] coord=J2000, corr=[I], color='+color+'\n')
 
   elif proj=='XV':
     (pRA,pDec,pVel1,pStokes)=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),coords.velocitytofrequency(value=obj['vlow'],doppler='optical',velunit='km/s'),'I'])['numeric']
     pVel2=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),coords.velocitytofrequency(value=obj['vhigh'],doppler='optical',velunit='km/s'),'I'])['numeric'][2]
-    outfile.write('line [['+str(pRA)+','+str(pVel1)+'], ['+str(pRA)+','+str(pVel2)+']] linewidth=1, color='+color+'\n') 
+    outfile.write('line [['+str(pRA)+'deg,'+str(pVel1)+'], ['+str(pRA)+'deg,'+str(pVel2)+']] linewidth=1, color='+color+'\n') 
 
   elif proj=='VY':
     (pRA,pDec,pVel1,pStokes)=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),coords.velocitytofrequency(value=obj['vlow'],doppler='optical',velunit='km/s'),'I'])['numeric']
     pVel2=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),coords.velocitytofrequency(value=obj['vhigh'],doppler='optical',velunit='km/s'),'I'])['numeric'][2]
-    outfile.write('line [['+str(pVel1)+','+str(pDec)+'], ['+str(pVel2)+','+str(pDec)+']] linewidth=1, color='+color+'\n')
+    outfile.write('line [['+str(pVel1)+'deg,'+str(pDec)+'], ['+str(pVel2)+','+str(pDec)+'deg]] linewidth=1, color='+color+'\n')
 
   return 0
 
