@@ -29,7 +29,7 @@ M_MW	= 1.4e45		# g		Milky Way Mass
 t_U	= 4.342e17		# s		Age of the Universe (13.76 Gyr)
 T_CMB	= 2.73			# K		CMB temperature at z=0
 
-# Rest frequencies of astrophysically interesting lines (in Hz)
+# Rest frequencies of astrophysically interesting (to me) lines (in Hz)
 restfreq={'HI'	:1420405751.77,
 	'CO'	:115271201800.,
 	'13CO'	:110201.35400e6,
