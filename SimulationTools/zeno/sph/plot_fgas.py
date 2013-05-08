@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-import pylab
+import matplotlib.pyplot as plt
+import numpy as np
 import argparse,sys
 
 # to generate the required input files, do something like this:
@@ -34,28 +35,28 @@ spec=zip(args.gasfile,args.labels)
 
 sys.stderr.write('Found '+str(len(args.gasfile))+' input files.\n')
 
-data=[(pylab.loadtxt(filename,usecols=(0,2,8)),label) for filename,label in spec]
+data=[(np.loadtxt(filename,usecols=(0,2,8)),label) for filename,label in spec]
 
 # set the axis labels and make adjustments to the data
 if args.tscl!=1:
-  pylab.xlabel('t (Myr)')
+  plt.xlabel('t (Myr)')
 else:
-  pylab.xlabel('t (sim units)')
+  plt.xlabel('t (sim units)')
 
-pylab.ylabel('f$_{gas}$')
+plt.ylabel('f$_{gas}$')
 
 for inst,label in data:
     # plot the SFR with scalings
   if args.tscl==1:
-    pylab.plot(inst[:,0],inst[:,2]/(inst[:,1]+inst[:,2]),label=label)
+    plt.plot(inst[:,0],inst[:,2]/(inst[:,1]+inst[:,2]),label=label)
   else:
-    pylab.plot(args.tscl*(inst[:,0]-2.0),inst[:,2]/(inst[:,1]+inst[:,2]),label=label)
+    plt.plot(args.tscl*(inst[:,0]-2.0),inst[:,2]/(inst[:,1]+inst[:,2]),label=label)
     
-pylab.legend(fontsize='x-small',frameon=False)
-pylab.title(args.title)
-pylab.minorticks_on()
+plt.legend(fontsize='x-small',frameon=False)
+plt.title(args.title)
+plt.minorticks_on()
 if args.savefig:
-  pylab.savefig(args.savefig)
+  plt.savefig(args.savefig)
   print "Plot saved to "+args.savefig+".\n"
 else:
-  pylab.show()
+  plt.show()
