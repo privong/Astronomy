@@ -5,7 +5,7 @@ import argparse,sys
 
 parser=argparse.ArgumentParser(description="Read in the starlog files, bin them and plot the star formation rate as a function of time. Optionally takes arguments for mass and time scaling if you want to plot it in physical units.")
 parser.add_argument('starlog',type=str,nargs='*',help='List of 1 or more starlog files in the zeno format.')
-parser.add_argument('--split',action='store',type=int,default='0',help='Separate the starlog into two galaxies. This value is the upper particle ID number for the first galaxy. NOT YET IMPLEMENTED')
+#parser.add_argument('--split',action='store',type=int,default='0',help='Separate the starlog into two galaxies. This value is the upper particle ID number for the first galaxy. NOT YET IMPLEMENTED')
 parser.add_argument('--savefig',action='store',type=str,default=False,help='Figure will be saved to this filename if given.')
 parser.add_argument('--pmass',action='store',type=float,default=1,help='Mass of new star clusters in simulation units. Defaults to 1.')
 parser.add_argument('--tscl',action='store',type=float,default=1,help='Time Scaling (Myr)')
@@ -52,6 +52,7 @@ else:
   SFR=[((clusters[0].astype(float)/(clusters[1][1]-clusters[1][0])),clusters[1]+(clusters[1][1]-clusters[1][0])/2.,label) for clusters,label in binned]
 
 if args.Mscl!=1:
+  args.Mscl=args.Mscl*1.e9	# convert it to M_sun from GM_sun
   if args.pmass!=1:
     pylab.ylabel('dM$_*$/dt (M$_{\odot}$ yr$^{-1}$)')
   else:
@@ -65,7 +66,7 @@ else:
 
 for pl1,pl2,label in SFR:
     # plot the SFR with scalings
-    pylab.semilogy(args.tscl*pl2[:-1],args.pmass*(args.Mscl*1.e9)*pl1/(args.tscl*1.e6),label=label)
+    pylab.semilogy(args.tscl*pl2[:-1],args.pmass*args.Mscl*pl1/(args.tscl*1.e6),label=label)
 pylab.legend(fontsize='x-small',frameon=False)
 pylab.title(args.title)
 pylab.minorticks_on()
