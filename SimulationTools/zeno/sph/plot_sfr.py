@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-import pylab
+import matplotlib.pyplot as plt
+import numpy as np
 import argparse,sys
 
 parser=argparse.ArgumentParser(description="Read in the starlog files, bin them and plot the star formation rate as a function of time. Optionally takes arguments for mass and time scaling if you want to plot it in physical units.")
@@ -33,45 +34,45 @@ spec=zip(args.starlog,args.labels)
 sys.stderr.write('Found '+str(len(args.starlog))+' star log files.\n')
 
 # import the time for each cluster and the local SFR
-data=[(pylab.loadtxt(filename,usecols=(2,3)),label) for filename,label in spec]
+data=[(np.loadtxt(filename,usecols=(2,3)),label) for filename,label in spec]
 
 # base the bin size on the first file
-junk,mybins=pylab.histogram(data[0][0][:,0],bins=int(args.nbin))
+junk,mybins=plt.histogram(data[0][0][:,0],bins=int(args.nbin))
 
 # histogram the data
-binned=[(pylab.histogram(dat[:,0],bins=mybins,density=False),label) for dat,label in data]
+binned=[(plt.histogram(dat[:,0],bins=mybins,density=False),label) for dat,label in data]
 
 # set the axis labels and make adjustments to the data
 if args.tscl!=1:
-  pylab.xlabel('t (Myr)')
+  plt.xlabel('t (Myr)')
   # convert the times to have 0 be pericenter passage (t=2 in sim units)
   SFR=[((clusters[0].astype(float)/(clusters[1][1]-clusters[1][0])),clusters[1]-2.0+(clusters[1][1]-clusters[1][0])/2.,label) for clusters,label in binned]
 else:
-  pylab.xlabel('t (sim units)')
+  plt.xlabel('t (sim units)')
   # convert data to dN/dt
   SFR=[((clusters[0].astype(float)/(clusters[1][1]-clusters[1][0])),clusters[1]+(clusters[1][1]-clusters[1][0])/2.,label) for clusters,label in binned]
 
 if args.Mscl!=1:
   args.Mscl=args.Mscl*1.e9	# convert it to M_sun from GM_sun
   if args.pmass!=1:
-    pylab.ylabel('dM$_*$/dt (M$_{\odot}$ yr$^{-1}$)')
+    plt.ylabel('dM$_*$/dt (M$_{\odot}$ yr$^{-1}$)')
   else:
     sys.stderr.write("Surely your gas particles don't all have masses of 1 in sim units??\n")
     sys.exit()
 else:
   if args.pmass==1:
-    pylab.ylabel('dN$_*$/dt (Particles time$^{-1}$)')
+    plt.ylabel('dN$_*$/dt (Particles time$^{-1}$)')
   else:
-    pylab.ylabel('dM$_*$/dt (Mass time$^{-1}$, sim units)')
+    plt.ylabel('dM$_*$/dt (Mass time$^{-1}$, sim units)')
 
 for pl1,pl2,label in SFR:
     # plot the SFR with scalings
-    pylab.semilogy(args.tscl*pl2[:-1],args.pmass*args.Mscl*pl1/(args.tscl*1.e6),label=label)
-pylab.legend(fontsize='x-small',frameon=False)
-pylab.title(args.title)
-pylab.minorticks_on()
+    plt.semilogy(args.tscl*pl2[:-1],args.pmass*args.Mscl*pl1/(args.tscl*1.e6),label=label)
+plt.legend(fontsize='x-small',frameon=False)
+plt.title(args.title)
+plt.minorticks_on()
 if args.savefig:
-  pylab.savefig(args.savefig)
+  plt.savefig(args.savefig)
   print "Plot saved to "+args.savefig+".\n"
 else:
-  pylab.show()
+  plt.show()
