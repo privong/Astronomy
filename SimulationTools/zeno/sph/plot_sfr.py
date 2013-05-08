@@ -61,7 +61,7 @@ else:
   if args.pmass==1:
     pylab.ylabel('dN$_*$/dt (Particles time$^{-1}$)')
   else:
-    pylab.ylabel('dM$_*$/dat (Mass time$^{-1}$, sim units)')
+    pylab.ylabel('dM$_*$/dt (Mass time$^{-1}$, sim units)')
 
 for pl1,pl2,label in SFR:
     # plot the SFR with scalings
