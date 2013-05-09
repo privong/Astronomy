@@ -93,17 +93,18 @@ for snap in snaps:
     else:
       angle=(0,0,0)
     print angle
-    os.system('snapcollect tempsnap.dat - | snapsift - - sieve="'+sieve+'" | snaprotate - - thetax='+str(angle[0])+' thetay='+str(angle[1])+' thetaz='+str(angle[2])+' order=yxz | snapset - - x="x/'+str(zfac)+'" y="y/'+str(zfac)+'" produce=BodyType,Uinternal,Mass,AuxVec type=0x60 uint=0.00001 m=0.00001 z=0 auxvx="(type==0x44 || type==0x41) ? 1 : 0" auxvy="(type==0x44) ? 1 : 0" auxvz="type==0x44 ? 1 : 0"  | sphcode_u - tmpimg.dat tstop=0 outputs=Position,SmoothLength')
+    os.system('snapcollect tempsnap.dat - | snapsift - - sieve="'+sieve+'" | snaprotate - - thetax='+str(angle[0])+' thetay='+str(angle[1])+' thetaz='+str(angle[2])+' order=yxz | snapset - - x="x/'+str(zfac)+'" y="y/'+str(zfac)+'" produce=BodyType,Uinternal,Mass type=0x60 uint=0.00001 m=0.00001 z=0 | sphcode_u - tmpimg.dat tstop=0 outputs=Position,SmoothLength')
     if args.gdisk:
       # keep the rendering fuzzy
       os.system('snapset tmpimg.dat - aux=0.0001 produce=Aux | snapsmooth - '+oname+' value=rho threedim=false zval=2.0')
     else:
       # keep the particles as points
       if args.rgb:
-        os.system('snapset tmpimg.dat - smooth=0.002 aux=0.0001 produce=Aux | snapsmooth - '+oname+' value=rgb threedim=false zval=2.0')
+        os.system('snapsift '+snaps[0]+' - sieve="'+sieve+'" | csf - tmpimg.dat append=t exclude=Position,SmoothLength')
+        oname=oname.split('.pgm')[0]+'%i%s.pgm'
+        os.system('snapcollect tmpimg.dat - | snapset - - smooth=0.001 aux=0.0001 auxvx="(type==0x44 || type==0x41) ? 256 : 0" auxvy="(type==0x44) ? 256 : 0" auxvz="type==0x44 ? 256 : 0" produce=Aux,AuxVec | snapsmooth - '+oname+' value=rgb threedim=false zval=2.0')
       else:
         os.system('snapset tmpimg.dat - smooth=0.002 aux=0.0001 produce=Aux | snapsmooth - '+oname+' value=rho threedim=false zval=2.0')
-      
   
     # delete our temp files
     if os.path.exists('tmpimg.dat'):
