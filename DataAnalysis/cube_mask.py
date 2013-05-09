@@ -65,7 +65,7 @@ if args.spatial:
 
 # let's get a move on
 if os.path.isfile(args.cube):
-  cube=fits.open(args.cube,mode='readonly')
+  cube=fits.open(args.cube,mode='readonly',ignore_missing_end=True)
 else:
   sys.stderr.write("ERROR: "+args.cube+" not found.\n\n")
   sys.exit(-1)
