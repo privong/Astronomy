@@ -55,7 +55,7 @@ ax2=ax1.twiny()
 ax2.set_ylim([0,3.5])
 # put tick marks at the minima
 ax2.xaxis.set_ticks(time[minima][:4])
-ax2.xaxis.set_ticklabels(np.arange(4))
+ax2.xaxis.set_ticklabels(np.arange(4)+1)
 ax2.minorticks_on()
 #for (loc,label) in (ax2.xaxis.get_ticklines(),ax2.xaxis.get_ticklabels()):
   
