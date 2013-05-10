@@ -37,10 +37,10 @@ sys.stderr.write('Found '+str(len(args.starlog))+' star log files.\n')
 data=[(np.loadtxt(filename,usecols=(2,3)),label) for filename,label in spec]
 
 # base the bin size on the first file
-junk,mybins=plt.histogram(data[0][0][:,0],bins=int(args.nbin))
+junk,mybins=np.histogram(data[0][0][:,0],bins=int(args.nbin))
 
 # histogram the data
-binned=[(plt.histogram(dat[:,0],bins=mybins,density=False),label) for dat,label in data]
+binned=[(np.histogram(dat[:,0],bins=mybins,density=False),label) for dat,label in data]
 
 # set the axis labels and make adjustments to the data
 if args.tscl!=1:
