@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python
 #
 # Determine a numerical merger stage based on a model.
 
@@ -12,6 +12,7 @@ parser.add_argument('-tstage',action='store_true',default=True,help='Compute the
 #parser.add_argument('-rstage',action='store_true',efault=False,help='Compute the merger stage between successive passes, linear in nuclear separation.') 
 parser.add_argument('--eps',action='store',type=float,default=0.,help='Smoothing length for the simulation (if given, will clip minima below that)')
 parser.add_argument('--tnow',action='store',type=float,default=0.,help='Viewing time.')
+parser.add_argument('--minorder',action='store',type=int,default=10,help='Number of points on either side of minima for it to be considered valid. (Default:10)')
 parser.add_argument('--savefig',action='store',type=str,default=False,help='Save figure of the nuclear separation for diagnostics.')
 args=parser.parse_args()
 
@@ -34,7 +35,7 @@ ax1.set_xlim([0,8])
 ax1.set_ylim([0,3.5])
 ax1.plot(time,sep)
 # get local minima
-minima=argrelextrema(sep, np.less,order=50)
+minima=argrelextrema(sep, np.less,order=args.minorder)
 plt.scatter(time[minima],sep[minima])
 if args.tnow:
   plt.vlines(args.tnow,0,8)
@@ -47,7 +48,7 @@ for i in minima[0]:
   ntime[iprev:i]=npass+(time[iprev:i]-time[iprev])/(time[i+1]-time[iprev])
   if args.tnow and args.tnow < time[i+1] and args.tnow > time[iprev]:
     tnowscl=npass+(args.tnow-time[iprev])/(time[i+1]-time[iprev])
-    print "Merger stage of this object: %f" % (tnowscl)
+    print("Merger stage of this object: %f" % (tnowscl))
   iprev=i
   npass+=1
 
