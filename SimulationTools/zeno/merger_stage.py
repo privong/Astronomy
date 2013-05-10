@@ -36,6 +36,11 @@ ax1.set_ylim([0,3.5])
 ax1.plot(time,sep)
 # get local minima
 minima=argrelextrema(sep, np.less,order=args.minorder)
+if args.eps:
+  sys.stderr.write('Ignoring "passes" below the smoothing limit.\n')
+  sepnew=np.delete(sep,sep[minima[sep[minima]<eps]])
+  minima=np.delete(minima,sep[minima[sep[minima]<eps]])
+  sep=sepnew
 plt.scatter(time[minima],sep[minima])
 if args.tnow:
   plt.vlines(args.tnow,0,8)
