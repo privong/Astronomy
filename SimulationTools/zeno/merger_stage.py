@@ -35,12 +35,10 @@ ax1.set_xlim([0,8])
 ax1.set_ylim([0,3.5])
 ax1.plot(time,sep)
 # get local minima
-minima=argrelextrema(sep, np.less,order=args.minorder)
+minima=argrelextrema(sep, np.less,order=args.minorder)[0]
 if args.eps:
   sys.stderr.write('Ignoring "passes" below the smoothing limit.\n')
-  sepnew=np.delete(sep,sep[minima[sep[minima]<eps]])
-  minima=np.delete(minima,sep[minima[sep[minima]<eps]])
-  sep=sepnew
+  minima=np.delete(minima,np.nonzero((sep[minima]<args.eps)*sep[minima]))
 plt.scatter(time[minima],sep[minima])
 if args.tnow:
   plt.vlines(args.tnow,0,8)
@@ -49,7 +47,7 @@ if args.tnow:
 iprev=0
 npass=0
 ntime=time*1
-for i in minima[0]:
+for i in minima:
   ntime[iprev:i]=npass+(time[iprev:i]-time[iprev])/(time[i+1]-time[iprev])
   if args.tnow and args.tnow < time[i+1] and args.tnow > time[iprev]:
     tnowscl=npass+(args.tnow-time[iprev])/(time[i+1]-time[iprev])
