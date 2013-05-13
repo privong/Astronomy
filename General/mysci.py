@@ -2,7 +2,8 @@
 #
 # George's python module of useful scientific things.
 
-import sys,numpy,os,re
+import sys,os,re
+import numpy as np
 from astropy.io import fits as pyfits
 
 # Solar System Measurements, given as a dictionary
@@ -147,10 +148,10 @@ def Telload(file,Tel='none',mode='readonly',quiet=True):
     # load both fits extensions (and re-transpose to put them in the orig format)
     # 2nd one needs to be flipped since it's reading out the other way
     ext1=fitsopen(file,mode=mode,quiet=quiet,ext=1,trim=1).transpose()
-    ext2=numpy.fliplr(fitsopen(file,mode=mode,quiet=quiet,ext=2,trim=1).transpose())
+    ext2=np.fliplr(fitsopen(file,mode=mode,quiet=quiet,ext=2,trim=1).transpose())
 
     # concatenate the two halves of the image
-    ff=numpy.concatenate((ext1,ext2),axis=1)
+    ff=np.concatenate((ext1,ext2),axis=1)
 
     return ff
   elif Tel=="90Prime":
@@ -172,12 +173,12 @@ def Telload(file,Tel='none',mode='readonly',quiet=True):
     ext2=fitsopen(file,mode=mode,quiet=quiet,ext=2,trim=0)
     shape=ext2.shape
     ext2=ext2.reshape((1,shape[0],shape[1]))
-    ff=numpy.concatenate((ext1,ext2),axis=0)
+    ff=np.concatenate((ext1,ext2),axis=0)
     for hdu in range(3,nHDU+1,1):
       extt=fitsopen(file,mode=mode,quiet=quiet,ext=hdu,trim=0)
       shape=extt.shape
       extt=extt.reshape((1,shape[0],shape[1]))
-      ff=numpy.concatenate((ff,extt),axis=0)
+      ff=np.concatenate((ff,extt),axis=0)
     return ff
 
 # End Wrapper Functions
