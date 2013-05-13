@@ -5,7 +5,8 @@
 # generate a comparison set of histograms for original data with calibrated data
 # or a comparison file
 
-import numpy,glob
+import glob
+import numpy as np
 import matplotlib.pyplot as plt
 from astropy.io import fits as pyfits
 
@@ -36,9 +37,9 @@ def hicomp(files,compfile=False,hrange=(0,65000),corrfac=1):
     for i in range(1,len(frame)):	# frames must have the same number of
 					# extensions for this to work!
       # uncorrected data
-      (a,b,c)=plt.hist(numpy.ravel(frame2[i].data),100,range=hrange,alpha=0.3,color='red')
+      (a,b,c)=plt.hist(np.ravel(frame2[i].data),100,range=hrange,alpha=0.3,color='red')
       # corrected data
-      (a,b,c)=plt.hist(numpy.ravel(frame[i].data*corrfac),100,range=hrange,alpha=0.3,color='blue')
+      (a,b,c)=plt.hist(np.ravel(frame[i].data*corrfac),100,range=hrange,alpha=0.3,color='blue')
     frame2.close()
     if not(comp):
       frame.close()
