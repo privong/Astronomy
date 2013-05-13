@@ -7,6 +7,7 @@ import sys,argparse,os
 import numpy as np
 
 ################################################################################
+# Determine how many spatially adjacent pixels meet specified criteria
 def search_adj(cube,pos,nadj,minval):
   count=0
   # deal with edge points
