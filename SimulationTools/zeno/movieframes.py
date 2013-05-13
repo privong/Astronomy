@@ -92,7 +92,6 @@ for snap in snaps:
       angle=tuple(float(v) for v in re.findall("[\-\.0-9]+", args.angle))
     else:
       angle=(0,0,0)
-    print angle
     os.system('snapcollect tempsnap.dat - | snapsift - - sieve="'+sieve+'" | snaprotate - - thetax='+str(angle[0])+' thetay='+str(angle[1])+' thetaz='+str(angle[2])+' order=yxz | snapset - - x="x/'+str(zfac)+'" y="y/'+str(zfac)+'" produce=BodyType,Uinternal,Mass type=0x60 uint=0.00001 m=0.00001 z=0 | sphcode_u - tmpimg.dat tstop=0 outputs=Position,SmoothLength')
     if args.gdisk:
       # keep the rendering fuzzy
