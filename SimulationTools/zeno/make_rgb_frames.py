@@ -12,7 +12,7 @@ parser.add_argument('--nframes',type=int,action='store',default=2,help='Number o
 parser.add_argument('--overlayframes',type=int,action='store',default=150,help='Number of frames to display the overlay. (default=150)')
 args=parser.parse_args()
 
-for i in range(len(args.pgms)/2):
+for i in range(len(args.pgms)/args.nframes):
   if args.nframes==2:
     os.system('convert %s %s %s -combine %s' % (args.pgms[i*2],args.pgms[i*2+1],args.pgms[i*2+1],str(i).zfill(5)+'.ppm'))
   elif args.nframes==3:
