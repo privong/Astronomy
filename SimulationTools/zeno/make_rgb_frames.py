@@ -16,7 +16,7 @@ for i in range(len(args.pgms)/2):
   if args.nframes==2:
     os.system('convert %s %s %s -combine %s' % (args.pgms[i*2],args.pgms[i*2+1],args.pgms[i*2+1],str(i).zfill(5)+'.ppm'))
   elif args.nframes==3:
-    os.system('convert %s %s %s -combine %s' % (args.pgms[i*2],args.pgms[i*2+1],args.pgms[i*2+2],str(i).zfill(5)+'.ppm'))
+    os.system('convert %s %s %s -combine %s' % (args.pgms[i*3],args.pgms[i*3+1],args.pgms[i*3+2],str(i).zfill(5)+'.ppm'))
   if args.overlay:
     if i<args.overlayframes:
       os.system('convert %s %s -layers flatten %s' % (str(i).zfill(5)+'.ppm',args.overlay,str(i).zfill(5)+'.ppm'))
