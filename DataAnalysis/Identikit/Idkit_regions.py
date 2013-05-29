@@ -30,7 +30,7 @@ def Idkit_regions(imagelist,poslist,XML=False):
   if XML:
     fsuffix='.xml'
   else:
-    sys.stderr.write('You have selected to use the CASA region format. Currently (4.0.0) it does not utilize the full complement of options (http://casaguides.nrao.edu/index.php?title=CASA_Region_Format). As a result, only the XY region will be written out.\n\n')
+    sys.stderr.write('You have selected to use the CASA region format. Currently (4.0.0) it does not utilize the full complement of options (http://casaguides.nrao.edu/index.php?title=CASA_Region_Format). All region files will be written out, but it is likely only the XY one will work.\n\n')
     fsuffix='.reg'
   # read in the coordinate information from the position list
   posfile=open(poslist,'r')
@@ -83,9 +83,10 @@ def Idkit_regions(imagelist,poslist,XML=False):
       for obj in pos:
         # loop over objects in memory, write to an xml file
 	if obj['vel']!=0:
+          print obj
           if XML: Idkit_XMLobj(coords,outfile,'XV',obj)
-          #else: Idkit_CRTFobj(coords,outfile,'XV',obj)
-          else: sys.stderr.write('Lines not supported by CASA region files, skipping XV information.\n')
+          else: Idkit_CRTFobj(coords,outfile,'XV',obj)
+          #else: sys.stderr.write('Lines not supported by CASA region files, skipping XV information.\n')
       Idkit_footer(outfile,XML=XML)
       outfile.close()
     elif re.search("VY",proj):
@@ -97,8 +98,8 @@ def Idkit_regions(imagelist,poslist,XML=False):
         # loop over objects in memory, write to an xml file
 	if obj['vel']!=0:
           if XML: Idkit_XMLobj(coords,outfile,'VY',obj)
-          #else: Idkit_CRTFobj(coords,outfile,'VY',obj)
-          else: sys.stderr.write('Lines not supported by CASA region files, skipping VY information.\n')
+          else: Idkit_CRTFobj(coords,outfile,'VY',obj)
+          #else: sys.stderr.write('Lines not supported by CASA region files, skipping VY information.\n')
       Idkit_footer(outfile,XML=XML)
       outfile.close()
     else:
@@ -247,14 +248,14 @@ def Idkit_CRTFobj(coords,outfile,proj,obj):
     outfile.write('symbol [['+str(decRA(obj['RA']))+'deg, '+str(decDec(obj['Dec']))+'deg], +] coord=J2000, corr=[I], color='+color+'\n')
 
   elif proj=='XV':
-    (pRA,pDec,pVel1,pStokes)=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),coords.velocitytofrequency(value=obj['vlow'],doppler='optical',velunit='km/s'),'I'])['numeric']
-    pVel2=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),coords.velocitytofrequency(value=obj['vhigh'],doppler='optical',velunit='km/s'),'I'])['numeric'][2]
-    outfile.write('line [['+str(pRA)+'deg,'+str(pVel1)+'], ['+str(pRA)+'deg,'+str(pVel2)+']] linewidth=1, color='+color+'\n') 
+    (pRA,pDec,pVel1,pStokes)=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),str(coords.velocitytofrequency(value=obj['vlow'],doppler='optical',velunit='km/s')[0]),'I'])['numeric']
+    pVel2=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),str(coords.velocitytofrequency(value=obj['vhigh'],doppler='optical',velunit='km/s')[0]),'I'])['numeric'][2]
+    outfile.write('line [['+str(pRA)+','+str(pVel1)+'], ['+str(pRA)+','+str(pVel2)+']] linewidth=1, color='+color+'\n') 
 
   elif proj=='VY':
-    (pRA,pDec,pVel1,pStokes)=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),coords.velocitytofrequency(value=obj['vlow'],doppler='optical',velunit='km/s'),'I'])['numeric']
-    pVel2=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),coords.velocitytofrequency(value=obj['vhigh'],doppler='optical',velunit='km/s'),'I'])['numeric'][2]
-    outfile.write('line [['+str(pVel1)+'deg,'+str(pDec)+'], ['+str(pVel2)+','+str(pDec)+'deg]] linewidth=1, color='+color+'\n')
+    (pRA,pDec,pVel1,pStokes)=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),str(coords.velocitytofrequency(value=obj['vlow'],doppler='optical',velunit='km/s')[0]),'I'])['numeric']
+    pVel2=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),str(coords.velocitytofrequency(value=obj['vhigh'],doppler='optical',velunit='km/s')[0]),'I'])['numeric'][2]
+    outfile.write('line [['+str(pVel1)+','+str(pDec)+'], ['+str(pVel2)+','+str(pDec)+']] linewidth=1, color='+color+'\n')
 
   return 0
 
