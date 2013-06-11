@@ -132,7 +132,7 @@ def WSRTHI(viz,calname,source,refant="RT4",flagRT5=True,FLAGGING=True,GENCAL=Tru
 
   # do a generic continuum subtraction
   if (CONTSUB):
-    uvcontsub(vis=nvis,fitspw="0:50~375;650~800",fitorder=0,fitmode="subtract",splitdata=True)
+    uvcontsub(vis=nvis,fitspw="0:50~375;650~800",fitorder=0,want_cont=True)
 
   if (CONTSUBIMG):
     # image the continuum subtracted data
