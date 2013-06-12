@@ -30,15 +30,15 @@ else:
     args.labels=args.labels.split(', ')
 
 if args.pmass=='0':
-  args.pmass=np.ones(len(args.starlog))
+  pmass=np.ones(len(args.starlog))
 else:
   if (len(args.pmass.split(','))!=len(args.starlog) or len(args.pmass.split(','))==1):
     sys.stderr.write('PMASS Error: you must provide a single number or a number of particle masses equal to the number of starlog files.\n')
     sys.exit(-1)
   else:
-    args.pmass=args.pmass.split(',')
+    pmass=args.pmass.split(',')
  
-spec=zip(args.starlog,args.labels,args.pmass)
+spec=zip(args.starlog,args.labels,pmass)
 
 sys.stderr.write('Found '+str(len(args.starlog))+' star log files.\n')
 
@@ -69,7 +69,7 @@ if args.Mscl!=1:
     sys.stderr.write("Surely your gas particles don't all have masses of 1 in sim units??\n")
     sys.exit()
 else:
-  if args.pmass=='1':
+  if args.pmass=='0':
     plt.ylabel('dN$_*$/dt (Particles)')
   else:
     plt.ylabel('dM$_*$/dt (sim units)')
