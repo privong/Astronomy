@@ -128,19 +128,19 @@ def WSRTHI(viz,calname,source,refant="RT4",flagRT5=True,FLAGGING=True,GENCAL=Tru
       print "---- Imaging concatenated, calibrated measurement set ----"
     else:
       print "---- Imaging calibrated data set ----"
-    clean(vis=nvis,imagename=source,selectdata=False,mode='channel',imsize=[256,256],cell='6arcsec',niter=100000,threshold='4mJy',interactive=False)
+    clean(vis=nvis,imagename=source,selectdata=False,mode='channel',imsize=[256,256],cell='6arcsec',niter=100000,threshold='4mJy',interactive=False,multiscale=[])
 
   # do a generic continuum subtraction
   if (CONTSUB):
     print "---- Performing Continuum Subtraction ----"
     uvcontsub(vis=nvis,fitspw="0:50~375;650~800",fitorder=0,want_cont=True)
-
+  nvis=source+'.ms'
   if (CONTSUBIMG):
     print "---- Imaging Continuum Subtracted Data ----"
     # image the continuum subtracted data
-    clean(vis=nvis+'.contsub',imagename=source+'.contsub',selectdata=False,mode='channel',imsize=[256,256],cell='6arcsec',niter=1000000,threshold='4mJy',interactive=False)
+    clean(vis=nvis+'.contsub',imagename=source+'.contsub',selectdata=False,mode='channel',interpolation='nearest',imsize=[256,256],cell='6arcsec',niter=1000000,threshold='4mJy',interactive=False,multiscale=[])
     # and make a continuum image
-    clean(vis=nvis+'.cont',imagename=source+'.cont',selectdata=False,mode='mfs',imsize=[256,256],cell='6arcsec',niter=1000000,threshold='4mJy',interactive=False)
+    clean(vis=nvis+'.cont',imagename=source+'.cont',selectdata=False,mode='mfs',imsize=[256,256],cell='6arcsec',niter=1000000,threshold='4mJy',interactive=False,multiscale=[])
 
   print "The following operations were performed on the data:"
   print "Flagging: "+str(FLAGGING)
