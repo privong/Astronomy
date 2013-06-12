@@ -17,6 +17,7 @@
 # APPLYCAL (OPTIONAL, default: True): apply calibration to the data?
 # MSCAT (OPTIONAL, default: False): concatenate source MS?
 # IMAGE (OPTIONAL, default: False): invert and clean the image?
+# FSMO (OPTIONAL, default: 1): # of adjacent channels to avg together when imaging
 # CONTSUB (OPTIONAL, default: False): QND UV continuum subtraction.
 # CONTSUBIMG (OPTIONAL, default: False): QND imaging of continuum subtracted and continuum
 #		data.
@@ -30,7 +31,7 @@
 import os
 import string
 
-def WSRTHI(viz,calname,source,refant="RT4",flagRT5=True,FLAGGING=True,GENCAL=True,APPLYCAL=True,MSCAT=False,IMAGE=False,CONTSUB=False,CONTSUBIMG=False):
+def WSRTHI(viz,calname,source,refant="RT4",flagRT5=True,FLAGGING=True,GENCAL=True,APPLYCAL=True,MSCAT=False,IMAGE=False,FSMO=1,CONTSUB=False,CONTSUBIMG=False):
 
   # be sure we have MS inputs. If they're UVFITS, convert them
   for i in range(len(viz)):
@@ -138,7 +139,7 @@ def WSRTHI(viz,calname,source,refant="RT4",flagRT5=True,FLAGGING=True,GENCAL=Tru
   if (CONTSUBIMG):
     print "---- Imaging Continuum Subtracted Data ----"
     # image the continuum subtracted data
-    clean(vis=nvis+'.contsub',imagename=source+'.contsub',selectdata=False,mode='channel',interpolation='nearest',imsize=[256,256],cell='6arcsec',niter=1000000,threshold='4mJy',interactive=False,multiscale=[])
+    clean(vis=nvis+'.contsub',imagename=source+'.contsub',selectdata=False,mode='channel',interpolation='nearest',imsize=[256,256],cell='6arcsec',niter=1000000,threshold='4mJy',interactive=False,multiscale=[],width=FSMO)
     # and make a continuum image
     clean(vis=nvis+'.cont',imagename=source+'.cont',selectdata=False,mode='mfs',imsize=[256,256],cell='6arcsec',niter=1000000,threshold='4mJy',interactive=False,multiscale=[])
 
@@ -151,7 +152,7 @@ def WSRTHI(viz,calname,source,refant="RT4",flagRT5=True,FLAGGING=True,GENCAL=Tru
   print "Measurement set concatenation: "+str(MSCAT)
   print "Dataset imaged: "+str(IMAGE)
   print "Continuum subtracted: "+str(CONTSUB)
-  print "Continuum subtracted data imaged: "+str(CONTSUBIMG)
+  print "Continuum subtracted data imaged: "+str(CONTSUBIMG)+" and smoothed by +"+str(FSMO)+" channels."
 
 
   return 0
