@@ -77,6 +77,10 @@ while 1:
 
 infile.close()
 
+# check for dangling time values (if running this on an in-progress sim)
+if len(time)==len(Etot)+1:
+  time=time[:-1]
+
 if args.density:
   rhoavg=numpy.array([])
   t=numpy.array([])
