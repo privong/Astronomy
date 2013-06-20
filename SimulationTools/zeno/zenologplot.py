@@ -124,6 +124,7 @@ if args.Etot:
   plt.xlim(xmax=8)
   plt.plot(time,Etot,'-',color='red',label='E$_{tot}$')
   plt.ylabel('E$_{tot}$ [simulation units]')
+  plt.axhline(y=Etot[0],ls=':',c='gray',label='E$_{tot}$(0)')
   plt.legend(loc='upper right',frameon=False,fontsize='small')
 plt.title(args.logfile+' - Energy')
 if args.savefig:
