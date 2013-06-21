@@ -18,7 +18,6 @@ rmlist=[]
 for line in texfile:
   if re.search('includegraphics',line):
     sline=line.split('\\includegraphics')
-    print sline
     n=len(sline)-1
     for i in range(1,n+1):
       img=sline[i].split(']{')[1].split('}')[0]
