@@ -30,17 +30,25 @@ for filename in os.listdir('.'):
     if re.search(suffix[i],filename):
       nomatch=False
       if not(filename.split('\/')[-1] in imglist):
-        rmlist.append(filename.split('\/')[-1])
+        if not(re.search(sys.argv[1].split('.tex')[0],filename.split('\/')[-1])):
+          rmlist.append(filename.split('\/')[-1])
     i+=1
     if i>=len(suffix): break
 
-imglist.sort()
-sys.stderr.write(str(len(imglist))+" images found.\n")
-sys.stdout.write("Found images: ")
-for img in imglist:
-  sys.stdout.write(img+", ")
-sys.stdout.write("\n")
-sys.stdout.write("The unused images can be removed with this command:\n")
-sys.stdout.write("rm ")
-for img in rmlist:
-  sys.stdout.write(img+' ')
+if imglist:
+  imglist.sort()
+  sys.stderr.write(str(len(imglist))+" images found.\n")
+  sys.stdout.write("Found images: ")
+  for img in imglist:
+    sys.stdout.write(img+", ")
+  sys.stdout.write("\n\n")
+else:
+  sys.stderr.write("Found no images to be included in TeX file.\n")
+if rmlist:
+  sys.stdout.write("The unused images can be removed with this command:\n")
+  sys.stdout.write("rm ")
+  for img in rmlist:
+    sys.stdout.write(img+' ')
+  sys.stdout.write("\n\n")
+else:
+  sys.stderr.write("No unused images found.\n\n")
