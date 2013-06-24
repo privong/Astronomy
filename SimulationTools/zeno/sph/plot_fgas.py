@@ -12,9 +12,9 @@ import argparse,sys
 
 parser=argparse.ArgumentParser(description="Read in information on the gas fractions and plot the gas fraction as a function of time. Optionally takes arguments for mass and time scaling if you want to plot it in physical units.")
 parser.add_argument('gasfile',type=str,nargs='*',help='List of 1 or more files with information on gas logs (Col 1: time, Col 2: total # particles, Col 3: number of star particles.')
-parser.add_argument('-gmass',action='store_true',default=False,help='Plot the gas mass as a function of time.')
+parser.add_argument('-mgas',action='store_true',default=False,help='Plot the gas mass as a function of time.')
 parser.add_argument('-fgas',action='store_true',default=False,help='Plot the gas fraction as a function of time (DEFAULT)?')
-parser.add_argument('--Mscl',action='store',type=float,default=1,help='Mass Scaling (GM_sun), only useed if -gmass is flagged.')
+parser.add_argument('--Mscl',action='store',type=float,default=1,help='Mass Scaling (GM_sun), only useed if -mgas is flagged.')
 parser.add_argument('--savefig',action='store',type=str,default=False,help='Figure will be saved to this filename if given.')
 parser.add_argument('--tscl',action='store',type=float,default=1,help='Time Scaling (Myr)')
 parser.add_argument('--labels',default='',action='store',help='Comma separated labels for the plot items. Must be as many labels as files added.')
@@ -34,7 +34,7 @@ else:
   else:
     args.labels=args.labels.split(', ')
 
-if not(args.gmass) and not(args.fgas):
+if not(args.mgas) and not(args.fgas):
   # default to fgas
   args.fgas=True
 
@@ -56,7 +56,7 @@ else:
 if args.fgas:
   plt.ylabel('f$_{gas}$')
   data=[(np.loadtxt(filename,usecols=(0,2,8)),label) for filename,label in spec]
-elif args.gmass:
+elif args.mgas:
   plt.ylabel('M$_{gas}$')
   data=[(np.loadtxt(filename,usecols=(0,8)),label) for filename,label in spec]
 
@@ -64,7 +64,7 @@ for inst,label in data:
     # plot the SFR with scalings
   if args.fgas:
     yax=inst[:,2]/(inst[:,1]+inst[:,2])
-  elif args.gmass:
+  elif args.mgas:
     yax=inst[:,1]*args.Mscl
   if args.tscl==1:
     plt.plot(inst[:,0],yax,label=label)
