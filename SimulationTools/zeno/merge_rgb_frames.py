@@ -1,4 +1,4 @@
-#!/sw/bin/python2.7
+#!/usr/bin/python
 
 # merge rgb images into single frames and write them out sequentially so 
 # they can be combined into a movie

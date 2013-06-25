@@ -1,4 +1,4 @@
-#!/sw/bin/python2.7
+#!/usr/bin/python
 #
 # Generate images from zeno sph/treecode simulations for making movies
 #

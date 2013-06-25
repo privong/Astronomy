@@ -1,4 +1,4 @@
-#!/sw/bin/python2.7
+#!/usr/bin/python
 #
 # centers_plot.py
 #
