@@ -1,9 +1,9 @@
-#!/sw/bin/python2.7
+#!/usr/bin/python
 #
 # Make RGB frames using 2 input images
 # DM+stars (red channel), stars (green), and stars (blue)
 
-import argparse,os
+import argparse,os,sys
 
 parser=argparse.ArgumentParser()
 parser.add_argument('pgms',type=str,nargs='+')
@@ -11,6 +11,8 @@ parser.add_argument('--overlay',type=str,action='store',default=False,help='Spec
 parser.add_argument('--nframes',type=int,action='store',default=2,help='Number of frames to combine into a color image (default: 2)')
 parser.add_argument('--overlayframes',type=int,action='store',default=150,help='Number of frames to display the overlay. (default=150)')
 args=parser.parse_args()
+
+sys.stderr.write('Processing '+str(len(args.pgms))+' images, assuming '+str(args.nframes)+' images per 3-channel image.\n\n')
 
 for i in range(len(args.pgms)/args.nframes):
   if args.nframes==2:
