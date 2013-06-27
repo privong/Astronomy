@@ -11,6 +11,8 @@ General/		- general use files, other scripts may depend on files
 Observing/		- scripts related to observations
 SimulationTools/	- Scripts related to analyzing outputs of simulations
 			  currently this includes the zeno nbody/sph code.
+Talks/			- Tools to assist with managing talks written in LaTeX/
+			  beamer.
 
 Dependencies:
 
