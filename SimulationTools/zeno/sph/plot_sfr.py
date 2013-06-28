@@ -80,7 +80,7 @@ else:
 for pl1,pl2,label,pm in SFR:
     # plot the SFR with scalings
     ax1.semilogy(args.tscl*pl2[:-1],float(pm)*args.Mscl*pl1/(args.tscl*1.e6),label=label)
-ax1.legend(fontsize='x-small',frameon=False)
+ax1.legend(fontsize='x-small',frameon=False,loc='upper left')
 plt.title(args.title)
 ax1.minorticks_on()
 if args.nucsep:
