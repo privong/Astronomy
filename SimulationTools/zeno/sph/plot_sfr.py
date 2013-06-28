@@ -9,6 +9,7 @@ parser.add_argument('starlog',type=str,nargs='*',help='List of 1 or more starlog
 #parser.add_argument('--split',action='store',type=int,default='0',help='Separate the starlog into two galaxies. This value is the upper particle ID number for the first galaxy. NOT YET IMPLEMENTED')
 parser.add_argument('--savefig',action='store',type=str,default=False,help='Figure will be saved to this filename if given.')
 parser.add_argument('--pmass',action='store',type=str,default='0',help='Mass of new star clusters in simulation units. Defaults to 1. Comma separated if there\'s more than one value.')
+parser.add_argument('--nucsep',action='store',type=str,default=False,help='Centers file of the nuclear separation to overplot on the y2 axis.')
 parser.add_argument('--tscl',action='store',type=float,default=1,help='Time Scaling (Myr)')
 parser.add_argument('--Mscl',action='store',type=float,default=1,help='Mass Scaling (GM_sun)')
 parser.add_argument('--nbin',default='100',action='store',help='Number of bins to use')
@@ -51,35 +52,47 @@ junk,mybins=np.histogram(data[0][0][:,0],bins=int(args.nbin))
 # histogram the data
 binned=[(np.histogram(dat[:,0],bins=mybins,density=False),label,pmass) for dat,label,pmass in data]
 
+fig=plt.figure()
+ax1=plt.subplot(111)
 # set the axis labels and make adjustments to the data
 if args.tscl!=1:
-  plt.xlabel('t (Myr)')
+  ax1.set_xlabel('t (Myr)')
   # convert the times to have 0 be pericenter passage (t=2 in sim units)
   SFR=[((clusters[0].astype(float)/(clusters[1][1]-clusters[1][0])),clusters[1]-2.0+(clusters[1][1]-clusters[1][0])/2.,label,pmass) for clusters,label,pmass in binned]
 else:
-  plt.xlabel('t (sim units)')
+  ax1.set_xlabel('t (sim units)')
   # convert data to dN/dt
   SFR=[((clusters[0].astype(float)/(clusters[1][1]-clusters[1][0])),clusters[1]+(clusters[1][1]-clusters[1][0])/2.,label,pmass) for clusters,label,pmass in binned]
 
 if args.Mscl!=1:
   args.Mscl=args.Mscl*1.e9	# convert it to M_sun from GM_sun
   if args.pmass!=1:
-    plt.ylabel('dM$_*$/dt (M$_{\odot}$ yr$^{-1}$)')
+    ax1.set_ylabel('dM$_*$/dt (M$_{\odot}$ yr$^{-1}$)')
   else:
     sys.stderr.write("Surely your gas particles don't all have masses of 1 in sim units??\n")
     sys.exit()
 else:
   if args.pmass=='0':
-    plt.ylabel('dN$_*$/dt (Particles)')
+    ax1.set_ylabel('dN$_*$/dt (Particles)')
   else:
-    plt.ylabel('dM$_*$/dt (sim units)')
+    ax1.set_ylabel('dM$_*$/dt (sim units)')
 
 for pl1,pl2,label,pm in SFR:
     # plot the SFR with scalings
-    plt.semilogy(args.tscl*pl2[:-1],float(pm)*args.Mscl*pl1/(args.tscl*1.e6),label=label)
-plt.legend(fontsize='x-small',frameon=False)
+    ax1.semilogy(args.tscl*pl2[:-1],float(pm)*args.Mscl*pl1/(args.tscl*1.e6),label=label)
+ax1.legend(fontsize='x-small',frameon=False)
 plt.title(args.title)
-plt.minorticks_on()
+ax1.minorticks_on()
+if args.nucsep:
+  ax2=ax1.twinx()
+  ax2.minorticks_on()
+  ax2.set_ylabel('Nuclear Separation')
+  data=np.loadtxt(args.nucsep)
+  sep=((data[:,1]-data[:,4])**2+(data[:,2]-data[:,5])**2+(data[:,3]-data[:,6])**2)**0.5
+  time=(data[:,0]-2.0)*args.tscl
+  ax2.set_ylim([0,3.5])
+  ax2.plot(time,sep,ls='--',color='gray')
+
 if args.savefig:
   plt.savefig(args.savefig)
   sys.stdout.write("Plot saved to "+args.savefig+".\n")
