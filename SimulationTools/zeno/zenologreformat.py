@@ -4,14 +4,14 @@
 #
 # Read in a zeno logfile and reformat it for plotting.
 
-import sys,re
+import sys,re,argparse
 
-if len(sys.argv) < 2:
-  sys.stderr.write("Usage:\n"+sys.argv[0]+' logfile\n\n')
-  exit(-1)
+parser=argparse.ArgumentParser(description='Reformat zeno treecode logs into a single-line format.')
+parser.add_argument('logfile',type=str,help='name of the zeno treecode log')
+args=parser.parse_args()
 
-infile=open(sys.argv[1],'r')
-ofname=sys.argv[1].split('.log')[0]+'-reformat.log'
+infile=open(args.logfile,'r')
+ofname=args.logfile.split('.log')[0]+'-reformat.log'
 ofile=open(ofname,'w')
 
 lineno=0
