@@ -8,9 +8,6 @@ import sys,re,argparse,os
 import matplotlib.pyplot as plt
 import numpy
 
-VERSION='0.1'
-VERSIONDATE='25 April 2012'
-
 # set up command line arguments
 parser=argparse.ArgumentParser(description='Process zeno sphcode logs and make plots of interesting quantities.')
 parser.add_argument('logfile',type=str,help='name of the zeno sphcode log')
@@ -26,7 +23,6 @@ parser.add_argument('-fixErad',action='store_true',default=False,help='Fix the E
 parser.add_argument('--density',action='store',help='Overplot density vs time from this file (normalized to the maximum density)')
 parser.add_argument('--output',action='store',default=False,help='Specify the name of the output file (default is to change the log file suffix to .pdf)')
 parser.add_argument('--savefig',action='store',type=str,default=False,help='Figure will be saved to this filename if given.')
-parser.add_argument('--version',action='version',version='%(prog)s '+VERSION+' ('+VERSIONDATE+')')
 args=parser.parse_args()
 
 if args.allE:
