@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# zenoLogplot.py
+# zenologplot.py
 #
 # Read in a zeno logfile and plot the energies.
 
