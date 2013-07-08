@@ -1,0 +1,2 @@
+bib_update.py	- Search a bibtex file and query ADS to update arXiv records w/
+		  published references.
