@@ -144,7 +144,10 @@ if args.sph:
     plt.plot(t,rhoavg,"-",label='mean(rho) / mean(rho)$_{max}$',color='green')
 
 plt.minorticks_on()
-plt.xlim(xmax=8)
+if time[-1]<8:
+  plt.xlim(xmax=8)
+else:
+  plt.xlim(xmax=np.ceil(time[-1]))
 plt.ylabel('Energy (Components) [simulation units]')
 plt.xlabel('Time [simulation units]')
 plt.legend(loc='upper left',frameon=False,fontsize='small')
@@ -153,7 +156,10 @@ if args.Etot:
   plt.minorticks_on()
   plt.ylim(ymin=Etot[0]+Etot[0]*0.05)
   plt.ylim(ymax=Etot[0]-Etot[0]*0.05)
-  plt.xlim(xmax=8)
+  if time[-1]<8:
+    plt.xlim(xmax=8)
+  else:
+    plt.xlim(xmax=np.ceil(time[-1]))
   if args.tree:
     label='|E$_{tot}$|'
   elif args.sph:
