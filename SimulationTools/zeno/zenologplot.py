@@ -95,7 +95,10 @@ elif args.tree:
       Epot=numpy.append(Epot,float(tline[3]))
       VirR=numpy.append(VirR,float(tline[4]))
       Vcom=numpy.append(Vcom,float(tline[5]))
-      Jtot=numpy.append(Jtot,float(tline[6]))
+      if len(tline[6].split('.'))==2:
+        Jtot=numpy.append(Jtot,float(tline[6]))
+      else:
+        Jtot=numpy.append(Jtot,float(tline[6][:6]))
       savenext=False
     elif re.search('T\+U',line):
       savenext=True
