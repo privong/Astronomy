@@ -69,14 +69,10 @@ if args.sph:
     tline=infile.readline()
     if not tline:
       break
-    if re.search('time:',tline):
-      # extract the exact time
-      tline=tline.split()
-      time=numpy.append(time,float(tline[1]))
-      Nstep=numpy.append(Nstep,int(tline[3]))
-    elif re.search('Etot',tline):
+    if re.search('Etot',tline):
       # get the next line and add other information to the stack
       tline=infile.readline().split()
+      time=numpy.append(time,float(tline[0]))
       Etot=numpy.append(Etot,float(tline[1]))
       Eint=numpy.append(Eint,float(tline[2]))
       Ekin=numpy.append(Ekin,float(tline[3]))
