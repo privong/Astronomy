@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # zenologplot.py
 #
@@ -150,8 +150,8 @@ plt.legend(loc='upper left',frameon=False,fontsize='small')
 if args.Etot:
   plt.twinx()
   plt.minorticks_on()
-  plt.ylim(ymin=Etot[0]+Etot[0]*0.05)
-  plt.ylim(ymax=Etot[0]-Etot[0]*0.05)
+  plt.ylim(ymin=-0.02)
+  plt.ylim(ymax=0.02)
   if time[-1]<8:
     plt.xlim(xmax=8)
   else:
@@ -160,13 +160,13 @@ if args.Etot:
     label='|E$_{tot}$|'
   elif args.sph:
     label='E$_{tot}$'
-  plt.plot(time,Etot,'-',color='red',label=label)
-  plt.ylabel('E$_{tot}$ [simulation units]')
+  plt.plot(time,(Etot[0]-Etot)/Etot[0],'-',color='red',label=label)
+  plt.ylabel('$\Delta$E$_{tot}$/E$_{tot}(0)$ [simulation units]')
   if args.tree:
-    label='|E$_{tot}$(0)|'
+    label='|E$_{tot}$=E$_{tot}$(0)|'
   elif args.sph:
-    label='E$_{tot}$(0)'
-  plt.axhline(y=Etot[0],ls=':',c='gray',label=label)
+    label='E$_{tot}$=E$_{tot}$(0)'
+  plt.axhline(y=0,ls=':',c='gray',label=label)
   plt.legend(loc='upper right',frameon=False,fontsize='small')
 plt.title(args.logfile+' - Energy')
 if args.savefig:
