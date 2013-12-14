@@ -183,3 +183,38 @@ def Telload(file,Tel='none',mode='readonly',quiet=True):
 
 # End Wrapper Functions
 ###############################################################################
+
+################################################################################# VOTable functions
+
+def VOtoDict(votab):
+  """
+
+  When passed a votab object, return a dictionary with the votab.
+
+  """
+
+  dump={}
+  i=j=0
+  for resource in votab.resources:
+    dump[j]={}
+    for table in resource.tables:
+      # parse away, me hearties!
+      if table.name:
+        dkey=table.name
+      else:
+        dkey=i
+      i+=1
+      dump[j][dkey]={}
+      for entry in table.array:
+        dump[j][dkey][entry[0]]={}
+        for l in range(1,len(entry)):
+          dump[j][dkey][entry[0]][table.fields[l].name]=entry[l]
+          if table.fields[l].unit:
+            dump[j][dkey][entry[0]][table.fields[l].name]*=table.fields[l].unit
+    j+=1
+  while len(dump.keys())==1:
+    dump=dump[dump.keys()[0]]
+  return dump
+
+# Edn VOTable parsing
+################################################################################
