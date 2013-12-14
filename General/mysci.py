@@ -69,7 +69,7 @@ def decimaltoseg(deci,RA=0):
   
   return seg
 
-def redshift_line(z,restlam=-1,restnu=-1):
+def redshift_line(z,restlam=None,restnu=None):
   """
 
   Computes the wavelength and/or frequency of a redshifted line.
@@ -78,9 +78,9 @@ def redshift_line(z,restlam=-1,restnu=-1):
 
   If neither are defined, the function returns -1.
   """
-  if restlam>0:
+  if restlam:
     return restlam*(1.+z)
-  if restnu>0:
+  if restnu:
     return restnu/(1.+z)
   else:
     return -1
