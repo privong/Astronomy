@@ -191,6 +191,11 @@ def VOtoDict(votab,printstruc=False):
 
   When passed a votab object, return a dictionary with the votab.
 
+  Options:
+    - votab: parsed VOTable item
+    - printstruc: if True, will print the structure of the resulting dictionary
+	to stdout
+
   """
 
   dump={}
