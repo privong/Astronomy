@@ -216,5 +216,5 @@ def VOtoDict(votab):
     dump=dump[dump.keys()[0]]
   return dump
 
-# Edn VOTable parsing
+# End VOTable parsing
 ################################################################################
