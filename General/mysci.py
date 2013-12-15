@@ -59,7 +59,7 @@ def SegtoDecimal(seg,RA=False):
   if re.search(":",seg):
     seg=seg.split(":")
   elif re.search("h",seg):
-    
+     
   else: 
     seg=seg.split()
   sign=np.sign(float(seg[0]))
@@ -94,14 +94,15 @@ def RedshiftLine(z,restlam=None,restnu=None):
   Requires the redshift (z) and one of restlam or restnu. Returns redshifted
   value.
 
-  If neither are defined, the function returns -1.
+  If neither are defined, the function returns nan.
   """
   if restlam:
     return restlam*(1.+z)
   if restnu:
     return restnu/(1.+z)
   else:
-    return -1
+    sys.stderr.write("Error: frequency not specified. Returning nan.\n")
+    return nan
 
 def fitsopen(file,mode='readonly',ext=0,trim=0,quiet=True):
   """
