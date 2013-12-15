@@ -42,7 +42,6 @@ restfreq={'HI'	:1420405751.77*u.Hz,
 
 # Wishlist:
 # - Blackbody (Planck in both F_lam and F_nu; Wein's Law, Stefan-Boltzmann Law)
-# - angle conversions (arcsec to degrees to radians, H:M:S to decimal degrees and the reverse)
 # - Jy/beam <-> K
 # - Velocity system conversions (LSR, Bary/heliocentric)
 # - Velocity definitions (optical, radio, relativistic)
