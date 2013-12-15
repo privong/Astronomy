@@ -2,7 +2,7 @@
 #
 # George's python module of useful scientific things.
 
-import sys,os,re
+import sys,os,re,string
 import numpy as np
 from astropy.io import fits as pyfits
 
@@ -47,29 +47,47 @@ restfreq={'HI'	:1420405751.77,
 # - Velocity definitions (optical, radio, relativistic)
 # - pyfits import, transpose the data to RA,Dec,Spectral,[Stokes] (see http://www.cv.nrao.edu/~aleroy/pytut/topic2/intro_fits_files.py)
 
-def segtodecimal(seg,RA=0):
+def SegtoDecimal(seg,RA=False):
   """
   Input a segidecimal angle (can't be hours!), return a decimal value
   
   seg is a string, with the values separated by a colon
-  RA is 0 if it's an angle, RA=1 if it's hours,mins,seconds
+  RA=False if it's an angle, RA=True if it's hours,mins,seconds
+
   """
-  print "Coming soon...."
   # split the string
+  if re.search(":",seg):
+    seg=seg.split(":")
+  elif re.search("h",seg):
+    
+  else: 
+    seg=seg.split()
+  sign=np.sign(float(seg[0]))
+  deci=float(seg[0])+sign*(float(seg[1])/60.+float(seg[2])/60.)  
+  if RA:
+    deci*=15
 
-  # compute the angle
-  return dec 
+  return deci
 
-def decimaltoseg(deci,RA=0):
+def DecimaltoSeg(deci,RA=False):
   """
 
-  Convert deci to a segidecimal string. If RA=1, then it's also converted to
+  Convert deci to a segidecimal string. If RA=True, then it's also converted to
   hours:min:seconds. Otherwise it is left as degrees:arcminutes:arcseconds.
+
   """
+  sign=int(np.sign(deci))
+  deci=deci/sign
+  if RA:
+    deci=deci/15.
+  T1=int(np.floor(deci))
+  T2=int(np.floor(60.*(deci-T1)))
+  T3=60*(60.*(deci-T1)-T2)
+  seg=string.join([str(sign*T1),str(T2),str(T3)],":")
   
   return seg
 
-def redshift_line(z,restlam=None,restnu=None):
+def RedshiftLine(z,restlam=None,restnu=None):
   """
 
   Computes the wavelength and/or frequency of a redshifted line.
