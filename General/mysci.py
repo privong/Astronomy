@@ -28,12 +28,14 @@ R_MW	= 4.62e22*u.cm		# cm		Milky Way Radius
 M_MW	= 1.4e45*u.g		# g		Milky Way Mass
 
 # Rest frequencies of astrophysically interesting (to me) lines
-restfreq={'HI'	:1420405751.77*u.Hz,
-	'CO'	:115271201800.*u.Hz,
-	'13CO'	:110201.35400e6*u.Hz,
-	'C18O'	:109782.17600e6*u.Hz,
-	'HCN'	:88631.60100e6*u.Hz,
-	'HCO+'	:89188.52600e6*u.Hz}
+restfreq={'HI'		:1420405751.77*u.Hz,
+	'CO(1-0)'	:115271201800.*u.Hz,
+	'13CO(1-0)'	:110201.35400e6*u.Hz,
+	'C18O(1-0)'	:109782.17600e6*u.Hz,
+	'HCN(1-0)'	:88631.60100e6*u.Hz,
+	'HCO+(1-0)'	:89188.52600e6*u.Hz,
+	'HNC(1-0)'	:90.66356e9*u.Hz,
+	'CCH'		:87.325e9*u.Hz}
 # End Astronomical Constants/Values
 ###############################################################################
 
