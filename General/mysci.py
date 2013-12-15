@@ -233,9 +233,14 @@ def VOtoDict(votab,printstruc=False):
 
 def DictStruct(d,depth=0):
   if type(d)==dict:
+    if depth==0:
+      sys.stdout.write("Dictionary has the following key structure:\n")
     for key in d.keys():
       for i in range(depth):
-        sys.stdout.write("  ")
+        if depth>0 and i==depth-1:
+          sys.stdout.write("|")
+        else:
+          sys.stdout.write(" ")
       sys.stdout.write(str(key)+"\n")
       DictStruct(d[key],depth=depth+1)
 
