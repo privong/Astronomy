@@ -218,3 +218,17 @@ def VOtoDict(votab):
 
 # End VOTable parsing
 ################################################################################
+
+################################################################################
+# Convenience functions
+
+def DictStruct(d,depth=0):
+  if type(d)==dict:
+    for key in d.keys():
+      for i in range(depth):
+        sys.stderr.write("  ")
+      sys.stderr.write(str(key)+"\n")
+      DictStruct(d[key],depth=depth+1)
+
+# End Convenience functions
+################################################################################
