@@ -59,10 +59,22 @@ def SegtoDecimal(seg,RA=False):
   if re.search(":",seg):
     seg=seg.split(":")
   elif re.search("h",seg):
-     
+    temp=seg.split("h")
+    seg=[]
+    seg[0]=temp[0]
+    temp=temp.split('m')
+    seg[1]=temp[0]
+    temp=temp.split('s')
+    seg[2]=temp[0]
   else: 
     seg=seg.split()
   sign=np.sign(float(seg[0]))
+  if sign<0 and RA:
+    sys.stderr.write("Uh, RA has a negative value. That's weird. Returning nan.n")
+    return np.nan
+  if RA and seg[0]>24.:
+    sys.stderr.write("RA is greater than 24 hours. Sure you're passing the correct arguments?\n")
+    return np.nan
   deci=float(seg[0])+sign*(float(seg[1])/60.+float(seg[2])/60.)  
   if RA:
     deci*=15
