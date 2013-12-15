@@ -5,34 +5,35 @@
 import sys,os,re,string
 import numpy as np
 from astropy.io import fits as pyfits
+import astropy.units as u
 
 # Solar System Measurements, given as a dictionary
 # mass - g, radius - cm, period - yr, semi-major axis - cm, eccentrcity
-ssys={'sun'	:{'mass':1.99e33, 'radius':6.96e10, 'period':0,'sma':0,'e':0},
-	'mercury'	:{'mass': 3.303e26,'radius': 2.439e8,'period': 2.4085e-1,'sma': 5.7909e12,'e': 0.205622},
-	'venus'		:{'mass': 4.870e27,'radius': 6.050e8,'period': 6.1521e-1,'sma': 1.0821e13,'e': 0.006783},
-	'earth'		:{'mass': 5.976e27,'radius': 6.378e8,'period': 1.00004e0,'sma': 1.4959e13,'e': 0.016684},
-	'mars'		:{'mass': 6.418e26,'radius': 3.397e8,'period': 1.88089e0,'sma': 2.2794e13,'e': 0.093404},
-	'jupiter'	:{'mass': 1.899e30,'radius': 7.140e9,'period': 1.18622e1,'sma': 7.7859e13,'e': 0.047826},
-	'saturn'	:{'mass': 5.686e29,'radius': 6.000e9,'period': 2.94577e1,'sma': 1.4324e14,'e': 0.052754},
-	'uranus'	:{'mass': 8.66e28, 'radius': 2.615e9,'period': 8.40139e1,'sma': 2.8878e14,'e': 0.050363},
-	'neptune'	:{'mass': 1.030e29,'radius': 2.43e9, 'period': 1.64793e2,'sma': 4.5188e14,'e': 0.004014}}
+ssys={'sun'	:{'mass':1.99e33*u.g, 'radius':6.96e10, 'period':0,'sma':0,'e':0},
+	'mercury'	:{'mass': 3.303e26*u.g,'radius': 2.439e8*u.cm,'period': 2.4085e-1*u.year,'sma': 5.7909e12*u.cm,'e': 0.205622},
+	'venus'		:{'mass': 4.870e27*u.g,'radius': 6.050e8*u.cm,'period': 6.1521e-1*u.year,'sma': 1.0821e13*u.cm,'e': 0.006783},
+	'earth'		:{'mass': 5.976e27*u.g,'radius': 6.378e8*u.cm,'period': 1.00004e0*u.year,'sma': 1.4959e13*u.cm,'e': 0.016684},
+	'mars'		:{'mass': 6.418e26*u.g,'radius': 3.397e8*u.cm,'period': 1.88089e0*u.year,'sma': 2.2794e13*u.cm,'e': 0.093404},
+	'jupiter'	:{'mass': 1.899e30*u.g,'radius': 7.140e9*u.cm,'period': 1.18622e1*u.year,'sma': 7.7859e13*u.cm,'e': 0.047826},
+	'saturn'	:{'mass': 5.686e29*u.g,'radius': 6.000e9*u.cm,'period': 2.94577e1*u.year,'sma': 1.4324e14*u.cm,'e': 0.052754},
+	'uranus'	:{'mass': 8.66e28*u.g, 'radius': 2.615e9*u.cm,'period': 8.40139e1*u.year,'sma': 2.8878e14*u.cm,'e': 0.050363},
+	'neptune'	:{'mass': 1.030e29*u.g,'radius': 2.43e9*u.cm, 'period': 1.64793e2*u.year,'sma': 4.5188e14*u.cm,'e': 0.004014}}
 # interesting stars (distances in cm)
-stars={'proximacentauri'	:{'distance':4.0143e18},	# wikipedia
-	'barnardsstar'		:{'distance':5.6428e18},	# wikipedia
-	'siriusA'		:{'distance':8.1219e18}}	# wikipedia
+stars={'proximacentauri'	:{'distance':4.0143e18*u.cm},	# wikipedia
+	'barnardsstar'		:{'distance':5.6428e18*u.cm},	# wikipedia
+	'siriusA'		:{'distance':8.1219e18*u.cm}}	# wikipedia
 
 # Galaxy values (from https://secure.wikimedia.org/wikipedia/en/wiki/Milky_Way 16 Oct 2011)
-R_MW	= 4.62e22		# cm		Milky Way Radius
-M_MW	= 1.4e45		# g		Milky Way Mass
+R_MW	= 4.62e22*u.cm		# cm		Milky Way Radius
+M_MW	= 1.4e45*u.g		# g		Milky Way Mass
 
-# Rest frequencies of astrophysically interesting (to me) lines (in Hz)
-restfreq={'HI'	:1420405751.77,
-	'CO'	:115271201800.,
-	'13CO'	:110201.35400e6,
-	'C18O'	:109782.17600e6,
-	'HCN'	:88631.60100e6,
-	'HCO+'	:89188.52600e6}
+# Rest frequencies of astrophysically interesting (to me) lines
+restfreq={'HI'	:1420405751.77*u.Hz,
+	'CO'	:115271201800.*u.Hz,
+	'13CO'	:110201.35400e6*u.Hz,
+	'C18O'	:109782.17600e6*u.Hz,
+	'HCN'	:88631.60100e6*u.Hz,
+	'HCO+'	:89188.52600e6*u.Hz}
 # End Astronomical Constants/Values
 ###############################################################################
 
