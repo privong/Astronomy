@@ -186,7 +186,7 @@ def Telload(file,Tel='none',mode='readonly',quiet=True):
 
 ################################################################################# VOTable functions
 
-def VOtoDict(votab):
+def VOtoDict(votab,printstruc=False):
   """
 
   When passed a votab object, return a dictionary with the votab.
@@ -214,6 +214,10 @@ def VOtoDict(votab):
     j+=1
   while len(dump.keys())==1:
     dump=dump[dump.keys()[0]]
+
+  if printstruc:
+    DictStruct(dump)
+
   return dump
 
 # End VOTable parsing
