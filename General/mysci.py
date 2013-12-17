@@ -224,7 +224,7 @@ def VOtoDict(votab,printstruc=False):
 
   When passed a votab object, return a dictionary with the votab.
 
-  Options:
+  Arguments:
     - votab: parsed VOTable item
     - printstruc: if True, will print the structure of the resulting dictionary
 	to stdout
@@ -258,24 +258,51 @@ def VOtoDict(votab,printstruc=False):
 
   return dump
 
+def DicttoVO():
+  """
+
+  Write a python dictionary as a votable.
+
+  Arguments:
+    - outdict: dictionary to write
+    - outfile: file to which to write
+
+  """
+
+  Dict
+
 # End VOTable parsing
 ################################################################################
+
+
 
 ################################################################################
 # Convenience functions
 
-def DictStruct(d,depth=0):
+def DictStruct(d,depth=0,Print=True):
+  """
+
+  Print the structure of a dictionary.
+
+  Arguments:
+    - d:	dictionary in question
+    - depth:	don't touch this :)
+    - Print:	If True, structure will be printed via stdout. If False, nothing
+		happens, so why did you bother to run this? :)
+
+  """
+
   if type(d)==dict:
     if depth==0:
-      sys.stdout.write("Dictionary has the following key structure:\n")
+      if Print: sys.stdout.write("Dictionary has the following key structure:\n")
     for key in d.keys():
       for i in range(depth):
         if depth>0 and i==depth-1:
-          sys.stdout.write("|")
+          if Print: sys.stdout.write("|")
         else:
-          sys.stdout.write(" ")
-      sys.stdout.write(str(key)+"\n")
-      DictStruct(d[key],depth=depth+1)
+          if Print: sys.stdout.write(" ")
+      if Print: sys.stdout.write(str(key)+"\n")
+      DictStruct(d[key],depth=depth+1,Print=Print)
 
 # End Convenience functions
 ################################################################################
