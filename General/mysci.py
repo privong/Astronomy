@@ -9,6 +9,7 @@ import string as _string
 import numpy as _numpy
 from astropy.io import fits as _pyfits
 import astropy.units as _u
+import astropy.io.votable as _votable
 
 # Solar System Measurements, given as a dictionary
 # mass - g, radius - cm, period - yr, semi-major axis - cm, eccentrcity
@@ -261,7 +262,7 @@ def VOtoDict(votab,printstruc=False):
 
   return dump
 
-def DicttoVO():
+def DicttoVO(outdict=None,outfile=None):
   """
 
   Write a python dictionary as a votable.
@@ -271,8 +272,12 @@ def DicttoVO():
     - outfile: file to which to write
 
   """
+  if not(outdict) or not(outfile):
+    _sys.stderr.write("DicttoVO Error: need to provide both the dictionary and the desired output file.\n")
+    _sys.exit(-1)
 
-  Dict
+  votable=_votable.tree.VOTableFile()
+  resource=_votable.tree.Resource()
 
 # End VOTable parsing
 ################################################################################
