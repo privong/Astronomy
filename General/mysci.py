@@ -2,40 +2,43 @@
 #
 # George's python module of useful scientific things.
 
-import sys,os,re,string
-import numpy as np
-from astropy.io import fits as pyfits
-import astropy.units as u
+import sys as _sys
+import os as _os
+import re as _re
+import string as _string
+import numpy as _numpy
+from astropy.io import fits as _pyfits
+import astropy.units as _u
 
 # Solar System Measurements, given as a dictionary
 # mass - g, radius - cm, period - yr, semi-major axis - cm, eccentrcity
-ssys={'sun'	:{'mass':1.99e33*u.g, 'radius':6.96e10, 'period':0,'sma':0,'e':0},
-	'mercury'	:{'mass': 3.303e26*u.g,'radius': 2.439e8*u.cm,'period': 2.4085e-1*u.year,'sma': 5.7909e12*u.cm,'e': 0.205622},
-	'venus'		:{'mass': 4.870e27*u.g,'radius': 6.050e8*u.cm,'period': 6.1521e-1*u.year,'sma': 1.0821e13*u.cm,'e': 0.006783},
-	'earth'		:{'mass': 5.976e27*u.g,'radius': 6.378e8*u.cm,'period': 1.00004e0*u.year,'sma': 1.4959e13*u.cm,'e': 0.016684},
-	'mars'		:{'mass': 6.418e26*u.g,'radius': 3.397e8*u.cm,'period': 1.88089e0*u.year,'sma': 2.2794e13*u.cm,'e': 0.093404},
-	'jupiter'	:{'mass': 1.899e30*u.g,'radius': 7.140e9*u.cm,'period': 1.18622e1*u.year,'sma': 7.7859e13*u.cm,'e': 0.047826},
-	'saturn'	:{'mass': 5.686e29*u.g,'radius': 6.000e9*u.cm,'period': 2.94577e1*u.year,'sma': 1.4324e14*u.cm,'e': 0.052754},
-	'uranus'	:{'mass': 8.66e28*u.g, 'radius': 2.615e9*u.cm,'period': 8.40139e1*u.year,'sma': 2.8878e14*u.cm,'e': 0.050363},
-	'neptune'	:{'mass': 1.030e29*u.g,'radius': 2.43e9*u.cm, 'period': 1.64793e2*u.year,'sma': 4.5188e14*u.cm,'e': 0.004014}}
+ssys={'sun'	:{'mass':1.99e33*_u.g, 'radius':6.96e10*_u.cm, 'period':0*_u.year,'sma':0*_u.cm,'e':0},
+	'mercury'	:{'mass': 3.303e26*_u.g,'radius': 2.439e8*_u.cm,'period': 2.4085e-1*_u.year,'sma': 5.7909e12*_u.cm,'e': 0.205622},
+	'venus'		:{'mass': 4.870e27*_u.g,'radius': 6.050e8*_u.cm,'period': 6.1521e-1*_u.year,'sma': 1.0821e13*_u.cm,'e': 0.006783},
+	'earth'		:{'mass': 5.976e27*_u.g,'radius': 6.378e8*_u.cm,'period': 1.00004e0*_u.year,'sma': 1.4959e13*_u.cm,'e': 0.016684},
+	'mars'		:{'mass': 6.418e26*_u.g,'radius': 3.397e8*_u.cm,'period': 1.88089e0*_u.year,'sma': 2.2794e13*_u.cm,'e': 0.093404},
+	'jupiter'	:{'mass': 1.899e30*_u.g,'radius': 7.140e9*_u.cm,'period': 1.18622e1*_u.year,'sma': 7.7859e13*_u.cm,'e': 0.047826},
+	'saturn'	:{'mass': 5.686e29*_u.g,'radius': 6.000e9*_u.cm,'period': 2.94577e1*_u.year,'sma': 1.4324e14*_u.cm,'e': 0.052754},
+	'uranus'	:{'mass': 8.66e28*_u.g, 'radius': 2.615e9*_u.cm,'period': 8.40139e1*_u.year,'sma': 2.8878e14*_u.cm,'e': 0.050363},
+	'neptune'	:{'mass': 1.030e29*_u.g,'radius': 2.43e9*_u.cm, 'period': 1.64793e2*_u.year,'sma': 4.5188e14*_u.cm,'e': 0.004014}}
 # interesting stars (distances in cm)
-stars={'proximacentauri'	:{'distance':4.0143e18*u.cm},	# wikipedia
-	'barnardsstar'		:{'distance':5.6428e18*u.cm},	# wikipedia
-	'siriusA'		:{'distance':8.1219e18*u.cm}}	# wikipedia
+stars={'proximacentauri'	:{'distance':4.0143e18*_u.cm},	# wikipedia
+	'barnardsstar'		:{'distance':5.6428e18*_u.cm},	# wikipedia
+	'siriusA'		:{'distance':8.1219e18*_u.cm}}	# wikipedia
 
 # Galaxy values (from https://secure.wikimedia.org/wikipedia/en/wiki/Milky_Way 16 Oct 2011)
-R_MW	= 4.62e22*u.cm		# cm		Milky Way Radius
-M_MW	= 1.4e45*u.g		# g		Milky Way Mass
+R_MW	= 4.62e22*_u.cm		# cm		Milky Way Radius
+M_MW	= 1.4e45*_u.g		# g		Milky Way Mass
 
 # Rest frequencies of astrophysically interesting (to me) lines
-restfreq={'HI'		:1420405751.77*u.Hz,
-	'CO(1-0)'	:115271201800.*u.Hz,
-	'13CO(1-0)'	:110201.35400e6*u.Hz,
-	'C18O(1-0)'	:109782.17600e6*u.Hz,
-	'HCN(1-0)'	:88631.60100e6*u.Hz,
-	'HCO+(1-0)'	:89188.52600e6*u.Hz,
-	'HNC(1-0)'	:90.66356e9*u.Hz,
-	'CCH'		:87.325e9*u.Hz}
+restfreq={'HI'		:1420405751.77*_u.Hz,
+	'CO(1-0)'	:115271201800.*_u.Hz,
+	'13CO(1-0)'	:110201.35400e6*_u.Hz,
+	'C18O(1-0)'	:109782.17600e6*_u.Hz,
+	'HCN(1-0)'	:88631.60100e6*_u.Hz,
+	'HCO+(1-0)'	:89188.52600e6*_u.Hz,
+	'HNC(1-0)'	:90.66356e9*_u.Hz,
+	'CCH'		:87.325e9*_u.Hz}
 # End Astronomical Constants/Values
 ###############################################################################
 
@@ -58,9 +61,9 @@ def SegtoDecimal(seg,RA=False):
 
   """
   # split the string
-  if re.search(":",seg):
+  if _re.search(":",seg):
     seg=seg.split(":")
-  elif re.search("h",seg):
+  elif _re.search("h",seg):
     temp=seg.split("h")
     seg=[]
     seg[0]=temp[0]
@@ -72,11 +75,11 @@ def SegtoDecimal(seg,RA=False):
     seg=seg.split()
   sign=np.sign(float(seg[0]))
   if sign<0 and RA:
-    sys.stderr.write("Uh, RA has a negative value. That's weird. Returning nan.n")
-    return np.nan
+    _sys.stderr.write("Uh, RA has a negative value. That's weird. Returning nan.n")
+    return _numpy.nan
   if RA and seg[0]>24.:
-    sys.stderr.write("RA is greater than 24 hours. Sure you're passing the correct arguments?\n")
-    return np.nan
+    _sys.stderr.write("RA is greater than 24 hours. Sure you're passing the correct arguments?\n")
+    return _numpy.nan
   deci=float(seg[0])+sign*(float(seg[1])/60.+float(seg[2])/60.)  
   if RA:
     deci*=15
@@ -97,7 +100,7 @@ def DecimaltoSeg(deci,RA=False):
   T1=int(np.floor(deci))
   T2=int(np.floor(60.*(deci-T1)))
   T3=60*(60.*(deci-T1)-T2)
-  seg=string.join([str(sign*T1),str(T2),str(T3)],":")
+  seg=_string.join([str(sign*T1),str(T2),str(T3)],":")
   
   return seg
 
@@ -115,7 +118,7 @@ def RedshiftLine(z,restlam=None,restnu=None):
   if restnu:
     return restnu/(1.+z)
   else:
-    sys.stderr.write("Error: frequency not specified. Returning nan.\n")
+    _sys.stderr.write("Error: frequency not specified. Returning nan.\n")
     return nan
 
 def fitsopen(file,mode='readonly',ext=0,trim=0,quiet=True):
@@ -134,19 +137,19 @@ def fitsopen(file,mode='readonly',ext=0,trim=0,quiet=True):
   """
 
   # make sure the file exists
-  if os.path.isfile(file):
-    frame=pyfits.open(file,mode=mode)
+  if _os.path.isfile(file):
+    frame=_pyfits.open(file,mode=mode)
     # we should really make sure we have enough extensions to open the one we
     # want, but i'll leave that for later. :)
     idata=frame[ext].data.transpose()
     if trim:
       trimsec=frame[ext].header['TRIMSEC'] #should really check this exists...
       # split it
-      range=[int(s) for s in re.findall(r'\d+',trimsec)]
+      range=[int(s) for s in _re.findall(r'\d+',trimsec)]
       idata=idata[range[0]-1:range[1],range[2]-1:range[3]]
     frame.close()
   else:
-    sys.stderr.write('Error: '+file+' not found.')
+    _sys.stderr.write('Error: '+file+' not found.')
     return -1
 
   if not(quiet):
@@ -172,7 +175,7 @@ def Telload(file,Tel='none',mode='readonly',quiet=True):
   """
 
   if Tel=='none':
-    sys.stderr.write('No telescope specified, running fitsopen()\n')
+    _sys.stderr.write('No telescope specified, running fitsopen()\n')
     ff=fitsopen(file,mode=mode,quiet=quiet)
     return ff
   elif Tel=='VATT':
@@ -196,7 +199,7 @@ def Telload(file,Tel='none',mode='readonly',quiet=True):
     # in the same way?
 
     # first, figure out how many HDUs there are...
-    frame=pyfits.open(file)
+    frame=_pyfits.open(file)
     nHDU=len(frame)-1 # ditch the overall HDU
     frame.close()
     # load the first frame to get us started
@@ -294,14 +297,14 @@ def DictStruct(d,depth=0,Print=True):
 
   if type(d)==dict:
     if depth==0:
-      if Print: sys.stdout.write("Dictionary has the following key structure:\n")
+      if Print: _sys.stdout.write("Dictionary has the following key structure:\n")
     for key in d.keys():
       for i in range(depth):
         if depth>0 and i==depth-1:
-          if Print: sys.stdout.write("|")
+          if Print: _sys.stdout.write("|")
         else:
-          if Print: sys.stdout.write(" ")
-      if Print: sys.stdout.write(str(key)+"\n")
+          if Print: _sys.stdout.write(" ")
+      if Print: _sys.stdout.write(str(key)+"\n")
       DictStruct(d[key],depth=depth+1,Print=Print)
 
 # End Convenience functions
