@@ -32,17 +32,17 @@ time=np.array(data[:,0])
 fig=plt.figure()
 ax1=plt.subplot(111)
 ax1.minorticks_on()
-ax1.set_xlabel('t')
-ax1.set_ylabel('Nuclear separation')
+ax1.set_xlabel('t',fontsize='x-large')
+ax1.set_ylabel('Nuclear separation',fontsize='x-large')
 ax1.set_xlim([0,8])
 ax1.set_ylim([0,3.5])
 if args.tscl!=1.0:
-  ax1.set_xlabel('T (Myr)')
+  ax1.set_xlabel('T (Myr)',fontsize='x-large')
   time=(time-2.0)*args.tscl
   ax1.set_xlim([-2*args.tscl,6*args.tscl])
   args.tnow*=args.tscl
 if args.Lscl!=1.0:
-  ax1.set_ylabel('Nuclear separation (kpc)')
+  ax1.set_ylabel('Nuclear separation (kpc)',fontsize='x-large')
   sep=sep*args.Lscl
   ax1.set_ylim([0,3.5*args.Lscl])
 
@@ -84,7 +84,7 @@ ax2.xaxis.set_ticklabels(labels,rotation=90)
 ax2.minorticks_on()
 #for (loc,label) in (ax2.xaxis.get_ticklines(),ax2.xaxis.get_ticklabels()):
   
-ax2.set_xlabel('Merger Stage')
+ax2.set_xlabel('Merger Stage',fontsize='x-large')
 ax2.plot(time,sep)
 
 if args.savefig:
