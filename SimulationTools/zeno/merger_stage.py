@@ -13,6 +13,8 @@ parser.add_argument('-tstage',action='store_true',default=True,help='Compute the
 parser.add_argument('--eps',action='store',type=float,default=0.,help='Smoothing length for the simulation (if given, will clip minima below that)')
 parser.add_argument('--tnow',action='store',type=float,default=0.,help='Viewing time.')
 parser.add_argument('--minorder',action='store',type=int,default=10,help='Number of points on either side of minima for it to be considered valid. (Default:10)')
+parser.add_argument('--tscl',action='store',type=float,default=1.0,help='Time scaling factor (Myr)')
+parser.add_argument('--Lscl',action='store',type=float,default=1.0,help='Length scaling factor (kpc)')
 parser.add_argument('--savefig',action='store',type=str,default=False,help='Save figure of the nuclear separation for diagnostics.')
 args=parser.parse_args()
 
@@ -23,8 +25,9 @@ if len(args.center)<1:
 
 data=np.loadtxt(args.center)
 
-sep=((data[:,1]-data[:,4])**2+(data[:,2]-data[:,5])**2+(data[:,3]-data[:,6])**2)**0.5
-time=data[:,0]
+#sep=((data[:,1]-data[:,4])**2+(data[:,2]-data[:,5])**2+(data[:,3]-data[:,6])**2)**0.5
+sep=np.array(data[:,1])
+time=np.array(data[:,0])
 
 fig=plt.figure()
 ax1=plt.subplot(111)
@@ -33,7 +36,18 @@ ax1.set_xlabel('t')
 ax1.set_ylabel('Nuclear separation')
 ax1.set_xlim([0,8])
 ax1.set_ylim([0,3.5])
+if args.tscl!=1.0:
+  ax1.set_xlabel('T (Myr)')
+  time=(time-2.0)*args.tscl
+  ax1.set_xlim([-2*args.tscl,6*args.tscl])
+  args.tnow*=args.tscl
+if args.Lscl!=1.0:
+  ax1.set_ylabel('Nuclear separation (kpc)')
+  sep=sep*args.Lscl
+  ax1.set_ylim([0,3.5*args.Lscl])
+
 ax1.plot(time,sep)
+
 # get local minima
 minima=argrelextrema(sep, np.less,order=args.minorder)[0]
 if args.eps:
@@ -41,7 +55,7 @@ if args.eps:
   minima=np.delete(minima,np.nonzero((sep[minima]<args.eps)*sep[minima]))
 plt.scatter(time[minima],sep[minima])
 if args.tnow:
-  plt.vlines(args.tnow,0,8)
+  plt.vlines(args.tnow,0,8*args.Lscl)
 
 # get the merger point
 if args.eps:
@@ -60,7 +74,8 @@ for i in minima:
   npass+=1
 
 ax2=ax1.twiny()
-ax2.set_ylim([0,3.5])
+if args.Lscl!=1.0: ax2.set_ylim([0,3.5*args.Lscl])
+else: ax2.set_ylim([0,3.5])
 # put tick marks at the minima
 ax2.xaxis.set_ticks(np.concatenate([time[minima][:4],[mtime]],axis=0))
 labels=[str(i) for i in np.arange(1,4)]
