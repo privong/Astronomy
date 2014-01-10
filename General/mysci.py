@@ -279,6 +279,8 @@ def DicttoVO(outdict=None,outfile=None):
   votable=_votable.tree.VOTableFile()
   resource=_votable.tree.Resource()
 
+  sys.stderr.write('Warn: DicttoVO() is currently non-functional.\n')
+
 # End VOTable parsing
 ################################################################################
 
