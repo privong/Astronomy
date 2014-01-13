@@ -268,7 +268,7 @@ def VOtoDict(votab,printstruc=False):
 ################################################################################
 # Specific VOTable tasks
 
-def WriteSpecVOTMeas(outdict=None,outfile=None):
+def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
   """
   Take a dictionary and write it to a VOTable.
 
@@ -279,9 +279,14 @@ def WriteSpecVOTMeas(outdict=None,outfile=None):
   This function uses any astropy.units information from the first entry it
   comes across to set up units in the VOTable.
 
-  Arguments:
+  Required Arguments:
     - outdict: dictionary to write
     - outfile: file to which to write
+
+  Optional Arguments (via **kwargs):
+    - author: Author Name
+    - email: Author email
+    - reference: Paper reference
 
   """
 
@@ -289,8 +294,19 @@ def WriteSpecVOTMeas(outdict=None,outfile=None):
     _sys.stderr.write("WriteSpecVOTMeas Error: need to provide both the dictionary and the desired output file.\n")
     _sys.exit(-1)
 
+  if not 'measlines' in outdict[outdict.keys()[0]].keys():
+    _sys.stderr.write("WriteSpecVOTMeas Warning: no 'measlines' dictionary entry. Will be writing a single table.\n")
+    havemeasline=False
+  else:
+    havemeasline=True
+
   votable=_votable.tree.VOTableFile()
   resource=_votable.tree.Resource()
+
+  if kwargs is not None:
+    # populate the header
+  else:
+    # put generic information in the header
 
   # add in stuff from the custom-written script converting the IRAM measured
   # results.
