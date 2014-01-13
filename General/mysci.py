@@ -282,6 +282,38 @@ def DicttoVO(outdict=None,outfile=None):
 # End VOTable parsing
 ################################################################################
 
+################################################################################
+# Specific VOTable tasks
+
+def WriteSpecVOTMeas(outdict=None,outfile=None):
+  """
+  Take a dictionary and write it to a VOTable.
+
+  Output VOTable will have a 'Source Information' table with top-level
+  information, plus additional tables for each entry in the (required) 
+  'measlines' sub-directory.
+
+  This function uses any astropy.units information from the first entry it
+  comes across to set up units in the VOTable.
+
+  Arguments:
+    - outdict: dictionary to write
+    - outfile: file to which to write
+
+  """
+
+  if not(outdict) or not(outfile):
+    _sys.stderr.write("WriteSpecVOTMeas Error: need to provide both the dictionary and the desired output file.\n")
+    _sys.exit(-1)
+
+  votable=_votable.tree.VOTableFile()
+  resource=_votable.tree.Resource()
+
+  # add in stuff from the custom-written script converting the IRAM measured
+  # results.
+
+# End Specific VOTable tasks
+################################################################################
 
 
 ################################################################################
