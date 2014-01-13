@@ -262,23 +262,6 @@ def VOtoDict(votab,printstruc=False):
 
   return dump
 
-def DicttoVO(outdict=None,outfile=None):
-  """
-
-  Write a python dictionary as a votable.
-
-  Arguments:
-    - outdict: dictionary to write
-    - outfile: file to which to write
-
-  """
-  if not(outdict) or not(outfile):
-    _sys.stderr.write("DicttoVO Error: need to provide both the dictionary and the desired output file.\n")
-    _sys.exit(-1)
-
-  votable=_votable.tree.VOTableFile()
-  resource=_votable.tree.Resource()
-
 # End VOTable parsing
 ################################################################################
 
