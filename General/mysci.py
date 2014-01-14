@@ -1,6 +1,9 @@
 # mysci.py
 #
-# George's python module of useful scientific things.
+# Python module with some useful constants, values, and functions for data
+# processing and import/export.
+#
+# George Privon
 
 import sys as _sys
 import os as _os
@@ -9,7 +12,7 @@ import string as _string
 import numpy as _numpy
 from astropy.io import fits as _pyfits
 import astropy.units as _u
-import astropy.io.votable as _votable
+import astropy.io.votable as _vot
 
 # Solar System Measurements, given as a dictionary
 # mass - g, radius - cm, period - yr, semi-major axis - cm, eccentrcity
@@ -300,8 +303,8 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
   else:
     havemeasline=True
 
-  votable=_votable.tree.VOTableFile()
-  resource=_votable.tree.Resource()
+  newtable=_vot.tree.VOTableFile()
+  resource=_vot.tree.Resource()
 
   if kwargs is None:
     # put in some generic header inforation
@@ -310,14 +313,50 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
     kwargs['reference']=None
 
   for key in kwargs.keys():
-    resource.
+    newtable.infos.extend([_vot.tree.Info(newtable,name=key,datatype='char',value=kwards[key])])
 
+  # create a 'Source Information' table and X measurement tables
+  srcTab=_vot.tree.Table(newtable)
+  srcTab.fields.extend([_vot.tree.Field(newtable,name="srcID",datatype="int")
+  for i in outdict[outdict.keys()[0]].keys():
+    if i!='measline':
+      if type(outdict[outdict.keys()[0]][j]) is _u.quantity.Quantity:
+        srcTab.fields.extend([_vot.tree.Field(newtable,name=i,
+		datatype="float",
+		unit=outdict[outdict.keys()[0]]['measline'][i]).unit])
+      else:
+        srcTab.fields.extend([_vot.tree.Field(newtable,name=i,
+		datatype=type(utdict[outdict.keys()[0]][j])])
+  srcTab.create_arrays(len(outdict.keys()))
+  measTab={}
+  for i in outdict[outdict.keys()[0]]['measline'].keys():
+    measTab[i]=_vot.tree.Table(newtable)
+    for j in outdict[outdict.keys()[0]]['measline'][i]:
+      if type(outdict[outdict.keys()[0]]['measline'][i])) is _u.quantity.Quantity:
+        measTab[i].fields.extend([_vot.tree.Field(newtable,name=j,
+		datatype="float",
+		unit=outdict[outdict.keys()[0]]['measline'][i]).unit])
+      else:
+        measTab[i].fields.extend([_vot.tree.Field(newtable,name=j,
+		datatype=type(outdict[outdict.keys()[0]]['measline'][i])]))
+   measTab[i].create_arrays(len(outdict.keys()))
+
+  srcID=0
   for src in outdict.keys():
+    srcinfo=[srcID]
     for key in outdict[src].keys():
       if key=='measline':
-        # loop into the other tables
+        for line in measTab.keys():
+          lineinfo=[srcID]
+          for key2 in outdict[src]['measline'][line].keys():
+            lineinfo.append(outdict[src]['measline'][line][key2])
+          measTab[key].array[srcID]=lineinfo
       else:
-        # write these values to the 'Source Information' table
+        srcinfo.append(outdict[src][key])
+    srcTab.array[srcID]=srcinfo
+    srcID+=1
+
+  newtable.to_xml(outfile)
 
 
 # End Specific VOTable tasks
