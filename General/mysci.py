@@ -262,28 +262,57 @@ def VOtoDict(votab,printstruc=False):
 
   return dump
 
-def DicttoVO(outdict=None,outfile=None):
+# End VOTable parsing
+################################################################################
+
+################################################################################
+# Specific VOTable tasks
+
+def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
   """
+  Take a dictionary and write it to a VOTable.
 
-  Write a python dictionary as a votable.
+  Output VOTable will have a 'Source Information' table with top-level
+  information, plus additional tables for each entry in the (required) 
+  'measlines' sub-directory.
 
-  Arguments:
+  This function uses any astropy.units information from the first entry it
+  comes across to set up units in the VOTable.
+
+  Required Arguments:
     - outdict: dictionary to write
     - outfile: file to which to write
 
+  Optional Arguments (via **kwargs):
+    - author: Author Name
+    - email: Author email
+    - reference: Paper reference
+
   """
+
   if not(outdict) or not(outfile):
-    _sys.stderr.write("DicttoVO Error: need to provide both the dictionary and the desired output file.\n")
+    _sys.stderr.write("WriteSpecVOTMeas Error: need to provide both the dictionary and the desired output file.\n")
     _sys.exit(-1)
+
+  if not 'measlines' in outdict[outdict.keys()[0]].keys():
+    _sys.stderr.write("WriteSpecVOTMeas Warning: no 'measlines' dictionary entry. Will be writing a single table.\n")
+    havemeasline=False
+  else:
+    havemeasline=True
 
   votable=_votable.tree.VOTableFile()
   resource=_votable.tree.Resource()
 
-  sys.stderr.write('Warn: DicttoVO() is currently non-functional.\n')
+  if kwargs is not None:
+    # populate the header
+  else:
+    # put generic information in the header
 
-# End VOTable parsing
+  # add in stuff from the custom-written script converting the IRAM measured
+  # results.
+
+# End Specific VOTable tasks
 ################################################################################
-
 
 
 ################################################################################
