@@ -274,7 +274,7 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
 
   Output VOTable will have a 'Source Information' table with top-level
   information, plus additional tables for each entry in the (required) 
-  'measlines' sub-directory.
+  'measline' sub-dictionary.
 
   This function uses any astropy.units information from the first entry it
   comes across to set up units in the VOTable.
@@ -294,8 +294,8 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
     _sys.stderr.write("WriteSpecVOTMeas Error: need to provide both the dictionary and the desired output file.\n")
     _sys.exit(-1)
 
-  if not 'measlines' in outdict[outdict.keys()[0]].keys():
-    _sys.stderr.write("WriteSpecVOTMeas Warning: no 'measlines' dictionary entry. Will be writing a single table.\n")
+  if not 'measline' in outdict[outdict.keys()[0]].keys():
+    _sys.stderr.write("WriteSpecVOTMeas Warning: no 'measline' dictionary entry. Will be writing a single table.\n")
     havemeasline=False
   else:
     havemeasline=True
@@ -303,13 +303,22 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
   votable=_votable.tree.VOTableFile()
   resource=_votable.tree.Resource()
 
-  if kwargs is not None:
-    # populate the header
-  else:
-    # put generic information in the header
+  if kwargs is None:
+    # put in some generic header inforation
+    kwargs['author']='privong/mysci.py'
+    kwargs['email']=None
+    kwargs['reference']=None
 
-  # add in stuff from the custom-written script converting the IRAM measured
-  # results.
+  for key in kwargs.keys():
+    resource.
+
+  for src in outdict.keys():
+    for key in outdict[src].keys():
+      if key=='measline':
+        # loop into the other tables
+      else:
+        # write these values to the 'Source Information' table
+
 
 # End Specific VOTable tasks
 ################################################################################
