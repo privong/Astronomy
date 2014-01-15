@@ -224,7 +224,24 @@ def Telload(file,Tel='none',mode='readonly',quiet=True):
 # End Wrapper Functions
 ###############################################################################
 
-################################################################################# VOTable functions
+################################################################################
+# CSV functions
+
+def CSVtoDict(infile,skiplines=0):
+  """
+  Opens infile and converts it to a dictionary.
+
+  Assumes the first non-skipped line is 
+
+  """
+
+# End CSV functions
+################################################################################
+
+
+
+################################################################################
+# VOTable functions
 
 def VOtoDict(votab,printstruc=False):
   """
