@@ -1,0 +1,55 @@
+# General output desired from a CASA pipeline:
+
+1. Relevant listobs information saved to a file
+2. Plot antenna locations
+3. Final UV coverage plots for the pipeline reduced images
+4. 'mfs' images of all objects (sci targets, phase calibrators)
+5. RMS values measured for several locations in each final cube. Shown as a plot of RMS against channel number. High RMS values might reveal channels with missed narrow RFI. Also, plot a horizontal line with the theoretical thermal noise, based on the true integration time.
+6. Spectral profile on the phase center for each observation, inside some sized box. Perhaps do multiple boxes for the science target. One point on the phase center and one large box. Plot on the same (log?) axes. Again, plot the expected thermal noise level per channel (and maybe also the measured RMS far off the phase center?)
+7. Output regarding autoflagging.. what fraction of the data did it flag? Compare the number of visibilities for each telescope before and after to determine if it (nearly) flagged all data from a single telescope. If so, maybe we should flag that whole telescope..
+
+
+# Rough procedure
+
+1. Import data
+2. Flag obvious things:
+  - auto correlations
+  - shadowing
+  - beginning and end channels of the bandpass (the exact amount depends on which telescope)
+  - 20s quack of start and end for each scan
+3. Determine which fields are the science target and which are the calibrators (maybe by the relative number of visibilties in each? Or does this need to be in the input?)
+4. Auto-flag the data using a CASA automagic algorithm
+5. Run an initial calibration on the flux calibrator
+6. Redo the autoflagging on the calibrated data.
+7. Redo the flux calibrator calibration.
+8. Calibrate the phase calibrator.
+9. 2nd pass of autoflagging on the phase calibrator.
+10. Redo calibration for phase calibrator.
+11. Apply calibration to the target field(s).
+12. 2nd pass of autoflagging on target field.
+13. Imaging of all fields. Non-interactive clean. For the primary and flux calibrators, set a mask based on the expected beam size and set the threshold based on some expectation of the noise level.
+14. Do image and spectral diagnostics listed above. Write the output diagnostic info into an easy to digest report format. (toolkit: ia)
+
+# Calibration procedure
+
+This is the general calibration procedure which will be (re)computed when described above. The general description is:
+taskname (parameters;generated_table_number;applied_table_numbers)
+
+1. setjy			- set the flux density scale of primary calibrators
+2. gaincal (int,phase; I; none)	- rough calibration of the phase on the flux calibrator so it doesn't affect the bandpass solution
+3. bandpass (inf; II; I)	- calibrate the bandpass on the primary calibrators
+4. gaincal (int,phase; III, II) - recalibrate the phase using our derived bandpass calibration (this replaces caltable I)
+5. gaincal (inf,phase; IV, II)	- phase solution which will be applied to the target. done over scans to remove effect of spurrious noise)
+6. gaincal (inf,ap; V, II, III) - calculate the amplitude for the scan, taking into account bandpass and phase solutions.
+7. fluxscale (none; VI; V)	- determine the fluxscaling to apply to the phase calibrators. Caltable VI replaces caltable V.
+
+Next we apply the calibration in the following manner:
+
+8. Primary calibator (II, III, VI)
+9. Phase calibrator (II, III, VI)
+10. Science target (II, IV, VI)
+
+# General implementation thoughts:
+
+1. Make fields, spectral windows, rest frequencies, etc. as explicit as possible. I.e. - always specify these things when running *any* task which takes them as an option. Write these out into the report files.
+2. Try to determine as many of the above things from the raw measurement set as possible.
