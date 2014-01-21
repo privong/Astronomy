@@ -334,7 +334,7 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
 
   # create a 'Source Information' table and X measurement tables
   srcTab=_vot.tree.Table(newtable)
-  srcTab.fields.extend([_vot.tree.Field(newtable,name="srcID",datatype="int")
+  srcTab.fields.extend([_vot.tree.Field(newtable,name="srcID",datatype="int")])
   for i in outdict[outdict.keys()[0]].keys():
     if i!='measline':
       if type(outdict[outdict.keys()[0]][j]) is _u.quantity.Quantity:
@@ -343,20 +343,20 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
 		unit=outdict[outdict.keys()[0]]['measline'][i]).unit])
       else:
         srcTab.fields.extend([_vot.tree.Field(newtable,name=i,
-		datatype=type(utdict[outdict.keys()[0]][j])])
+		datatype=type(utdict[outdict.keys()[0]][j]))])
   srcTab.create_arrays(len(outdict.keys()))
   measTab={}
   for i in outdict[outdict.keys()[0]]['measline'].keys():
     measTab[i]=_vot.tree.Table(newtable)
     for j in outdict[outdict.keys()[0]]['measline'][i]:
-      if type(outdict[outdict.keys()[0]]['measline'][i])) is _u.quantity.Quantity:
+      if type(outdict[outdict.keys()[0]]['measline'][i]) is _u.quantity.Quantity:
         measTab[i].fields.extend([_vot.tree.Field(newtable,name=j,
 		datatype="float",
 		unit=outdict[outdict.keys()[0]]['measline'][i]).unit])
       else:
         measTab[i].fields.extend([_vot.tree.Field(newtable,name=j,
-		datatype=type(outdict[outdict.keys()[0]]['measline'][i])]))
-   measTab[i].create_arrays(len(outdict.keys()))
+		datatype=type(outdict[outdict.keys()[0]]['measline'][i]))])
+    measTab[i].create_arrays(len(outdict.keys()))
 
   srcID=0
   for src in outdict.keys():
