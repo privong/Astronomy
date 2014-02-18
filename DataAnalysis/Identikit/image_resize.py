@@ -1,25 +1,26 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
-# Pad (optical) images to be paddedsizexpaddedsize so they don't limit the extent of the XY
-# HI data cube projections
+# Pad (optical) images to be paddedsizexpaddedsize so they don't limit the 
+# extent of the XY HI data cube projections
+#
+# Should be run from within CASA, since it needs access to CASA image formats
 
 import pyfits,numpy,sys
 
-frame=pyfits.open(sys.argv[1],ignore_missing_end=True)
+def image_match(img,refimg=None,oimg=None):
+  """
+  Pad and/or crop an image to match the angular coverage of a reference image.
 
-(xsize,ysize)=frame[0].data.shape
+  Arguments:
+    img		- Image to be modified
+    refimg	- Reference image to match
+    oimg	- Output image
 
-paddedsize=(xsize+ysize)
+  Notes:
+    - Script assumes input and reference images have the same orientation and
+	that they have no rotation.
+  """
+  if not(refimg):
+    sys.stdout.write("No reference image specified. Can't do much with this.\n")
+    return -1
 
-nimg=numpy.zeros((paddedsize,paddedsize),dtype=frame[0].data.dtype)
-
-nimg[paddedsize/2.-numpy.ceil(xsize/2.):paddedsize/2.+numpy.ceil(xsize/2.),paddedsize/2.-numpy.ceil(ysize/2.):paddedsize/2.+numpy.ceil(ysize/2.)]=frame[0].data
-
-frame[0].data=nimg*1.
-
-frame[0].header['CRPIX1']=paddedsize/2.-(ysize/2.-frame[0].header['CRPIX1'])
-frame[0].header['CRPIX2']=paddedsize/2.-(xsize/2.-frame[0].header['CRPIX2'])
-
-frame.writeto(sys.argv[1].split('.fits')[0]+'-padded.fits')
-
-frame.close()
