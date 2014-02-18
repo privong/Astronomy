@@ -160,6 +160,16 @@ def fitsopen(file,mode='readonly',ext=0,trim=0,quiet=True):
     print file+" HDU("+str(ext)+") opened successfully with dimensions "+str(idata.shape)
 
   return idata
+
+def quadsum(values):
+  """
+  Take a list and return the quadrature sum of the elements.
+  """
+  tot=0.
+  for item in values:
+    tot+=item**2
+  return np.sqrt(tot)
+
 # End Useful functions
 ###############################################################################
 
