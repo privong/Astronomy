@@ -9,11 +9,17 @@ Directories
 -----------
 
 * Archives/		- Pulling data from online archives
+
 *DataAnalysis/		- assist with processing/analysis of reduced data
+
 *DataReduction/		- data reduction scripts (often, pipelines)
+
 *General/		- general use files, other scripts may depend on files in here
+
 *Observing/		- scripts related to observations *Papers/			- Paper writing and bibliography tools.
+
 *SimulationTools/	- Scripts related to analyzing outputs of simulations currently this includes the zeno nbody/sph code.
+
 *Talks/			- Tools to assist with managing talks written in LaTeX/ beamer.
 
 Dependencies
