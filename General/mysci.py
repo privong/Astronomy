@@ -77,7 +77,7 @@ def SegtoDecimal(seg,RA=False):
     seg[2]=temp[0]
   else: 
     seg=seg.split()
-  sign=np.sign(float(seg[0]))
+  sign=_np.sign(float(seg[0]))
   if sign<0 and RA:
     _sys.stderr.write("Uh, RA has a negative value. That's weird. Returning nan.n")
     return _numpy.nan
@@ -97,12 +97,12 @@ def DecimaltoSeg(deci,RA=False):
   hours:min:seconds. Otherwise it is left as degrees:arcminutes:arcseconds.
 
   """
-  sign=int(np.sign(deci))
+  sign=int(_np.sign(deci))
   deci=deci/sign
   if RA:
     deci=deci/15.
-  T1=int(np.floor(deci))
-  T2=int(np.floor(60.*(deci-T1)))
+  T1=int(_np.floor(deci))
+  T2=int(_np.floor(60.*(deci-T1)))
   T3=60*(60.*(deci-T1)-T2)
   seg=_string.join([str(sign*T1),str(T2),str(T3)],":")
   
@@ -165,10 +165,10 @@ def quadsum(values):
   """
   Take a list and return the quadrature sum of the elements.
   """
-  tot=0.
+  tot=0.*values[0]**2
   for item in values:
     tot+=item**2
-  return np.sqrt(tot)
+  return _np.sqrt(tot)
 
 # End Useful functions
 ###############################################################################
@@ -201,7 +201,7 @@ def Telload(file,Tel='none',mode='readonly',quiet=True):
     ext2=np.fliplr(fitsopen(file,mode=mode,quiet=quiet,ext=2,trim=1).transpose())
 
     # concatenate the two halves of the image
-    ff=np.concatenate((ext1,ext2),axis=1)
+    ff=_np.concatenate((ext1,ext2),axis=1)
 
     return ff
   elif Tel=="90Prime":
@@ -223,12 +223,12 @@ def Telload(file,Tel='none',mode='readonly',quiet=True):
     ext2=fitsopen(file,mode=mode,quiet=quiet,ext=2,trim=0)
     shape=ext2.shape
     ext2=ext2.reshape((1,shape[0],shape[1]))
-    ff=np.concatenate((ext1,ext2),axis=0)
+    ff=_np.concatenate((ext1,ext2),axis=0)
     for hdu in range(3,nHDU+1,1):
       extt=fitsopen(file,mode=mode,quiet=quiet,ext=hdu,trim=0)
       shape=extt.shape
       extt=extt.reshape((1,shape[0],shape[1]))
-      ff=np.concatenate((ff,extt),axis=0)
+      ff=_np.concatenate((ff,extt),axis=0)
     return ff
 
 # End Wrapper Functions
