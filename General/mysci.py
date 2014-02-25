@@ -9,7 +9,7 @@ import sys as _sys
 import os as _os
 import re as _re
 import string as _string
-import numpy as _numpy
+import numpy as _np
 from astropy.io import fits as _pyfits
 import astropy.units as _u
 import astropy.io.votable as _vot
@@ -80,10 +80,10 @@ def SegtoDecimal(seg,RA=False):
   sign=_np.sign(float(seg[0]))
   if sign<0 and RA:
     _sys.stderr.write("Uh, RA has a negative value. That's weird. Returning nan.n")
-    return _numpy.nan
+    return _np.nan
   if RA and seg[0]>24.:
     _sys.stderr.write("RA is greater than 24 hours. Sure you're passing the correct arguments?\n")
-    return _numpy.nan
+    return _np.nan
   deci=float(seg[0])+sign*(float(seg[1])/60.+float(seg[2])/60.)  
   if RA:
     deci*=15
