@@ -332,40 +332,52 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
 
   newtable=_vot.tree.VOTableFile()
   resource=_vot.tree.Resource()
+  newtable.resources.append(resource)
 
   if kwargs is None:
     # put in some generic header inforation
     kwargs['author']='privong/mysci.py'
-    kwargs['email']=None
-    kwargs['reference']=None
+    kwargs['email']='None'
+    kwargs['reference']='None'
 
-  for key in kwargs.keys():
-    newtable.infos.extend([_vot.tree.Info(newtable,name=key,datatype='char',value=kwargs[key])])
+  #for key in kwargs.keys():
+    #newtable.infos.extend([_vot.tree.Info(newtable,name=key,datatype='char',value=kwargs[key])])
 
-  # create a 'Source Information' table and X measurement tables
+  # create a 'Source Information' table
   srcTab=_vot.tree.Table(newtable)
+  resource.tables.append(srcTab)
   srcTab.fields.extend([_vot.tree.Field(newtable,name="srcID",datatype="int")])
   for i in outdict[outdict.keys()[0]].keys():
     if i!='measline':
-      if type(outdict[outdict.keys()[0]][j]) is _u.quantity.Quantity:
+      if type(outdict[outdict.keys()[0]][i]) is _u.quantity.Quantity:
         srcTab.fields.extend([_vot.tree.Field(newtable,name=i,
 		datatype="float",
-		unit=outdict[outdict.keys()[0]]['measline'][i]).unit])
+		unit=outdict[outdict.keys()[0]][i].unit)])
+      elif type(outdict[outdict.keys()[0]][i]) is float:
+        srcTab.fields.extend([_vot.tree.Field(newtable,name=i,
+		datatype="float")])
       else:
         srcTab.fields.extend([_vot.tree.Field(newtable,name=i,
-		datatype=type(utdict[outdict.keys()[0]][j]))])
+		datatype='char',
+		arraysize='*')]) #ype(outdict[outdict.keys()[0]][i])))])
   srcTab.create_arrays(len(outdict.keys()))
+  # create tables for the measurements
   measTab={}
   for i in outdict[outdict.keys()[0]]['measline'].keys():
     measTab[i]=_vot.tree.Table(newtable)
+    resource.tables.append(measTab[i])
     for j in outdict[outdict.keys()[0]]['measline'][i]:
-      if type(outdict[outdict.keys()[0]]['measline'][i]) is _u.quantity.Quantity:
+      if type(outdict[outdict.keys()[0]]['measline'][i][j]) is _u.quantity.Quantity:
         measTab[i].fields.extend([_vot.tree.Field(newtable,name=j,
 		datatype="float",
-		unit=outdict[outdict.keys()[0]]['measline'][i]).unit])
+		unit=(outdict[outdict.keys()[0]]['measline'][i][j]).unit)])
+      elif type(outdict[outdict.keys()[0]]['measline'][i][j]) is float:
+        measTab[i].fields.extend([_vot.tree.Field(newtable,name=j,
+		datatype="float")])
       else:
         measTab[i].fields.extend([_vot.tree.Field(newtable,name=j,
-		datatype=type(outdict[outdict.keys()[0]]['measline'][i]))])
+		datatype='char',
+		arraysize='*')])
     measTab[i].create_arrays(len(outdict.keys()))
 
   srcID=0
@@ -374,13 +386,19 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
     for key in outdict[src].keys():
       if key=='measline':
         for line in measTab.keys():
-          lineinfo=[srcID]
+          lineinfo=[]
           for key2 in outdict[src]['measline'][line].keys():
-            lineinfo.append(outdict[src]['measline'][line][key2])
-          measTab[key].array[srcID]=lineinfo
+            if type(outdict[src]['measline'][line][key2]) is _u.quantity.Quantity:
+              lineinfo.append(outdict[src]['measline'][line][key2].value)
+            else:
+              lineinfo.append(outdict[src]['measline'][line][key2])
+          measTab[line].array[srcID]=tuple(lineinfo)
       else:
-        srcinfo.append(outdict[src][key])
-    srcTab.array[srcID]=srcinfo
+        if type(outdict[src][key]) is _u.quantity.Quantity:
+          srcinfo.append(outdict[src][key].value)
+        else:
+          srcinfo.append(outdict[src][key])
+    srcTab.array[srcID]=tuple(srcinfo)
     srcID+=1
 
   newtable.to_xml(outfile)
