@@ -340,12 +340,17 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
     kwargs['email']='None'
     kwargs['reference']='None'
 
+  #info=_vot.tree.Info()
+  #newtable.infos.append(info)
   #for key in kwargs.keys():
-    #newtable.infos.extend([_vot.tree.Info(newtable,name=key,datatype='char',value=kwargs[key])])
+  #  newtable.infos.extend([_vot.tree.Info(newtable,name=key,datatype='char',arraysize='*',value=(kwargs[key]))])
 
   # create a 'Source Information' table
   srcTab=_vot.tree.Table(newtable)
+  srcTab.ID='Src'
+  srcTab.name='Source Information'
   resource.tables.append(srcTab)
+  srcTab.fields.extend([_vot.tree.Field(newtable,name="Source",datatype='char',arraysize='*',ID="Source")])
   srcTab.fields.extend([_vot.tree.Field(newtable,name="srcID",datatype="int")])
   for i in outdict[outdict.keys()[0]].keys():
     if i!='measline':
@@ -365,7 +370,10 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
   measTab={}
   for i in outdict[outdict.keys()[0]]['measline'].keys():
     measTab[i]=_vot.tree.Table(newtable)
+    measTab[i].ID='line'+str(i)
+    measTab[i].name=outdict[outdict.keys()[0]]['measline'][i]['lineID']
     resource.tables.append(measTab[i])
+    measTab[i].fields.extend([_vot.tree.Field(newtable,name='srcID',datatype='int',ID='srcID')])
     for j in outdict[outdict.keys()[0]]['measline'][i]:
       if type(outdict[outdict.keys()[0]]['measline'][i][j]) is _u.quantity.Quantity:
         measTab[i].fields.extend([_vot.tree.Field(newtable,name=j,
@@ -382,11 +390,11 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
 
   srcID=0
   for src in outdict.keys():
-    srcinfo=[srcID]
+    srcinfo=[src,srcID]
     for key in outdict[src].keys():
       if key=='measline':
         for line in measTab.keys():
-          lineinfo=[]
+          lineinfo=[srcID]
           for key2 in outdict[src]['measline'][line].keys():
             if type(outdict[src]['measline'][line][key2]) is _u.quantity.Quantity:
               lineinfo.append(outdict[src]['measline'][line][key2].value)
