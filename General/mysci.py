@@ -352,7 +352,7 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
   resource.tables.append(srcTab)
   srcTab.fields.extend([_vot.tree.Field(newtable,name="Source",datatype='char',arraysize='*',ID="Source")])
   srcTab.fields.extend([_vot.tree.Field(newtable,name="srcID",datatype="int")])
-  for i in outdict[outdict.keys()[0]].keys():
+  for i in sorted(outdict[outdict.keys()[0]].keys()):
     if i!='measline':
       if type(outdict[outdict.keys()[0]][i]) is _u.quantity.Quantity:
         srcTab.fields.extend([_vot.tree.Field(newtable,name=i,
@@ -368,13 +368,13 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
   srcTab.create_arrays(len(outdict.keys()))
   # create tables for the measurements
   measTab={}
-  for i in outdict[outdict.keys()[0]]['measline'].keys():
+  for i in sorted(outdict[outdict.keys()[0]]['measline'].keys()):
     measTab[i]=_vot.tree.Table(newtable)
     measTab[i].ID='line'+str(i)
     measTab[i].name=outdict[outdict.keys()[0]]['measline'][i]['lineID']
     resource.tables.append(measTab[i])
     measTab[i].fields.extend([_vot.tree.Field(newtable,name='srcID',datatype='int',ID='srcID')])
-    for j in outdict[outdict.keys()[0]]['measline'][i]:
+    for j in sorted(outdict[outdict.keys()[0]]['measline'][i].keys()):
       if type(outdict[outdict.keys()[0]]['measline'][i][j]) is _u.quantity.Quantity:
         measTab[i].fields.extend([_vot.tree.Field(newtable,name=j,
 		datatype="float",
@@ -389,24 +389,24 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
     measTab[i].create_arrays(len(outdict.keys()))
 
   srcID=0
-  for src in outdict.keys():
-    srcinfo=[src,srcID]
-    for key in outdict[src].keys():
+  for src in sorted(outdict.keys()):
+    srcinfo=(src,srcID)
+    for key in sorted(outdict[src].keys()):
       if key=='measline':
-        for line in measTab.keys():
-          lineinfo=[srcID]
-          for key2 in outdict[src]['measline'][line].keys():
+        for line in sorted(measTab.keys()):
+          lineinfo=(srcID,)
+          for key2 in sorted(outdict[src]['measline'][line].keys()):
             if type(outdict[src]['measline'][line][key2]) is _u.quantity.Quantity:
-              lineinfo.append(outdict[src]['measline'][line][key2].value)
+              lineinfo=lineinfo+(outdict[src]['measline'][line][key2].value,)
             else:
-              lineinfo.append(outdict[src]['measline'][line][key2])
-          measTab[line].array[srcID]=tuple(lineinfo)
+              lineinfo=lineinfo+(outdict[src]['measline'][line][key2],)
+          measTab[line].array[srcID]=lineinfo
       else:
         if type(outdict[src][key]) is _u.quantity.Quantity:
-          srcinfo.append(outdict[src][key].value)
+          srcinfo=srcinfo+(outdict[src][key].value,)
         else:
-          srcinfo.append(outdict[src][key])
-    srcTab.array[srcID]=tuple(srcinfo)
+          srcinfo=srcinfo+(outdict[src][key],)
+    srcTab.array[srcID]=srcinfo
     srcID+=1
 
   newtable.to_xml(outfile)
