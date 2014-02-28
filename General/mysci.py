@@ -340,7 +340,7 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
     kwargs['reference']=None
 
   for key in kwargs.keys():
-    newtable.infos.extend([_vot.tree.Info(newtable,name=key,datatype='char',value=kwards[key])])
+    newtable.infos.extend([_vot.tree.Info(newtable,name=key,datatype='char',value=kwargs[key])])
 
   # create a 'Source Information' table and X measurement tables
   srcTab=_vot.tree.Table(newtable)
