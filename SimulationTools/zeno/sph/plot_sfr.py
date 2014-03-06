@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -28,7 +28,7 @@ else:
     sys.stderr.write('LABELS Error: you must provide a number of labels equal to the number of starlog files.\n')
     sys.exit(-1)
   else:
-    args.labels=args.labels.split(', ')
+    args.labels=args.labels.split(',')
 
 if args.pmass=='0':
   pmass=np.ones(len(args.starlog))
