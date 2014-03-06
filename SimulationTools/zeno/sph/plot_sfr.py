@@ -56,26 +56,26 @@ fig=plt.figure()
 ax1=plt.subplot(111)
 # set the axis labels and make adjustments to the data
 if args.tscl!=1:
-  ax1.set_xlabel('t (Myr)')
+  ax1.set_xlabel('t (Myr)',fontsize='x-large')
   # convert the times to have 0 be pericenter passage (t=2 in sim units)
   SFR=[((clusters[0].astype(float)/(clusters[1][1]-clusters[1][0])),clusters[1]-2.0+(clusters[1][1]-clusters[1][0])/2.,label,pmass) for clusters,label,pmass in binned]
 else:
-  ax1.set_xlabel('t (sim units)')
+  ax1.set_xlabel('t (sim units)',fontsize='x-large')
   # convert data to dN/dt
   SFR=[((clusters[0].astype(float)/(clusters[1][1]-clusters[1][0])),clusters[1]+(clusters[1][1]-clusters[1][0])/2.,label,pmass) for clusters,label,pmass in binned]
 
 if args.Mscl!=1:
   args.Mscl=args.Mscl*1.e9	# convert it to M_sun from GM_sun
   if args.pmass!=1:
-    ax1.set_ylabel('dM$_*$/dt (M$_{\odot}$ yr$^{-1}$)')
+    ax1.set_ylabel('dM$_*$/dt (M$_{\odot}$ yr$^{-1}$)',fontsize='x-large')
   else:
     sys.stderr.write("Surely your gas particles don't all have masses of 1 in sim units??\n")
     sys.exit()
 else:
   if args.pmass=='0':
-    ax1.set_ylabel('dN$_*$/dt (Particles)')
+    ax1.set_ylabel('dN$_*$/dt (Particles)',fontsize='x-large')
   else:
-    ax1.set_ylabel('dM$_*$/dt (sim units)')
+    ax1.set_ylabel('dM$_*$/dt (sim units)',fontsize='x-large')
 
 for pl1,pl2,label,pm in SFR:
     # plot the SFR with scalings
@@ -86,7 +86,7 @@ ax1.minorticks_on()
 if args.nucsep:
   ax2=ax1.twinx()
   ax2.minorticks_on()
-  ax2.set_ylabel('Nuclear Separation')
+  ax2.set_ylabel('Nuclear Separation',fontsize='x-large')
   data=np.loadtxt(args.nucsep)
   sep=((data[:,1]-data[:,4])**2+(data[:,2]-data[:,5])**2+(data[:,3]-data[:,6])**2)**0.5
   time=(data[:,0]-2.0)*args.tscl
