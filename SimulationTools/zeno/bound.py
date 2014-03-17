@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # bound.py
 # Plot the orbital energy of a particle versus radius

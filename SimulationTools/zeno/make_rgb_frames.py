@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # Make RGB frames using 2 input images
 # DM+stars (red channel), stars (green), and stars (blue)

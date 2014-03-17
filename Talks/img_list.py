@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # Make a list of unique images files in a tex file, get list of images in 
 # that directory, and print out which aren't being used in that tex file.

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # Generate images from zeno sph/treecode simulations for making movies
 #

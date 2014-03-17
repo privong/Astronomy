@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # luci_select.py
 # Given an selection criteria, print a list of matching FITS files.

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # luciGenDarks.py
 # Look through a list of LUCIFER files, extract the integration settings
