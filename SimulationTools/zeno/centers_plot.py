@@ -39,12 +39,13 @@ while True:
     line=infile.readline()	# Mass2, discard
     pos1=[float(x) for x in infile.readline().split()]	# Position1, keep
     pos2=[float(x) for x in infile.readline().split()]	# Position1, keep
-    line=infile.readline()	# Velocity1, discard
-    line=infile.readline()	# Velocity2, discard
+    vel1=[float(x) for x in infile.readline().split()]	# Velocity1, keep
+    vel2=[float(x) for x in infile.readline().split()]	# Velocity2, keep
 
     # now compute the geometric distance
     dist=math.sqrt((pos1[0]-pos2[0])**2+(pos1[1]-pos2[1])**2+(pos1[2]-pos2[2])**2)
-    outfile.write(str(time)+'\t'+str(dist)+'\n')
+    dv=math.sqrt((vel1[0]-vel2[0])**2+(vel1[1]-vel2[1])**2+(vel1[2]-vel2[2])**2)
+    outfile.write(str(time)+'\t'+str(dist)+'\t'+str(dv)+'\n')
 
 outfile.close()
 infile.close()
