@@ -170,6 +170,16 @@ def quadsum(values):
     tot+=item**2
   return _np.sqrt(tot)
 
+def HImass(flux,DL):
+  """
+  HImass(flux,DL)
+
+  Returns HI mass (in units of solar mass) with an input flux (Jy km/s) and a
+  luminosity distance (Mpc). Units encouraged.
+  """
+
+  return (2.36e5*(DL/_u.Mpc)**2*flux/(_u.Jy*_u.km/_u.s)).decompose()*_u.MsolMass
+
 # End Useful functions
 ###############################################################################
 
