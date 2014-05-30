@@ -45,6 +45,7 @@ if args.tscl!=1.0:
 if args.Lscl!=1.0:
   ax1.set_ylabel('Nuclear separation (kpc)')
   sep=sep*args.Lscl
+  args.eps*=args.Lscl
   ax1.set_ylim([0,3.5*args.Lscl])
 
 ax1.plot(time,sep)
