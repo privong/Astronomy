@@ -24,6 +24,7 @@ infile=open(args.centers,'r')
 
 if args.writeDist:
   outfile=open(args.writeDist,'w')
+  outfile.write('#t\tdr\tdv\n# all values in simulation units\n')
 
 while True:
   line=infile.readline()
@@ -49,3 +50,27 @@ while True:
 
 outfile.close()
 infile.close()
+
+
+
+#line=stars.readline()
+#time=float(stars.readline().split()[0])	# Time, keep
+#line=stars.readline()	# Mass1, discard
+#line=stars.readline()	# Mass2, discard
+#line=stars.readline()	# Mass2, discard
+#line=stars.readline()	# Mass2, discard
+#sv1=[float(x) for x in stars.readline().split()]	# Velocity1, keep
+#sv2=[float(x) for x in stars.readline().split()]	# Velocity2, keep
+#line=dm.readline()
+#time=float(dm.readline().split()[0])	# Time, keep
+#line=dm.readline()	# Mass1, discard
+#line=dm.readline()	# Mass2, discard
+#line=dm.readline()	# Mass2, discard
+#line=dm.readline()	# Mass2, discard
+#dv1=[float(x) for x in dm.readline().split()]	# Velocity1, keep
+#dv2=[float(x) for x in dm.readline().split()]	# Velocity2, keep
+#dv1=math.sqrt((sv1[0]-dv1[0])**2+(sv1[1]-dv1[1])**2+(sv1[2]-dv1[2])**2)
+#dv2=math.sqrt((sv2[0]-dv2[0])**2+(sv2[1]-dv2[1])**2+(sv2[2]-dv2[2])**2)
+#outfile.write(str(time)+'\t'+str(dv1)+'\t'+str(dv2)+'\n')
+
+
