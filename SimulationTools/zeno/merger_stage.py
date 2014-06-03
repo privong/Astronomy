@@ -48,14 +48,14 @@ if args.Lscl!=1.0:
   args.eps*=args.Lscl
   ax1.set_ylim([0,3.5*args.Lscl])
 
-ax1.plot(time,sep)
+ax1.plot(time,sep,color='k')
 
 # get local minima
 minima=argrelextrema(sep, np.less,order=args.minorder)[0]
 if args.eps:
   sys.stderr.write('Ignoring "passes" below the smoothing limit.\n')
   minima=np.delete(minima,np.nonzero((sep[minima]<args.eps)*sep[minima]))
-plt.scatter(time[minima],sep[minima])
+plt.scatter(time[minima],sep[minima],color='k')
 if args.tnow:
   plt.vlines(args.tnow,0,8*args.Lscl)
 
@@ -87,7 +87,7 @@ ax2.minorticks_on()
 #for (loc,label) in (ax2.xaxis.get_ticklines(),ax2.xaxis.get_ticklabels()):
   
 ax2.set_xlabel('Merger Stage')
-ax2.plot(time,sep)
+ax2.plot(time,sep,color='k')
 
 if args.savefig:
   plt.savefig(args.savefig)
