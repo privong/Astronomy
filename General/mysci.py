@@ -170,6 +170,12 @@ def quadsum(values):
     tot+=item**2
   return _np.sqrt(tot)
 
+def angDist(pos1,pos2):
+  """
+  Calculate the angular distance between two points. Require decimal positions
+  """
+  return -1
+
 def HImass(flux,DL):
   """
   HImass(flux,DL)
@@ -181,6 +187,43 @@ def HImass(flux,DL):
   return (2.36e5*(DL/_u.Mpc)**2*flux/(_u.Jy*_u.km/_u.s)).decompose()*_u.MsolMass
 
 # End Useful functions
+###############################################################################
+
+###############################################################################
+# Catalog Functions
+
+def PosMatch(pos1,pos2,name1=None,name2=None,posTol=60.*_u.arcsec):
+  """
+  Position matching function for catalogs. 
+
+  Parameters:
+    - pos1,pos2: positions, 2 element, Seg or decimal
+    - name1,name2: tagged names (optional)
+    - posTol: position tolerance (in arcsec if no units defined; default 60")
+
+  Returns True if they match, False if not.
+  """
+
+  # homogenize positions
+  if type(pos1[0])!=float:
+    pos1[0]=SegtoDecimal(pos1[0],RA=True)
+  if type(pos1[1])!=float:
+    pos1[1]=SegtoDecimal(pos1[1],RA=False)
+  if type(pos2[0])!=float:
+    pos2[0]=SegtoDecimal(pos2[0],RA=True)
+  if type(pos2[1])!=float:
+    pos2[1]=SegtoDecimal(pos2[1],RA=False)
+
+  # determine posTol character and homogenize
+
+  if angDist(pos1,pos2) < posTol:
+    return True
+  else:
+    return False  
+
+  return -1
+
+# End Catalog Functions
 ###############################################################################
 
 ###############################################################################
