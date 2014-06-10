@@ -88,7 +88,7 @@ def SegtoDecimal(seg,RA=False):
   if RA:
     deci*=15
 
-  return deci
+  return deci*_u.degrees
 
 def DecimaltoSeg(deci,RA=False):
   """
