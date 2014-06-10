@@ -290,13 +290,34 @@ def Telload(file,Tel='none',mode='readonly',quiet=True):
 ################################################################################
 # CSV functions
 
-def CSVtoDict(infile,skiplines=0):
+def CSVtoDict(infile,skiplines=0,usecols=None,delimiter=',',haveunits=False):
   """
   Opens infile and converts it to a dictionary.
 
-  Assumes the first non-skipped line is 
+  Assumes the first non-skipped line has column titles. If haveunits is True, 
+  the second non-skipped line is assumed to have units.
 
   """
+  vals=_np.genfromtxt(infile,usecols=usecols,delimiter=delimiter,skiplines=skiplines)
+  key=[]
+  infile=open(infile,'r')
+  i=0
+  for line in infile:
+    if i==skiplines:
+      cols=line.split(delimiter)[1:]
+    elif haveunits and i==skiplines+1:
+      units=line.split(delimiter)[1:]
+    elif (haveunits and i>skiplines+1) or (i>skiplines and not(haveunits)) :
+      line=line.split(delimiter)
+      name.append(line[0])
+  infile.close()
+  out={}
+  for i in range(len(name)):
+    out[i]={}
+    for j in cols:
+      out[i][j]=vals[i][j+1]
+
+  return out
 
 # End CSV functions
 ################################################################################
