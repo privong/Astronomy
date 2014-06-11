@@ -290,7 +290,7 @@ def Telload(file,Tel='none',mode='readonly',quiet=True):
 ################################################################################
 # CSV functions
 
-def CSVtoDict(infile,skiplines=0,usecols=None,delimiter=',',haveunits=False):
+def CSVtoDict(infile,usecols=None,delimiter=',',haveunits=False):
   """
   Opens infile and converts it to a dictionary.
 
@@ -298,24 +298,32 @@ def CSVtoDict(infile,skiplines=0,usecols=None,delimiter=',',haveunits=False):
   the second non-skipped line is assumed to have units.
 
   """
-  vals=_np.genfromtxt(infile,usecols=usecols,delimiter=delimiter,skiplines=skiplines)
+  vals=_np.genfromtxt(infile,usecols=usecols,delimiter=delimiter)
   key=[]
+  cols=[]
+  units=[]
   infile=open(infile,'r')
-  i=0
+  count=0
   for line in infile:
-    if i==skiplines:
-      cols=line.split(delimiter)[1:]
-    elif haveunits and i==skiplines+1:
-      units=line.split(delimiter)[1:]
-    elif (haveunits and i>skiplines+1) or (i>skiplines and not(haveunits)) :
+    if count==0 and line[0]=='#':
+      sline=line.split(delimiter)
+      for a in usecols:
+        cols.append(sline[a])
+      count=1
+    elif haveunits and count==1:
+      sline=line.split(delimiter)
+      for a in usecols:
+        units.append(sline[a])
+      count=2
+    elif (haveunits and count>1) or (count>0 and not(haveunits)) :
       line=line.split(delimiter)
-      name.append(line[0])
+      key.append(line[0])
   infile.close()
   out={}
-  for i in range(len(name)):
-    out[i]={}
-    for j in cols:
-      out[i][j]=vals[i][j+1]
+  for i in range(len(key)):
+    out[key[i]]={}
+    for j in range(len(cols)):
+      out[key[i]][cols[j]]=vals[i][j]
 
   return out
 
