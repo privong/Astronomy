@@ -81,14 +81,14 @@ def SegtoDecimal(seg,RA=False):
   if sign<0 and RA:
     _sys.stderr.write("Uh, RA has a negative value. That's weird. Returning nan.n")
     return _np.nan
-  if RA and seg[0]>24.:
+  if RA and float(seg[0])>24.:
     _sys.stderr.write("RA is greater than 24 hours. Are you sure you're passing the correct arguments?\n")
     return _np.nan
   deci=float(seg[0])+sign*(float(seg[1])/60.+float(seg[2])/60.)  
   if RA:
     deci*=15
 
-  return deci*_u.degrees
+  return deci*_u.deg
 
 def DecimaltoSeg(deci,RA=False):
   """
@@ -174,7 +174,9 @@ def angDist(pos1,pos2):
   """
   Calculate the angular distance between two points. Require decimal positions
   """
-  return -1
+  numer=_np.sqrt((_np.cos(pos2[0])*_np.sin(_np.abs(pos1[1]-pos2[1])))**2+(_np.cos(pos1[0])*_np.sin(pos2[0])-_np.sin(pos1[0])*_np.cos(pos2[0])*_np.cos(_np.abs(pos1[1]-pos2[1])))**2)
+  denom=_np.sin(pos1[0])*_np.sin(pos2[0])+_np.cos(pos1[0])*_np.cos(pos2[0])*_np.cos(_np.abs(pos1[1]-pos2[1]))
+  return _np.arctan2(numer/denom)
 
 def HImass(flux,DL):
   """
