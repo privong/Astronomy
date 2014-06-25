@@ -84,7 +84,7 @@ def SegtoDecimal(seg,RA=False):
   if RA and float(seg[0])>24.:
     _sys.stderr.write("RA is greater than 24 hours. Are you sure you're passing the correct arguments?\n")
     return _np.nan
-  deci=float(seg[0])+sign*(float(seg[1])/60.+float(seg[2])/60.)  
+  deci=float(seg[0])+sign*(float(seg[1])/60.+float(seg[2])/3600.)  
   if RA:
     deci*=15
 
