@@ -176,7 +176,7 @@ def angDist(pos1,pos2):
   """
   numer=_np.sqrt((_np.cos(pos2[0])*_np.sin(_np.abs(pos1[1]-pos2[1])))**2+(_np.cos(pos1[0])*_np.sin(pos2[0])-_np.sin(pos1[0])*_np.cos(pos2[0])*_np.cos(_np.abs(pos1[1]-pos2[1])))**2)
   denom=_np.sin(pos1[0])*_np.sin(pos2[0])+_np.cos(pos1[0])*_np.cos(pos2[0])*_np.cos(_np.abs(pos1[1]-pos2[1]))
-  return _np.arctan2(numer/denom)
+  return _np.arctan2(numer,denom)
 
 def HImass(flux,DL):
   """
@@ -207,13 +207,13 @@ def PosMatch(pos1,pos2,name1=None,name2=None,posTol=60.*_u.arcsec):
   """
 
   # homogenize positions
-  if type(pos1[0])!=float:
+  if type(pos1[0]) is str:
     pos1[0]=SegtoDecimal(pos1[0],RA=True)
-  if type(pos1[1])!=float:
+  if type(pos1[1]) is str:
     pos1[1]=SegtoDecimal(pos1[1],RA=False)
-  if type(pos2[0])!=float:
+  if type(pos2[0]) is str:
     pos2[0]=SegtoDecimal(pos2[0],RA=True)
-  if type(pos2[1])!=float:
+  if type(pos2[1]) is str:
     pos2[1]=SegtoDecimal(pos2[1],RA=False)
 
   # determine posTol character and homogenize
