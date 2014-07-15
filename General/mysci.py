@@ -33,6 +33,39 @@ stars={'proximacentauri'	:{'distance':4.0143e18*_u.cm},	# wikipedia
 # Galaxy values (from https://secure.wikimedia.org/wikipedia/en/wiki/Milky_Way 16 Oct 2011)
 R_MW	= 4.62e22*_u.cm		# cm		Milky Way Radius
 M_MW	= 1.4e45*_u.g		# g		Milky Way Mass
+galcenter={'RA':4.92619*u.rad,
+        'Dec':0.47822*u.rad,
+        'galLon':0.57596*u.rad}
+
+# Attractor locations (from Mould+ 2000 ApJ, 529, 786)
+# parameters: RA-right ascencion
+#       Dec - declination
+#       vlgcl - attractor velocity corrected to local group
+#       vfid - infall velocity to attractor, at local group position
+#       radius - cluster angular radius
+#       vmax - maximum heliocentric velocity of cluster core
+#       vmin - minimum heliocentric velocity of cluster core
+VirgoCluster={'RA':3.26515*u.rad,
+        'Dec':0.22108*u.rad,
+        'vlgcl':957.*u.km/u.s,
+        'vfid':200.*u.km/u.s,
+        'radius':0.17453*u.rad,
+        'vmin':600*u.km/u.s,
+        'vmax':2300*u.km/u.s}
+GreatAttractor={'RA':3.49066*u.rad,
+        'Dec':0.76794*u.rad,
+        'vlgcl':4380*u.km/u.s
+        'vfid':400.*u.km/u.s,
+        'radius':0.17453*u.rad,
+        'vmin':2600*u.km/u.s,
+        'vmax':6600*u.km/u.s}
+ShapleySupercluster={'RA':3.53429*u.rad,
+        'Dec':0.54105*u.rad,
+        'vlgcl':13600*u.km/u.s
+        'vfid':85.*u.km/u.s,
+        'radius':0.20944*u.rad,
+        'vmin':10000*u.km/u.s,
+        'vmax':16000*u.km/u.s}
 
 # Rest frequencies of astrophysically interesting (to me) lines
 restfreq={'HI'		:1420405751.77*_u.Hz,
