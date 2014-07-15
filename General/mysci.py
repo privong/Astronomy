@@ -54,14 +54,14 @@ VirgoCluster={'RA':3.26515*u.rad,
         'vmax':2300*u.km/u.s}
 GreatAttractor={'RA':3.49066*u.rad,
         'Dec':0.76794*u.rad,
-        'vlgcl':4380*u.km/u.s
+        'vlgcl':4380*u.km/u.s,
         'vfid':400.*u.km/u.s,
         'radius':0.17453*u.rad,
         'vmin':2600*u.km/u.s,
         'vmax':6600*u.km/u.s}
 ShapleySupercluster={'RA':3.53429*u.rad,
         'Dec':0.54105*u.rad,
-        'vlgcl':13600*u.km/u.s
+        'vlgcl':13600*u.km/u.s,
         'vfid':85.*u.km/u.s,
         'radius':0.20944*u.rad,
         'vmin':10000*u.km/u.s,
