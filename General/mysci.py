@@ -75,6 +75,14 @@ def SegtoDecimal(seg,RA=False):
     seg.append(temp[0])
     temp=temp.split('s')
     seg.append(temp)
+  elif _re.search("d",seg):
+    temp=seg.split("d")
+    seg=[]
+    seg.append(temp[0])
+    temp=temp.split('m')
+    seg.append(temp[0])
+    temp=temp.split('s')
+    seg.append(temp)
   else:			# to cover whitespace separated values
     seg=seg.split()
   sign=_np.sign(float(seg[0]))
