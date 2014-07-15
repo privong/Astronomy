@@ -73,7 +73,7 @@ def SegtoDecimal(seg,RA=False):
     seg.append(temp[0])
     temp=temp[1].split('m')
     seg.append(temp[0])
-    temp=temp[1].split('s')
+    temp=temp[1].split('s')[0]
     seg.append(temp)
   elif _re.search("d",seg):
     temp=seg.split("d")
@@ -81,7 +81,7 @@ def SegtoDecimal(seg,RA=False):
     seg.append(temp[0])
     temp=temp[1].split('m')
     seg.append(temp[0])
-    temp=temp[1].split('s')
+    temp=temp[1].split('s')[0]
     seg.append(temp)
   else:			# to cover whitespace separated values
     seg=seg.split()
