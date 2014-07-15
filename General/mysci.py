@@ -70,11 +70,11 @@ def SegtoDecimal(seg,RA=False):
   elif _re.search("h",seg):
     temp=seg.split("h")
     seg=[]
-    seg[0]=temp[0]
+    seg.append(temp[0])
     temp=temp.split('m')
-    seg[1]=temp[0]
+    seg.append(temp[0])
     temp=temp.split('s')
-    seg[2]=temp[0]
+    seg.append(temp)
   else:			# to cover whitespace separated values
     seg=seg.split()
   sign=_np.sign(float(seg[0]))
