@@ -47,25 +47,25 @@ galcenter={'RA':4.92619*_u.rad,
 #       vmin - minimum heliocentric velocity of cluster core
 VirgoCluster={'RA':3.26515*_u.rad,
         'Dec':0.22108*_u.rad,
-        'vlgcl':957.*_u.km/u.s,
-        'vfid':200.*_u.km/u.s,
+        'vlgcl':957.*_u.km/_u.s,
+        'vfid':200.*_u.km/_u.s,
         'radius':0.17453*_u.rad,
-        'vmin':600*_u.km/u.s,
-        'vmax':2300*_u.km/u.s}
+        'vmin':600*_u.km/_u.s,
+        'vmax':2300*_u.km/_u.s}
 GreatAttractor={'RA':3.49066*_u.rad,
         'Dec':0.76794*_u.rad,
-        'vlgcl':4380*_u.km/u.s,
-        'vfid':400.*_u.km/u.s,
+        'vlgcl':4380*_u.km/_u.s,
+        'vfid':400.*_u.km/_u.s,
         'radius':0.17453*_u.rad,
-        'vmin':2600*_u.km/u.s,
-        'vmax':6600*_u.km/u.s}
+        'vmin':2600*_u.km/_u.s,
+        'vmax':6600*_u.km/_u.s}
 ShapleySupercluster={'RA':3.53429*_u.rad,
         'Dec':0.54105*_u.rad,
-        'vlgcl':13600*_u.km/u.s,
-        'vfid':85.*_u.km/u.s,
+        'vlgcl':13600*_u.km/_u.s,
+        'vfid':85.*_u.km/_u.s,
         'radius':0.20944*_u.rad,
-        'vmin':10000*_u.km/u.s,
-        'vmax':16000*_u.km/u.s}
+        'vmin':10000*_u.km/_u.s,
+        'vmax':16000*_u.km/_u.s}
 
 # Rest frequencies of astrophysically interesting (to me) lines
 restfreq={'HI'		:1420405751.77*_u.Hz,
