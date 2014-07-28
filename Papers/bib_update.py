@@ -109,10 +109,11 @@ for j in range(len(bp.records)):
                 bp.records[j] = res
                 sys.stdout.write(thisref['id']+" updated. Please verify changes.\n")
                 newbib = to_bibtex(bp)
-                # replace bibtex file as we go
-                outf = codecs.open(bibfile,'w','utf-8')
-                outf.write(newbib)
-                outf.close()
+                # replace bibtex file as we go, every 10 fixes :)
+                if upcount % 20 == 0:
+                    outf = codecs.open(bibfile,'w','utf-8')
+                    outf.write(newbib)
+                    outf.close()
 
             else:
                 sys.stdout.write("No new version found.\n")
