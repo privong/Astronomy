@@ -11,6 +11,7 @@ import sys
 import os
 import shutil
 import re
+import codecs   # for unicode
 import ads  # https://github.com/andycasey/ads
 
 
@@ -31,13 +32,14 @@ def checkRef(entry):
     if 'eprint' in entry.keys():
         res = ads.query("arXiv:"+entry['eprint'])
         for i in res:
-            print entry['author'],entry['title']
+            print entry['author'].split(',')[0],entry['title']
             print i.author[0],i.title,i.year
             sel = raw_input('Is this a match (y/n)? ')
             if sel == 'y':  # replace relevant bibtex entries
                 entry['title'] = i.title[0]
                 entry['year'] = i.year
-                entry['journal'] = i.pub
+                if 'i.pub' in globals():
+                    entry['journal'] = i.pub
                 if 'i.doi' in globals():
                     entry['doi'] = i.doi[0]
                 entry['abstract'] = i.abstract
@@ -55,7 +57,7 @@ def checkRef(entry):
 bibfile = sys.argv[1]
 
 if os.path.isfile(bibfile):
-    bib = open(bibfile,'r')
+    bib = codecs.open(bibfile,'r','utf-8')
     bp = BibTexParser(bib.read())
     bib.close()
 else:
@@ -93,7 +95,7 @@ for j in range(len(bp.records)):
                 bp.records[j] = res
                 sys.stdout.write(thisref['id']+" updated. Please verify changes.\n")
                 # replace bibtex file as we go
-                outf = open(bibfile,'w')
+                outf = codecs.open(bibfile,'w','utf-8')
                 outf.write(newbib)
                 outf.close()
 
