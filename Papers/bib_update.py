@@ -32,6 +32,11 @@ def checkRef(entry):
     if 'eprint' in entry.keys():
         res = ads.query("arXiv:"+entry['eprint'])
         for i in res:
+            try:    # only want things that are published
+                print i.pub
+            except :
+                continue
+            print "\n"
             print entry['author'].split(',')[0],entry['title']
             print i.author[0],i.title,i.year
             sel = raw_input('Is this a match (y/n)? ')
@@ -39,16 +44,25 @@ def checkRef(entry):
                 entry['author'] = '{'+entry['author']+'}'
                 entry['title'] = i.title[0]
                 entry['year'] = i.year
-                if 'i.pub' in globals():
-                    entry['journal'] = i.pub
-                if 'i.doi' in globals():
+                entry['journal'] = i.pub
+                try:
                     entry['doi'] = i.doi[0]
-                entry['abstract'] = i.abstract
+                except:
+                    pass
+                try: 
+                    entry['abstract'] = i.abstract
+                except:
+                    pass
                 entry['link'] = i.url[0]
                 entry['year'] = i.year
-                if 'i.volume' in globals():
+                try: 
                     entry['volume'] = i.volume
-                entry['pages'] = i.page[0]
+                except:
+                    pass
+                try: 
+                    entry['pages'] = i.page[0]
+                except:
+                    pass
                 entry['adsurl'] = 'http://adsabs.harvard.edu/abs/'+i.bibcode
                 if not(re.search(i.year,entry['id'])):
                     sys.stderr.write("Warning: Updated year ("+i.year+") no longer matches ID: "+entry['id']+".\n")
@@ -67,7 +81,6 @@ else:
 
 # back up library before we start
 shutil.copy2(bibfile,bibfile+'ads_updater.bak')
-newbib = to_bibtex(bp)
 
 upcount = 0
 match = False
@@ -89,18 +102,19 @@ for j in range(len(bp.records)):
 
         if match:
             match = False # reset
-            sys.stdout.write('Searching for update to '+thisref['id']+'...\n')
+            sys.stdout.write('Searching for update to '+thisref['id']+'...')
             res = checkRef(thisref)
             if res:
                 upcount += 1
                 bp.records[j] = res
                 sys.stdout.write(thisref['id']+" updated. Please verify changes.\n")
+                newbib = to_bibtex(bp)
                 # replace bibtex file as we go
                 outf = codecs.open(bibfile,'w','utf-8')
                 outf.write(newbib)
                 outf.close()
 
             else:
-                sys.stdout.write("No new version found for "+thisref['id']+".\n")
+                sys.stdout.write("No new version found.\n")
 
 sys.stdout.write(str(upcount)+' reference(s) updated.\n')
