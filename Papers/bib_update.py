@@ -64,7 +64,8 @@ def checkRef(entry):
                     pass
                 entry['adsurl'] = 'http://adsabs.harvard.edu/abs/'+i.bibcode
                 if not(re.search(i.year,entry['id'])):
-                    sys.stderr.write("Warning: Updated year ("+i.year+") no longer matches ID: "+entry['id']+".\n")
+                    sys.stderr.write("Warning: Updating year of : "+entry['id']+" to reflect publication year ("+i.year+").\n")
+                    entry['id'] = entry['id'].split('2')[0]+i.year
                 return entry
         return False
 
