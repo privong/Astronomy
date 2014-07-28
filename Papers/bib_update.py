@@ -36,6 +36,7 @@ def checkRef(entry):
             print i.author[0],i.title,i.year
             sel = raw_input('Is this a match (y/n)? ')
             if sel == 'y':  # replace relevant bibtex entries
+                entry['author'] = '{'+entry['author']+'}'
                 entry['title'] = i.title[0]
                 entry['year'] = i.year
                 if 'i.pub' in globals():
@@ -101,7 +102,5 @@ for j in range(len(bp.records)):
 
             else:
                 sys.stdout.write("No new version found for "+thisref['id']+".\n")
-
-print bp.records
 
 sys.stdout.write(str(upcount)+' reference(s) updated.\n')
