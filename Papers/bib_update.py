@@ -4,7 +4,6 @@
 # query ADS to see if the paper has been published. If so, update the bibtex
 # entry.
 
-import pycurl
 from bibtexparser.bparser import BibTexParser
 from bibtexparser.bwriter import to_bibtex
 import sys
