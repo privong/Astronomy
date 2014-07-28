@@ -100,4 +100,6 @@ for j in range(len(bp.records)):
             else:
                 sys.stdout.write("No new version found for "+thisref['id']+".\n")
 
+print bp.records
+
 sys.stdout.write(str(upcount)+' reference(s) updated.\n')
