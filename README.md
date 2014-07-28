@@ -10,14 +10,19 @@ Directories
 
 * Archives/		- Pulling data from online archives
 * DataAnalysis/		- assist with processing/analysis of reduced data
-* DataReduction/		- data reduction scripts (often, pipelines)
+* DataReduction/		- data reduction scripts (often pipelines)
 * General/		- general use files, other scripts may depend on files in here
-* Observing/		- scripts related to observations 
-* Papers/			- Paper writing and bibliography tools.
-* SimulationTools/	- Scripts related to analyzing outputs of simulations currently this includes the zeno nbody/sph code.
-* Talks/			- Tools to assist with managing talks written in LaTeX/ beamer.
+* Observing/		- scripts related to observation planning and execution.
+* Papers/			- Paper writing and bibliography management tools.
+* SimulationTools/	- Scripts related to analyzing outputs of simulations. Currently this includes the Zeno N-body/SPH code (http://www.ifa.hawaii.edu/faculty/barnes/zeno/).
+* Talks/			- Tools to assist with managing talks written in LaTeX/beamer.
 
 Dependencies
 ------------
 
-Most of the scripts depend on common python libraries (numpy, scipy) and sometimes, the astropy library. These can all be installed via pip.
+Generally required:
+* numpy
+* scipy
+* astropy
+
+These scripts are generally tested using python 2.7.x. They may not be python3 compatible.
