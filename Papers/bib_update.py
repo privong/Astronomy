@@ -43,7 +43,8 @@ def checkRef(entry):
                 entry['abstract'] = i.abstract
                 entry['link'] = i.url[0]
                 entry['year'] = i.year
-                entry['volume'] = i.volume
+                if 'i.volume' in globals():
+                    entry['volume'] = i.volume
                 entry['pages'] = i.page[0]
                 entry['adsurl'] = 'http://adsabs.harvard.edu/abs/'+i.bibcode
                 if not(re.search(i.year,entry['id'])):
@@ -60,6 +61,10 @@ if os.path.isfile(bibfile):
 else:
     sys.stderr.write("Error, could not open: "+bibfile+".\n")
     sys.exit(1)
+
+# back up library before we start
+shutil.copy2(bibfile,bibfile+'ads_updater.bak')
+newbib = to_bibtex(bp)
 
 upcount = 0
 match = False
@@ -87,16 +92,12 @@ for j in range(len(bp.records)):
                 upcount += 1
                 bp.records[j] = res
                 sys.stdout.write(thisref['id']+" updated. Please verify changes.\n")
+                # replace bibtex file as we go
+                outf = open(bibfile,'w')
+                outf.write(newbib)
+                outf.close()
+
             else:
-                sys.stdout.write("No new version found for "+ref+".\n")
-
-# back up library
-shutil.copy2(bibfile,bibfile+'ads_updater.bak')
-newbib = to_bibtex(bp)
-
-# replace bibtex file
-outf = open(bibfile,'w')
-outf.write(newbib)
-outf.close()
+                sys.stdout.write("No new version found for "+thisref['id']+".\n")
 
 sys.stdout.write(str(upcount)+' reference(s) updated.\n')
