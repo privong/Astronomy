@@ -118,4 +118,8 @@ for j in range(len(bp.records)):
             else:
                 sys.stdout.write("No new version found.\n")
 
+outf = codecs.open(bibfile,'w','utf-8')
+outf.write(newbib)
+outf.close()
+
 sys.stdout.write(str(upcount)+' reference(s) updated.\n')
