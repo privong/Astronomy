@@ -12,9 +12,10 @@ import shutil
 import re
 import codecs   # for unicode
 import ads  # https://github.com/andycasey/ads
+import argparse
 
 
-def checkRef(entry):
+def checkRef(entry,confirm=False):
     """
     Check ADS for an updated reference
 
@@ -35,10 +36,12 @@ def checkRef(entry):
                 print i.pub
             except :
                 continue
-            print "\n"
-            print entry['author'].split(',')[0],entry['title'],entry['year']
-            print i.author[0],i.title[0],i.year
-            sel = raw_input('Is this a match (y/n)? ')
+            if confirm:
+                print entry['author'].split(',')[0],entry['title'],entry['year']
+                print i.author[0],i.title[0],i.year
+                sel = raw_input('Is this a match (y/n)? ')
+            else:
+                sel = 'y'
             if sel == 'y':  # replace relevant bibtex entries
                 entry['author'] = '{'+entry['author']+'}'
                 entry['title'] = i.title[0]
@@ -69,18 +72,22 @@ def checkRef(entry):
                 return entry
         return False
 
-bibfile = sys.argv[1]
 
-if os.path.isfile(bibfile):
-    bib = codecs.open(bibfile,'r','utf-8')
+parser=argparse.ArgumentParser(description="Update arXiv entries in a bibtex file with subsequently published papers.")
+parser.add_argument('bibfile',action='store',type=str,default=False,help='BibTeX file')
+parser.add_argument('--confirm',action='store_true',default=False,help='If passed, confirm each entry.')
+args=parser.parse_args()
+
+if os.path.isfile(args.bibfile):
+    bib = codecs.open(args.bibfile,'r','utf-8')
     bp = BibTexParser(bib.read())
     bib.close()
 else:
-    sys.stderr.write("Error, could not open: "+bibfile+".\n")
+    sys.stderr.write("Error, could not open: "+args.bibfile+".\n")
     sys.exit(1)
 
 # back up library before we start
-shutil.copy2(bibfile,bibfile+'ads_updater.bak')
+shutil.copy2(args.bibfile,args.bibfile+'ads_updater.bak')
 
 upcount = 0
 match = False
@@ -103,7 +110,7 @@ for j in range(len(bp.records)):
         if match:
             match = False # reset
             sys.stdout.write('Searching for update to '+thisref['id']+'...')
-            res = checkRef(thisref)
+            res = checkRef(thisref,args.confirm)
             if res:
                 upcount += 1
                 bp.records[j] = res
@@ -111,14 +118,14 @@ for j in range(len(bp.records)):
                 newbib = to_bibtex(bp)
                 # replace bibtex file as we go, every 10 fixes :)
                 if upcount % 20 == 0:
-                    outf = codecs.open(bibfile,'w','utf-8')
+                    outf = codecs.open(args.bibfile,'w','utf-8')
                     outf.write(newbib)
                     outf.close()
 
             else:
                 sys.stdout.write("No new version found.\n")
 
-outf = codecs.open(bibfile,'w','utf-8')
+outf = codecs.open(args.bibfile,'w','utf-8')
 outf.write(newbib)
 outf.close()
 
