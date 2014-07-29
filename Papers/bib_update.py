@@ -36,8 +36,8 @@ def checkRef(entry):
             except :
                 continue
             print "\n"
-            print entry['author'].split(',')[0],entry['title']
-            print i.author[0],i.title,i.year
+            print entry['author'].split(',')[0],entry['title'],entry['year']
+            print i.author[0],i.title[0],i.year
             sel = raw_input('Is this a match (y/n)? ')
             if sel == 'y':  # replace relevant bibtex entries
                 entry['author'] = '{'+entry['author']+'}'
@@ -64,7 +64,7 @@ def checkRef(entry):
                     pass
                 entry['adsurl'] = 'http://adsabs.harvard.edu/abs/'+i.bibcode
                 if not(re.search(i.year,entry['id'])):
-                    sys.stderr.write("Warning: Updating year of : "+entry['id']+" to reflect publication year ("+i.year+").\n")
+                    sys.stderr.write("Warning: Updating year of: "+entry['id']+" to reflect publication year ("+i.year+").\n")
                     entry['id'] = entry['id'].split('2')[0]+i.year
                 return entry
         return False
