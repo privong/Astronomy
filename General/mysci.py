@@ -33,11 +33,13 @@ stars={'proximacentauri'	:{'distance':4.0143e18*_u.cm},	# wikipedia
 # Galaxy values (from https://secure.wikimedia.org/wikipedia/en/wiki/Milky_Way 16 Oct 2011)
 R_MW	= 4.62e22*_u.cm		# cm		Milky Way Radius
 M_MW	= 1.4e45*_u.g		# g		Milky Way Mass
+# galcenter from condon's fortran code (in B9150)
 galcenter={'RA':4.92619*_u.rad,
         'Dec':0.47822*_u.rad,
         'galLon':0.57596*_u.rad}
 
 # Attractor locations (from Mould+ 2000 ApJ, 529, 786)
+# THESE ARE IN B1950!!!
 # parameters: RA-right ascencion
 #       Dec - declination
 #       vlgcl - attractor velocity corrected to local group
