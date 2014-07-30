@@ -37,11 +37,14 @@ def vcosmic(vh,b1950ra,b1950dec):
         if singlon > 0.: glon = np.pi/2.*u.rad
         if singlon < 0.: glon = 1.5*np.pi*u.rad
     # resolve 180 degree ambiguity in glon
-    if cosglon < 0.: glon = glon + np.pi*u.rad
+    if cosglon < 0.: 
+        glon = glon + np.pi*u.rad
     glon = glon + mysci.galcenter['galLon']
     twopi = 2. * np.pi*u.rad
-    if glon < 0: glon = glon + twopi
-    if glon >= twopi: glon = glon - twopi
+    if glon < 0: 
+        glon = glon + twopi
+    if glon >= twopi: 
+        glon = glon - twopi
 
     # correct from heliocentric to local group velocity
     vlg = vh - 79.*u.km/u.s*np.cos(glon)*np.cos(glat) \
@@ -73,7 +76,6 @@ def vcosmic(vh,b1950ra,b1950dec):
         # is the galaxy in the attractor core cone?
         if theta < radius[i] and vh > vmin[i] and vh < vmax[i]:
             vcosmic=vlgcl[i]
-            return vcosmic
         else:
             roa=vlg**2 + vlgcl[i]**2 - 2. * vlg * vlgcl[i] * costheta
             roa=np.sqrt(roa)
@@ -84,4 +86,4 @@ def vcosmic(vh,b1950ra,b1950dec):
             vin = -vin
             vcosmic = vcosmic - vin
 
-        return vcosmic
+    return vcosmic
