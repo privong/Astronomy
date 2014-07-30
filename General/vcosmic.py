@@ -1,24 +1,27 @@
-# Compute luminosity distance for a 3-attractor model (Mould+ 2000)
+# Compute "cosmic" velocity for a 3-attractor model (Mould+ 2000)
 
 import numpy as np
 import astropy.units as u
 import mysci
 
-def vcosmic(vh,b1950ra,b1950dec):
+def vcosmic(vh,inpRA,inpDec):
     """
     vcosmic: Compute a "cosmic velocity", correcting for the Virgo Cluster, 
     the Great Attractor and the Shapley Supercluster.
 
-    Based on fortran code provided by J. Condon.
+    Based on fortran code provided by J. Condon for the Mould+ 2000 3-attractor
+    model.
 
-    Angles in radians, velocities in km/s.
+    Angles and positions should be in radians or degrees, and velocities in km/s
+    All values should be provided using astropy.units quantities., 
+    J2000 assumed.
     """
 
     # constants
-    cosdec = np.cos(b1950dec)
-    sindec = np.sin(b1950dec)
-    cosrara0 = np.cos(b1950ra - mysci.galcenter['RA'])
-    sinrara0 = np.sin(b1950ra - mysci.galcenter['RA'])
+    cosdec = np.cos(inpDec)
+    sindec = np.sin(inpDec)
+    cosrara0 = np.cos(inpRA - mysci.galcenter['RA'])
+    sinrara0 = np.sin(inpRA - mysci.galcenter['RA'])
     coscdec0 = np.cos(np.pi*u.rad/2. - mysci.galcenter['Dec'])
     sincdec0 = np.sin(np.pi*u.rad/2. - mysci.galcenter['Dec'])
 
@@ -62,9 +65,9 @@ def vcosmic(vh,b1950ra,b1950dec):
     vmin = [mysci.VirgoCluster['vmin'],mysci.GreatAttractor['vmin'],mysci.ShapleySupercluster['vmin']]
     vmax = [mysci.VirgoCluster['vmax'],mysci.GreatAttractor['vmax'],mysci.ShapleySupercluster['vmax']]
     for i in range (3):
-        x = np.sin(np.pi*u.rad/2.-b1950dec)*np.cos(b1950ra)
-        y = np.sin(np.pi*u.rad/2.-b1950dec)*np.sin(b1950ra)
-        z = np.cos(np.pi*u.rad/2.-b1950dec)
+        x = np.sin(np.pi*u.rad/2.-inpDec)*np.cos(inpRA)
+        y = np.sin(np.pi*u.rad/2.-inpDec)*np.sin(inpRA)
+        z = np.cos(np.pi*u.rad/2.-inpDec)
         xcl = np.sin (np.pi*u.rad / 2. - deccl[i]) * np.cos(racl[i])
         ycl = np.sin (np.pi*u.rad / 2. - deccl[i]) * np.sin(racl[i])
         zcl = np.cos (np.pi*u.rad / 2. - deccl[i])
