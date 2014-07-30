@@ -47,7 +47,7 @@ galcenter={'RA':282.749599*_u.deg,
 #       radius - cluster angular radius
 #       vmax - maximum heliocentric velocity of cluster core
 #       vmin - minimum heliocentric velocity of cluster core
-VirgoCluster={'RA':187.71200*_u.deg
+VirgoCluster={'RA':187.71200*_u.deg,
         'Dec':12.39089*_u.deg,
         'vlgcl':957.*_u.km/_u.s,
         'vfid':200.*_u.km/_u.s,
