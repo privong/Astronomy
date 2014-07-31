@@ -47,22 +47,22 @@ galcenter={'RA':282.749599*_u.deg,
 #       radius - cluster angular radius
 #       vmax - maximum heliocentric velocity of cluster core
 #       vmin - minimum heliocentric velocity of cluster core
-VirgoCluster={'RA':187.71200*_u.deg,
-        'Dec':12.39089*_u.deg,
+VirgoCluster={'RA':187.71186*_u.deg,
+        'Dec':12.39060*_u.deg,
         'vlgcl':957.*_u.km/_u.s,
         'vfid':200.*_u.km/_u.s,
         'radius':0.17453*_u.rad,
         'vmin':600*_u.km/_u.s,
         'vmax':2300*_u.km/_u.s}
-GreatAttractor={'RA':200.54803*_u.deg,
-        'Dec':-43.73864*_u.deg,
+GreatAttractor={'RA':200.73470*_u.deg,
+        'Dec':-44.26105*_u.deg,
         'vlgcl':4380*_u.km/_u.s,
         'vfid':400.*_u.km/_u.s,
         'radius':0.17453*_u.rad,
         'vmin':2600*_u.km/_u.s,
         'vmax':6600*_u.km/_u.s}
-ShapleySupercluster={'RA':203.07614*_u.deg,
-        'Dec':-30.74326*_u.deg,
+ShapleySupercluster={'RA':203.20597*_u.deg,
+        'Dec':-31.25658*_u.deg,
         'vlgcl':13600*_u.km/_u.s,
         'vfid':85.*_u.km/_u.s,
         'radius':0.20944*_u.rad,
