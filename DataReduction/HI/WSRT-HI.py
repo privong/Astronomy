@@ -7,20 +7,6 @@
 #
 # Arguments:
 #
-# viz: array of .MS files to use
-# calname: Name of the primary calibrator in the first MS file
-# source: Name of the source
-# refant (OPTIONAL, default: RT4): reference antenna to use for gaincal
-# flagRT5 (OPTIONAL, default: True): flag antenna RT5 (being used in apertif testing)
-# FLAGGING (OPTIONAL, default: True): do the flagging portion of the script?
-# GENCAL (OPTIONAL, default: True): generate calibration tables?
-# APPLYCAL (OPTIONAL, default: True): apply calibration to the data?
-# MSCAT (OPTIONAL, default: False): concatenate source MS?
-# IMAGE (OPTIONAL, default: False): invert and clean the image?
-# FSMO (OPTIONAL, default: 1): # of adjacent channels to avg together when imaging
-# CONTSUB (OPTIONAL, default: False): QND UV continuum subtraction.
-# CONTSUBIMG (OPTIONAL, default: False): QND imaging of continuum subtracted and continuum
-#		data.
 
 # TODO:
 # 1. intelligent concatenating. Be sure we only concatenate two parts of the same observation.. e.g., "T0" and "T1"
@@ -34,6 +20,25 @@ import string
 def WSRTHI(viz, calname, source, refant="RT4", flagRT5=True, FLAGGING=True,
             GENCAL=True, APPLYCAL=True, MSCAT=False, IMAGE=False, FSMO=1,
             CONTSUB=False, CONTSUBIMG=False):
+    """
+    WSRTHI() - Pipeline HI reduction for WSRT observations.
+
+
+    viz: array of .MS files to use
+    calname: Name of the primary calibrator in the first MS file
+    source: Name of the source
+    refant (OPTIONAL, default: RT4): reference antenna to use for gaincal
+    flagRT5 (OPTIONAL, default: True): flag antenna RT5 (being used in apertif testing)
+    FLAGGING (OPTIONAL, default: True): do the flagging portion of the script?
+    GENCAL (OPTIONAL, default: True): generate calibration tables?
+    APPLYCAL (OPTIONAL, default: True): apply calibration to the data?
+    MSCAT (OPTIONAL, default: False): concatenate source MS?
+    IMAGE (OPTIONAL, default: False): invert and clean the image?
+    FSMO (OPTIONAL, default: 1): # of adjacent channels to avg together when imaging
+    CONTSUB (OPTIONAL, default: False): QND UV continuum subtraction.
+    CONTSUBIMG (OPTIONAL, default: False): QND imaging of continuum subtracted and continuum
+		data.
+    """
 
     # be sure we have MS inputs. If they're UVFITS, convert them
     for i in range(len(viz)):
