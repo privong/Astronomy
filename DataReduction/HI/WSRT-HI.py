@@ -1,18 +1,12 @@
 # WSRT-HI.py
 #
-# Script to do the initial calibration and flagging of WSRT data
-#
 # George C. Privon
 # gcp8y@virginia.edu
-#
-# Arguments:
-#
 
-# TODO:
+# TO DO:
 # 1. intelligent concatenating. Be sure we only concatenate two parts of the same observation.. e.g., "T0" and "T1"
-# DONE 2. Add basic continuum subtraction
-# 3. Self-discovery of measurement sets.
-#	3b. with auto-identification of the source and purpose of that obs?
+# 2. Self-discovery of measurement sets.
+#	2b. with auto-identification of the source and purpose of that obs?
 
 import os
 import string
