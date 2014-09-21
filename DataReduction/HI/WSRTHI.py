@@ -205,7 +205,7 @@ def WSRTHI(viz, calname, source, refant="RT4", flagRT5=True, FLAGGING=True,
         clean(vis=nvis, imagename=source, selectdata=False, mode='channel',
                 imsize=[256, 256], cell='6arcsec', niter=100000,
                 threshold='4mJy', interactive=False, multiscale=[],
-                usescratch=True)
+                spw='0:6~849', usescratch=True)
 
     # do a generic continuum subtraction
     if (CONTSUB):
@@ -220,12 +220,12 @@ def WSRTHI(viz, calname, source, refant="RT4", flagRT5=True, FLAGGING=True,
                 selectdata=False, mode='channel', interpolation='nearest',
                 imsize=[256, 256], cell='6arcsec', niter=1000000, 
                 threshold='4mJy', interactive=False, multiscale=[], width=FSMO,
-                usescratch=True)
+                spw='0:6~849', usescratch=True)
         # and make a continuum image
         clean(vis=nvis+'.cont', imagename=source+'.cont', selectdata=False,
                 mode='mfs', imsize=[256, 256], cell='6arcsec', niter=1000000,
                 threshold='4mJy', interactive=False, multiscale=[],
-                usescratch=True)
+                spw='0:6~849', usescratch=True)
 
     print "The following operations were performed on the data:"
     print "Flagging: "+str(FLAGGING)
