@@ -60,7 +60,7 @@ def WSRTHI(viz, calname, source, refant="RT4", flagRT5=True, FLAGGING=True,
         # start by flagging autocorrelations
         print "Flagging autocorrelations..."
         for vis in viz:
-            flagautocorr(vis=vis)
+            flagdata(vis=vis, mode='manual', autocorr=True)
 
         print "Flagging shadowed antennas..."
         for vis in viz:
