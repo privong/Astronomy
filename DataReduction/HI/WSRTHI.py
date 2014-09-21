@@ -11,7 +11,7 @@
 import os
 import string
 
-def WSRTHI(viz, source, refant="RT4", flagRT5=True, FLAGGING=True,
+def WSRTHI(viz, calname, source, refant="RT4", flagRT5=True, FLAGGING=True,
             GENCAL=True, APPLYCAL=True, MSCAT=False, IMAGE=False, FSMO=1,
             CONTSUB=False, CONTSUBIMG=False):
     """
@@ -19,6 +19,7 @@ def WSRTHI(viz, source, refant="RT4", flagRT5=True, FLAGGING=True,
 
 
     viz: array of .MS files to use
+    calname: name to use for calibrator source tables
     source: Name of the source
     refant (OPTIONAL, default: RT4): reference antenna to use for gaincal
     flagRT5 (OPTIONAL, default: True): flag antenna RT5 (being used in apertif testing)
@@ -32,6 +33,11 @@ def WSRTHI(viz, source, refant="RT4", flagRT5=True, FLAGGING=True,
     CONTSUBIMG (OPTIONAL, default: False): QND imaging of continuum subtracted and continuum
 		data.
     """
+
+    # generate cal table names
+    caltable=(calname+".gcal.01", calname+".bcal.01",
+                    calname+".gcal-int_p.02", calname+".gcal-inf_p.02",
+                    calname+".gcal-inf_ap.03")
 
     # be sure we have MS inputs. If they're UVFITS, convert them
     for i in range(len(viz)):
@@ -85,11 +91,6 @@ def WSRTHI(viz, source, refant="RT4", flagRT5=True, FLAGGING=True,
         setjyout = setjy(vis=viz[0], scalebychan=True, usescratch=True)
         print "Flux of "+setjyout['0']['fieldName']+" set to "+ \
                 str(setjyout['0']['0']['fluxd'][0])
-        # name our calibration tables
-        calname = setjyout['0']['fieldName']
-        caltable=(calname+".gcal.01", calname+".bcal.01",
-                    calname+".gcal-int_p.02", calname+".gcal-inf_p.02",
-                    calname+".gcal-inf_ap.03")
 
         # integration based phase calibration
         gaincal(vis=viz[0], caltable=caltable[0], field="", spw="", 
