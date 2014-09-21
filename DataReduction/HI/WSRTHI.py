@@ -64,18 +64,18 @@ def WSRTHI(viz, calname, source, refant="RT4", flagRT5=True, FLAGGING=True,
 
         print "Flagging shadowed antennas..."
         for vis in viz:
-            flagdata(vis=vis, mode='shadow', selectdata=False)
+            flagdata(vis=vis, mode='shadow')
 
         if (flagRT5):
             print "Flagging antenna RT5 (APERTIF testing)"
             for vis in viz:
-                flagdata(vis=vis, flagbackup=True, mode="manualflag",
-                            selectdata=True, antenna="RT5")
+                flagdata(vis=vis, flagbackup=True, mode="manual",
+                            antenna="RT5")
 
         print "Flagging channels on the edges of the bandpass."
         for vis in viz:
-            flagdata(vis=vis, flagbackup=True, mode="manualflag",
-                        spw="0:0~5;850~1024")
+            flagdata(vis=vis, flagbackup=True, mode="manual",
+                        spw="0:0~5;850~1023")
 
     if (GENCAL):
         print "---- Generating Calibration Tables ----"
