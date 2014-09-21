@@ -83,8 +83,8 @@ def WSRTHI(viz, source, refant="RT4", flagRT5=True, FLAGGING=True,
         # set the intitial flux density scale
         print "Setting flux density scale"
         setjyout = setjy(vis=viz[0], scalebychan=True, usescratch=True)
-        print "Flux of "+setjyout['0']['fieldName']+" set to "
-                +str(setjyout['0']['0']['fluxd'][0])
+        print "Flux of "+setjyout['0']['fieldName']+" set to "+ \
+                str(setjyout['0']['0']['fluxd'][0])
         # name our calibration tables
         calname = setjyout['0']['fieldName']
         caltable=(calname+".gcal.01", calname+".bcal.01",
@@ -99,7 +99,7 @@ def WSRTHI(viz, source, refant="RT4", flagRT5=True, FLAGGING=True,
                 gaintype="G", smodel=[], calmode="p", append=False,
                 splinetime=3600.0, npointaver=3, phasewrap=180.0,
                 gaintable=[''], gainfield=[''], interp=[''], spwmap=[], 
-                opacity=0.0, parang=False)
+                parang=False)
         # save a plot of the results
         plotcal(caltable=caltable[0], xaxis="time", yaxis="phase", poln="",
                 field="", antenna="", spw="", timerange="", subplot=111,
@@ -116,7 +116,7 @@ def WSRTHI(viz, source, refant="RT4", flagRT5=True, FLAGGING=True,
                     bandtype="B", append=False, fillgaps=0, degamp=3,
                     degphase=3, visnorm=False, maskcenter=0, maskedge=5,
                     gaintable=caltable[0], gainfield=[''], interp="nearest",
-                    spwmap=[], opacity=0.0, parang=False)
+                    spwmap=[], parang=False)
 
         # plot bandpass solution
         plotcal(caltable=caltable[1], xaxis="chan", yaxis="phase", poln="",
@@ -140,7 +140,7 @@ def WSRTHI(viz, source, refant="RT4", flagRT5=True, FLAGGING=True,
                 gaintype="G", smodel=[], calmode="p", append=False,
                 splinetime=3600.0, npointaver=3, phasewrap=180.0,
                 gaintable=caltable[1], gainfield=[''], interp="nearest",
-                spwmap=[], opacity=0.0, parang=False)
+                spwmap=[], parang=False)
 
         # scan based phase solution
         gaincal(vis=viz[0], caltable=caltable[3], field="", spw="",
@@ -150,7 +150,7 @@ def WSRTHI(viz, source, refant="RT4", flagRT5=True, FLAGGING=True,
                 gaintype="G", smodel=[], calmode="p", append=False,
                 splinetime=3600.0, npointaver=3, phasewrap=180.0,
                 gaintable=caltable[1], gainfield=[''], interp="nearest",
-                spwmap=[], opacity=0.0, parang=False)
+                spwmap=[], parang=False)
 
         # amplitude and phase scan based solution
         gaincal(vis=viz[0], caltable=caltable[4], field="", spw="",
@@ -160,7 +160,7 @@ def WSRTHI(viz, source, refant="RT4", flagRT5=True, FLAGGING=True,
                 gaintype="G", smodel=[], calmode="ap", append=False,
                 splinetime=3600.0, npointaver=3, phasewrap=180.0,
                 gaintable=[caltable[1], caltable[2]], gainfield=[''],
-                interp=["nearest", "nearest"], spwmap=[], opacity=0.0,
+                interp=["nearest", "nearest"], spwmap=[], 
                 parang=False)
 
     if (APPLYCAL):
