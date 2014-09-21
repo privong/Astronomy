@@ -86,7 +86,9 @@ def WSRTHI(viz, calname, source, refant="RT4", flagRT5=True, FLAGGING=True,
                     calname+".gcal-inf_ap.03")
 
         # set the intitial flux density scale
-        setjy(vis=viz[0])
+        print "Setting flux density scale"
+        setjyout = setjy(vis=viz[0], scalebychan=True, usescratch=True)
+        print setjyout
         # integration based phase calibration
         gaincal(vis=viz[0], caltable=caltable[0], field="", spw="", 
                 selectdata=False, timerange="", uvrange="", antenna="", 
