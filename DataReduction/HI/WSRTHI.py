@@ -99,7 +99,7 @@ def WSRTHI(viz, source, refant="RT4", flagRT5=True, FLAGGING=True,
                 gaintype="G", smodel=[], calmode="p", append=False,
                 splinetime=3600.0, npointaver=3, phasewrap=180.0,
                 gaintable=[''], gainfield=[''], interp=[''], spwmap=[], 
-                gaincurve=False, opacity=0.0, parang=False)
+                opacity=0.0, parang=False)
         # save a plot of the results
         plotcal(caltable=caltable[0], xaxis="time", yaxis="phase", poln="",
                 field="", antenna="", spw="", timerange="", subplot=111,
@@ -116,7 +116,7 @@ def WSRTHI(viz, source, refant="RT4", flagRT5=True, FLAGGING=True,
                     bandtype="B", append=False, fillgaps=0, degamp=3,
                     degphase=3, visnorm=False, maskcenter=0, maskedge=5,
                     gaintable=caltable[0], gainfield=[''], interp="nearest",
-                    spwmap=[], gaincurve=False, opacity=0.0, parang=False)
+                    spwmap=[], opacity=0.0, parang=False)
 
         # plot bandpass solution
         plotcal(caltable=caltable[1], xaxis="chan", yaxis="phase", poln="",
@@ -140,7 +140,7 @@ def WSRTHI(viz, source, refant="RT4", flagRT5=True, FLAGGING=True,
                 gaintype="G", smodel=[], calmode="p", append=False,
                 splinetime=3600.0, npointaver=3, phasewrap=180.0,
                 gaintable=caltable[1], gainfield=[''], interp="nearest",
-                spwmap=[], gaincurve=False, opacity=0.0, parang=False)
+                spwmap=[], opacity=0.0, parang=False)
 
         # scan based phase solution
         gaincal(vis=viz[0], caltable=caltable[3], field="", spw="",
@@ -150,7 +150,7 @@ def WSRTHI(viz, source, refant="RT4", flagRT5=True, FLAGGING=True,
                 gaintype="G", smodel=[], calmode="p", append=False,
                 splinetime=3600.0, npointaver=3, phasewrap=180.0,
                 gaintable=caltable[1], gainfield=[''], interp="nearest",
-                spwmap=[], gaincurve=False, opacity=0.0, parang=False)
+                spwmap=[], opacity=0.0, parang=False)
 
         # amplitude and phase scan based solution
         gaincal(vis=viz[0], caltable=caltable[4], field="", spw="",
@@ -160,8 +160,8 @@ def WSRTHI(viz, source, refant="RT4", flagRT5=True, FLAGGING=True,
                 gaintype="G", smodel=[], calmode="ap", append=False,
                 splinetime=3600.0, npointaver=3, phasewrap=180.0,
                 gaintable=[caltable[1], caltable[2]], gainfield=[''],
-                interp=["nearest", "nearest"], spwmap=[], gaincurve=False,
-                opacity=0.0, parang=False)
+                interp=["nearest", "nearest"], spwmap=[], opacity=0.0,
+                parang=False)
 
     if (APPLYCAL):
         print "---- Applying Calibration to the data ----"
@@ -171,22 +171,19 @@ def WSRTHI(viz, source, refant="RT4", flagRT5=True, FLAGGING=True,
                     uvrange="", antenna="", scan="", msselect="",
                     gaintable=[caltable[1], caltable[2], caltable[4]],
                     gainfield=[''], interp=['nearest',  'nearest',  'nearest'],
-                    spwmap=[], gaincurve=False, opacity=0.0, parang=False,
-                    calwt=True)
+                    spwmap=[], opacity=0.0, parang=False, calwt=True)
 
         # apply to the two MS for the target
         applycal(vis=viz[1], field="", spw="", selectdata=False, timerange="",
                     uvrange="", antenna="", scan="", msselect="",
                     gaintable=[caltable[1], caltable[3], caltable[4]],
                     gainfield=[''], interp=['nearest',  'nearest',  'nearest'],
-                    spwmap=[], gaincurve=False, opacity=0.0, parang=False,
-                    calwt=True)
+                    spwmap=[], opacity=0.0, parang=False, calwt=True)
         applycal(vis=viz[2], field="", spw="", selectdata=False, timerange="",
                     uvrange="", antenna="", scan="", msselect="",
                     gaintable=[caltable[1], caltable[3], caltable[4]],
                     gainfield=[''], interp=['nearest',  'nearest',  'nearest'],
-                    spwmap=[], gaincurve=False, opacity=0.0, parang=False,
-                    calwt=True)
+                    spwmap=[], opacity=0.0, parang=False, calwt=True)
 
         print "Finished applying calibrations to the raw data."
 
