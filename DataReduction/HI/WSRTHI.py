@@ -172,19 +172,19 @@ def WSRTHI(viz, calname, source, refant="RT4", flagRT5=True, FLAGGING=True,
                     uvrange="", antenna="", scan="", msselect="",
                     gaintable=[caltable[1], caltable[2], caltable[4]],
                     gainfield=[''], interp=['nearest',  'nearest',  'nearest'],
-                    spwmap=[], opacity=0.0, parang=False, calwt=True)
+                    spwmap=[], parang=False, calwt=True)
 
         # apply to the two MS for the target
         applycal(vis=viz[1], field="", spw="", selectdata=False, timerange="",
                     uvrange="", antenna="", scan="", msselect="",
                     gaintable=[caltable[1], caltable[3], caltable[4]],
                     gainfield=[''], interp=['nearest',  'nearest',  'nearest'],
-                    spwmap=[], opacity=0.0, parang=False, calwt=True)
+                    spwmap=[], parang=False, calwt=True)
         applycal(vis=viz[2], field="", spw="", selectdata=False, timerange="",
                     uvrange="", antenna="", scan="", msselect="",
                     gaintable=[caltable[1], caltable[3], caltable[4]],
                     gainfield=[''], interp=['nearest',  'nearest',  'nearest'],
-                    spwmap=[], opacity=0.0, parang=False, calwt=True)
+                    spwmap=[], parang=False, calwt=True)
 
         print "Finished applying calibrations to the raw data."
 
