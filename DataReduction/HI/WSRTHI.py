@@ -11,7 +11,7 @@
 import os
 import string
 
-def WSRTHI(viz, calname, source, refant="RT4", flagRT5=True, FLAGGING=True,
+def WSRTHI(viz, source, refant="RT4", flagRT5=True, FLAGGING=True,
             GENCAL=True, APPLYCAL=True, MSCAT=False, IMAGE=False, FSMO=1,
             CONTSUB=False, CONTSUBIMG=False):
     """
@@ -19,7 +19,6 @@ def WSRTHI(viz, calname, source, refant="RT4", flagRT5=True, FLAGGING=True,
 
 
     viz: array of .MS files to use
-    calname: Name of the primary calibrator in the first MS file
     source: Name of the source
     refant (OPTIONAL, default: RT4): reference antenna to use for gaincal
     flagRT5 (OPTIONAL, default: True): flag antenna RT5 (being used in apertif testing)
@@ -80,16 +79,18 @@ def WSRTHI(viz, calname, source, refant="RT4", flagRT5=True, FLAGGING=True,
     if (GENCAL):
         print "---- Generating Calibration Tables ----"
 
-        # name our calibration tables
-        caltable=(calname+".gcal.01", calname+".bcal.01",
-                    calname+".gcal-int_p.02", calname+".gcal-inf_p.02",
-                    calname+".gcal-inf_ap.03")
 
         # set the intitial flux density scale
         print "Setting flux density scale"
         setjyout = setjy(vis=viz[0], scalebychan=True, usescratch=True)
         print "Flux of "+setjyout['0']['fieldName']+" set to "
                 +str(setjyout['0']['0']['fluxd'][0])
+        # name our calibration tables
+        calname = setjyout['0']['fieldName']
+        caltable=(calname+".gcal.01", calname+".bcal.01",
+                    calname+".gcal-int_p.02", calname+".gcal-inf_p.02",
+                    calname+".gcal-inf_ap.03")
+
         # integration based phase calibration
         gaincal(vis=viz[0], caltable=caltable[0], field="", spw="", 
                 selectdata=False, timerange="", uvrange="", antenna="", 
