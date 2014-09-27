@@ -51,7 +51,7 @@ for file1 in args.files:
         bias.append(file)
       elif re.match('dark',frame[0].header["IMAGETYP"]):
         darks.append(file)
-      elif re.match('object',frame[0].header["IMAGETYP"]) and not(re.match('Focus',frame[0].header["OBJECT"])):
+      elif re.match('object',frame[0].header["IMAGETYP"]):
         # get the filter name
         thisfil=frame[0].header["FILTER"]
         if not(thisfil in filters):
@@ -143,7 +143,7 @@ else:
     sbias=pyfits.open(image)
     # copy over the keywords we want
     for kw in kprop:
-      if sbias[0].header.has_key(kw):
+      if kw in sbias[0].header:
         frame.header.set(kw,sbias[0].header[kw])
     # add header comments
     frame.header['IMAGETYP']='masterbias'
@@ -267,7 +267,7 @@ for filter in filters:
     sflat=pyfits.open(image[0])
     # copy over the keywords we want
     for kw in kprop:
-      if sflat[0].header.has_key(kw):
+      if kw in sflat[0].header:
         frame.header.set(kw,sflat[0].header[kw])
     # change the header keyword to masterflat
     frame.header['IMAGETYP']='masterflat'
