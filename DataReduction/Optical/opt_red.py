@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 #
 # opt_red.py
 #
@@ -22,11 +22,11 @@ import argparse
 # parse arguments
 parser=argparse.ArgumentParser(description='Pipeline to generate master bias and flat frames, then apply those master calibration files to a batch of science observations.')
 parser.add_argument('files',nargs='*',help='files to process')
-parser.add_argument('-t','--telescope',action='store',help='Specify telescope type',choices=['VATT','90Prime'])
+parser.add_argument('-t','--telescope',action='store',default='none',help='Specify telescope type',choices=['VATT','90Prime'])
 parser.add_argument('-p','--plot',action='store_true',help='Plot diagnostics to the screen and pause before continuing?')
 parser.add_argument('--masterbias',action='store',help='Use this master bias file instead of generating a new one')
 parser.add_argument('--masterflat',action='store',help='Use this master flat file instead of generating a new one')
-parser.add_argument('-v','--verbose',action='store_true',help='Provide additional output. Mostly useful for debugging.')
+parser.add_argument('-v','--verbose',action='store_true',default=False,help='Provide additional output. Mostly useful for debugging.')
 
 args=parser.parse_args()
 
@@ -47,7 +47,7 @@ for file1 in args.files:
     if os.path.isfile(file):
       frame=pyfits.open(file)
       thisfil=0
-      if re.match('zero',frame[0].header["IMAGETYP"]):
+      if re.match('zero',frame[0].header["IMAGETYP"]) or re.match('bias',frame[0].header["IMAGETYP"]):
         bias.append(file)
       elif re.match('dark',frame[0].header["IMAGETYP"]):
         darks.append(file)
@@ -144,7 +144,7 @@ else:
     # copy over the keywords we want
     for kw in kprop:
       if sbias[0].header.has_key(kw):
-        frame.header.update(kw,sbias[0].header[kw])
+        frame.header.set(kw,sbias[0].header[kw])
     # add header comments
     frame.header['IMAGETYP']='masterbias'
     frame.header.add_history(datenow+' - Masterbias created')
@@ -268,7 +268,7 @@ for filter in filters:
     # copy over the keywords we want
     for kw in kprop:
       if sflat[0].header.has_key(kw):
-        frame.header.update(kw,sflat[0].header[kw])
+        frame.header.set(kw,sflat[0].header[kw])
     # change the header keyword to masterflat
     frame.header['IMAGETYP']='masterflat'
     # add header comments
