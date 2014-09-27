@@ -95,7 +95,7 @@ else:
   for image in bias:
     # need to un-fix this later when more telescopes are added
     idata=mysci.Telload(image,Tel=args.telescope,quiet=not(args.verbose))
-    idata=idata.reshape((1,idata.shape[0],idata.shape[1],idata.shape[2]))
+    #idata=idata.reshape((1,idata.shape[0],idata.shape[1],idata.shape[2]))
     if bframes.ndim<2:
       #bframes.resize((1,idata.shape[0],idata.shape[1],idata.shape[2]))
       bframes=idata.copy()
@@ -223,12 +223,12 @@ for filter in filters:
       # yay, it's a filter we want, load it up
       sys.stderr.write('.')
       idata=mysci.Telload(image[0],Tel=args.telescope,quiet=not(args.verbose))
-#      idata.reshape((1,idata.shape[0],idata.shape[1],idata.shape[2]))
+      #idata.reshape((1,idata.shape[0],idata.shape[1],idata.shape[2]))
       if args.verbose:
         sys.stderr.write('\nmbias.shape='+str(mbias.shape)+'\tidata.shape='+str(idata.shape)+'\n\n')
       # bias subtract the flat image
       idata=idata-mbias
-      idata.resize(1,idata.shape[0],idata.shape[1],idata.shape[2])
+      #idata.resize(1,idata.shape[0],idata.shape[1],idata.shape[2])
       # add that flat field image onto the stack
       if fframes.ndim<2:
         # this is our first flat, initialize the stack
@@ -247,7 +247,7 @@ for filter in filters:
   if mflats.ndim<2:
     # we haven't initialized the stack yet, do it
     mflats=mflat*1.0
-    mflats.resize((1,mflat.shape[0],mflat.shape[1],mflat.shape[2]))
+    #mflats.resize((1,mflat.shape[0],mflat.shape[1],mflat.shape[2]))
   else:
     # stack has been initialized already, add our new master flat onto the stack
     mflats=numpy.concatenate((mflats,mflat),axis=0)
@@ -311,7 +311,7 @@ for filter in filters:
       # bias subtract
       idata=idata-mbias
       # flat field
-      idata=idata/mflats[flatnum,:,:]
+      idata=idata/mflats[flatnum]
       rootn=re.split('.fits',image[0])[0]
       fname=rootn+'-bsub_flat.fits'
       if os.path.isfile(fname):
