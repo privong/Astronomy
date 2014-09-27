@@ -90,8 +90,8 @@ else:
   median=[]
   stddev=[]
   bframes=numpy.array([0])
-  sys.stderr.write('Creating a master bias file\n')
-  sys.stderr.write('Loading bias frames')
+  sys.stderr.write('Creating a master bias file...\n')
+  sys.stderr.write('Loading bias frames...\n')
   for image in bias:
     # need to un-fix this later when more telescopes are added
     idata=mysci.Telload(image,Tel=args.telescope,quiet=not(args.verbose))
@@ -108,8 +108,8 @@ else:
 				   # steps, we won't do it
     median.append(numpy.median(idata))
     if args.verbose:
-      sys.stderr.write('\nMean: '+str(numpy.mean(idata))+'\tMedian: '+str(numpy.median(idata))+'\Stddev: '+str(numpy.std(idata))+'\n')
-    sys.stderr.write('.')
+      sys.stderr.write('\nMean: '+str(numpy.mean(idata))+'\tMedian: '+str(numpy.median(idata))+'\tstddev: '+str(numpy.std(idata)))
+      sys.stderr.write('.\n')
   
   sys.stderr.write('\n')
   sys.stderr.write('Loaded '+str(len(mean))+' bias frames.\n')
@@ -221,7 +221,6 @@ for filter in filters:
   for image in flats:
     if re.match(filter,image[1]):
       # yay, it's a filter we want, load it up
-      sys.stderr.write('.')
       idata=mysci.Telload(image[0],Tel=args.telescope,quiet=not(args.verbose))
       #idata.reshape((1,idata.shape[0],idata.shape[1],idata.shape[2]))
       if args.verbose:
@@ -300,7 +299,7 @@ del fframes
 sys.stderr.write('\n\nProcessing object frames (bias and flat correction)\n')
 i=0
 for filter in filters:
-  sys.stderr.write('Filter: '+filter)
+  sys.stderr.write('Filter: '+filter+'.\n')
   # locate the flat we want to use
   flatnum=filters.index(filter)
   for image in objects:
