@@ -335,42 +335,54 @@ def Telload(file,Tel='none',mode='readonly',quiet=True):
 ################################################################################
 # CSV functions
 
-def CSVtoDict(infile,usecols=None,delimiter=',',haveunits=False, dtype=None):
-  """
-  Opens infile and converts it to a dictionary.
+def CSVtoDict(infile,usecols=None,delimiter=',',haveunits=False, dtype=None,
+              keycol=False):
+    """
+    Opens infile and converts it to a dictionary.
 
-  Assumes the first non-skipped line has column titles. If haveunits is True, 
-  the second non-skipped line is assumed to have units.
+    Assumes the first non-skipped line has column titles. If haveunits is True,
+    the second non-skipped line is assumed to have units.
 
-  """
-  vals=_np.genfromtxt(infile,usecols=usecols,delimiter=delimiter, dtype=dtype)
-  key=[]
-  cols=[]
-  units=[]
-  infile=open(infile,'r')
-  count=0
-  for line in infile:
-    if count==0 and line[0]=='#':
-      sline=line.split(delimiter)
-      for a in usecols:
-        cols.append(sline[a])
-      count=1
-    elif haveunits and count==1:
-      sline=line.split(delimiter)
-      for a in usecols:
-        units.append(sline[a])
-      count=2
-    elif (haveunits and count>1) or (count>0 and not(haveunits)) :
-      line=line.split(delimiter)
-      key.append(line[0])
-  infile.close()
-  out={}
-  for i in range(len(key)):
-    out[key[i]]={}
-    for j in range(len(cols)):
-      out[key[i]][cols[j]]=vals[i][j]
+    If keycol is not false, that column number is used as the key for the
+    returned dictionary.
 
-  return out
+    """
+    vals=_np.genfromtxt(infile, usecols=usecols, delimiter=delimiter,
+                        dtype=dtype)
+    key = []
+    cols = []
+    units = []
+    infile = open(infile, 'r')
+    count = 0
+    for line in infile:
+        if count == 0 and line[0] == '#':
+            sline = line.split(delimiter)
+            for a in usecols:
+                cols.append(sline[a])
+            count = 1
+        elif haveunits and count == 1:
+            sline = line.split(delimiter)
+            for a in usecols:
+                units.append(sline[a])
+            count = 2
+        elif (haveunits and count > 1) or (count > 0 and not(haveunits)):
+            line = line.split(delimiter)
+            key.append(line[0])
+    infile.close()
+    out={}
+    if keycol is False:     # first column of CSV file becomes the dict keys
+        for i in range(len(key)):
+            out[key[i]] = {}
+            for j in range(len(cols)):
+                out[key[i]][cols[j]] = vals[i][j]
+    else:                   # use specified column as the dict key
+        for i in range(len(key)):
+            out[vals[i][keycol]] = {}
+            for j in range(len(cols)):
+                if j != keycol:
+                    out[vals[i][keycol]][cols[j]] = vals[i][j]
+
+    return out
 
 # End CSV functions
 ################################################################################
