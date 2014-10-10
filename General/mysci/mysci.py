@@ -335,7 +335,7 @@ def Telload(file,Tel='none',mode='readonly',quiet=True):
 ################################################################################
 # CSV functions
 
-def CSVtoDict(infile,usecols=None,delimiter=',',haveunits=False):
+def CSVtoDict(infile,usecols=None,delimiter=',',haveunits=False, dtype=None):
   """
   Opens infile and converts it to a dictionary.
 
@@ -343,7 +343,7 @@ def CSVtoDict(infile,usecols=None,delimiter=',',haveunits=False):
   the second non-skipped line is assumed to have units.
 
   """
-  vals=_np.genfromtxt(infile,usecols=usecols,delimiter=delimiter)
+  vals=_np.genfromtxt(infile,usecols=usecols,delimiter=delimiter, dtype=dtype)
   key=[]
   cols=[]
   units=[]
