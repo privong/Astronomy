@@ -48,14 +48,13 @@ kprop = ['DETSIZE', 'CCDSUM', 'TIMESYS', 'OBJECT', 'DATE-OBS', 'DARKTIME',
          'JULIAN', 'OBSERVAT', 'EPOCH', 'CAMTEMP', 'UT', 'TIME-OBS', 'ST',
          'EXPTIME']
 
-# initialize some lists
 darks = []    # list of dark frames
 bias = []        # list of bias frames
 filters = []    # list of filters used
 flats = []    # flat frames (will be a 2D array, file ID and filter ID)
 objects = []    # object frames (2D array, as above)
 
-# identify the files
+# sort files by type
 for file1 in args.files:
     file1 = glob.glob(file1)
     for file in file1:
@@ -68,22 +67,19 @@ for file1 in args.files:
             elif re.match('dark', frame[0].header["IMAGETYP"]):
                 darks.append(file)
             elif re.match('object', frame[0].header["IMAGETYP"]):
-                # get the filter name
                 thisfil = frame[0].header["FILTER"]
                 if not(thisfil in filters):
-                    # filter isn't in our list, add it!
                     filters.append(thisfil)
                 objects.append((file, thisfil))
             elif re.match('flat', frame[0].header["IMAGETYP"]):
                 thisfil = frame[0].header["FILTER"]
                 if not(thisfil in filters):
-                    # filter isn't in our list, add it!
                     filters.append(thisfil)
                 flats.append((file, thisfil))
             else:
                 sys.stderr.write(file+' - unknown image type, ignoring.\n')
             frame.close()
-# print out some info
+
 sys.stderr.write(str(len(args.files)) + ' files inspected.\n')
 sys.stderr.write(str(len(darks)) + ' dark frames found. ')
 sys.stderr.write(str(len(bias)) + ' bias frames found. ')
@@ -104,8 +100,7 @@ if args.masterbias:
                          args.masterbias+'\n\n')
         mbias = mysci.Telload(args.masterbias, Tel=args.telescope,
                               quiet=not(args.verbose))
-else:
-    # make a master bias
+else:   # make a master bias
     mean = []
     median = []
     stddev = []
@@ -146,13 +141,12 @@ else:
         plt.scatter(range(len(stddev)), stddev, color='green', label='Stddev')
         plt.legend()
         plt.show()
-    # right now take all the frames, we'll deal with dropping frames later
+    # right now take all the frames, need to add selective frame-ignoring
     mbias = np.mean(bframes, axis=0)
     if args.verbose:
         sys.stderr.write(str(bframes.shape) + '\n')
         sys.stderr.write(str(mbias.shape) + '\n')
 
-    # get the date
     datenow = datetime.datetime.today().isoformat()
 
     # if we're dealing with a single fits extension, create a new file
@@ -169,7 +163,7 @@ else:
         for kw in kprop:
             if kw in sbias[0].header:
                 frame.header.set(kw, sbias[0].header[kw])
-        # add header comments
+        # add reduction info to header
         frame.header['IMAGETYP'] = 'masterbias'
         frame.header.add_history(datenow + ' - Masterbias created')
         frame.header.add_comment('Master bias created from mean of: ' +
@@ -194,8 +188,6 @@ else:
         frame.close()
 
     sys.stderr.write('\n')
-
-    # delete variables we no longer need
     del bframes
 
 sys.stderr.write('\n\n\nNOTE: We are ignoring dark frames at the
@@ -246,25 +238,20 @@ for filter in filters:
     sys.stderr.write("Making master flat field for filter: " + filter + ' ')
     fframes = np.array([0])
     stddev = []
-    # we've selected a filter, now loop over files
     for image in flats:
         if re.match(filter, image[1]):
-            # yay, it's a filter we want, load it up
             idata = mysci.Telload(image[0], Tel=args.telescope,
                                   quiet=not(args.verbose))
             # idata.reshape((1,idata.shape[0],idata.shape[1],idata.shape[2]))
             if args.verbose:
                 sys.stderr.write('\nmbias.shape=' + str(mbias.shape) +
                                  '\tidata.shape=' + str(idata.shape)+'\n\n')
-            # bias subtract the flat image
             idata = idata-mbias
             # idata.resize(1,idata.shape[0],idata.shape[1],idata.shape[2])
             # add that flat field image onto the stack
             if fframes.ndim < 2:
-                # this is our first flat, initialize the stack
                 fframes = idata/np.median(idata)
             else:
-                # concatenate other flats onto the stack
                 fframes = np.concatenate((fframes, idata/np.median(idata)),
                                          axis=0)
             stddev.append(np.std(idata/np.mean(idata)))
@@ -277,13 +264,10 @@ for filter in filters:
     mfname = filter + '_masterflat.fits'
     # add that master flat to the stack of master flats
     if mflats.ndim < 2:
-        # we haven't initialized the stack yet, do it
         mflats = mflat*1.0
         # mflats.resize((1,mflat.shape[0],mflat.shape[1],mflat.shape[2]))
     else:
-        # stack has been initialized, add new master flat to the stack
         mflats = np.concatenate((mflats, mflat), axis=0)
-    # check for existence of the master flat file
     if os.path.isfile(mfname):
         sys.stderr.write('Deleting existing ' + mfname+'\n')
         raw_input('PRESS ENTER TO CONTINUE')
@@ -298,13 +282,10 @@ for filter in filters:
                              creating a new fits file.\n')
         frame = pyfits.PrimaryHDU(mflat)
         sflat = pyfits.open(image[0])
-        # copy over the keywords we want
         for kw in kprop:
             if kw in sflat[0].header:
                 frame.header.set(kw, sflat[0].header[kw])
-        # change the header keyword to masterflat
         frame.header['IMAGETYP'] = 'masterflat'
-        # add header comments
         frame.header.add_history(datenow + ' - Master Flat created')
         sflat.close()
         sys.stderr.write('\tsaving master flat as: ')
@@ -344,9 +325,9 @@ for filter in filters:
             idata = mysci.Telload(image[0], Tel=args.telescope,
                                   quiet=not(args.verbose))
             datenow = datetime.datetime.today().isoformat()
-            # bias subtract
+
             idata = idata-mbias
-            # flat field
+
             idata = idata/mflats[flatnum]
             rootn = re.split('.fits', image[0])[0]
             fname = rootn + '-bsub_flat.fits'
