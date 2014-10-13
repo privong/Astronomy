@@ -365,7 +365,8 @@ def CSVtoDict(infile,usecols=None,delimiter=',',haveunits=False, dtype=None,
             for a in usecols:
                 units.append(sline[a])
             count = 2
-        elif (haveunits and count > 1) or (count > 0 and not(haveunits)):
+        elif (haveunits and count > 1) or (count > 0 and not(haveunits)) and \
+             not(line[0] == '#'):
             line = line.split(delimiter)
             key.append(line[0])
     infile.close()
