@@ -120,7 +120,13 @@ def SegtoDecimal(seg,RA=False):
     seg.append(temp)
   else:			# to cover whitespace separated values
     seg=seg.split()
-  sign=_np.sign(float(seg[0]))
+  if float(seg[0]) == 0:
+    if seg[0][0] == '-':
+      sign = -1.0
+    else:
+      sign = 1.0
+  else:
+    sign=_np.sign(float(seg[0]))
   if sign<0 and RA:
     _sys.stderr.write("Uh, RA has a negative value. That's weird. Returning nan.n")
     return _np.nan
