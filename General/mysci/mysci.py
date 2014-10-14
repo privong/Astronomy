@@ -128,7 +128,7 @@ def SegtoDecimal(seg,RA=False):
   else:
     sign=_np.sign(float(seg[0]))
   if sign<0 and RA:
-    _sys.stderr.write("Uh, RA has a negative value. That's weird. Returning nan.n")
+    _sys.stderr.write("Uh, RA has a negative value. That's weird. Returning nan.\n")
     return _np.nan
   if RA and float(seg[0])>24.:
     _sys.stderr.write("RA is greater than 24 hours. Are you sure you're passing the correct arguments?\n")
