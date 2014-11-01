@@ -77,9 +77,8 @@ def checkRef(entry, confirm=False):
         return False
 
 
-parser = argparse.ArgumentParser(description="Update arXiv entries in a bibtex
-                                              file with subsequently published
-                                              papers.")
+parser = argparse.ArgumentParser(description="Update arXiv entries in a bibtex \
+                                 file with subsequently published papers.")
 parser.add_argument('bibfile', action='store', type=str, default=False,
                     help='BibTeX file')
 parser.add_argument('--confirm', action='store_true', default=False,
@@ -100,24 +99,21 @@ shutil.copy2(args.bibfile, args.bibfile + 'ads_updater.bak')
 upcount = 0
 match = False
 j = 0
-for j in range(len(bp.records)):
-    thisref = bp.records[j]
+for j in range(len(bp.entries)):
+    thisref = bp.entries[j]
     if thisref['type'] == 'article':  # not interested in anything else
         if 'journal' in thisref.keys():
-            if re.search('arxiv', thisref['journal']) or \
-               re.search('arXiv', thisref['journal']):
+            if re.search('arxiv', thisref['journal'], re.IGNORECASE):
                 match = True
         elif 'Journal' in thisref.keys():
-            if re.search('arxiv', thisref['Journal']) or \
-               re.search('arXiv', thisref['Journal']):
+            if re.search('arxiv', thisref['Journal'], re.IGNORECASE):
                 match = True
         else:
             if 'arxivid' in thisref.keys():
                 match = True
             else:
-                sys.stdout.write(thisref['id'] +
-                                 ' does not have a journal entry or arXiv
-                                  ID.\n')
+                sys.stdout.write(thisref['id'] + \
+                                 ' does not have a journal entry or arXiv ID.\n')
 
         if match:
             match = False   # reset
@@ -126,7 +122,7 @@ for j in range(len(bp.records)):
             res = checkRef(thisref, args.confirm)
             if res:
                 upcount += 1
-                bp.records[j] = res
+                bp.entries[j] = res
                 sys.stdout.write(thisref['id'] +
                                  " updated. Please verify changes.\n")
                 newbib = to_bibtex(bp)
