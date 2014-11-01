@@ -34,6 +34,8 @@ def checkRef(entry, confirm=False):
         for i in res:
             try:    # only want things that are published
                 print i.pub
+                if re.search('arxiv', i.pub, re.IGNORECASE):
+                    continue
             except:
                 continue
             if confirm:
