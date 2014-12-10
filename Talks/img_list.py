@@ -6,15 +6,27 @@
 import re
 import sys
 import os
+import argparse
 
+parser = argparse.ArgumentParser(description='Scan a TeX file and a directory \
+                                              to look for unused files. \
+                                              Optionally, suggest a renmaing \
+                                              of files to match figure order.')
+parser.add_argument('texfile', type=str, help='TeX file to scan.')
+"""
+parser.add_argument('-r', '--reorder', action='store_true',
+                    default=False, help='Suggest renaming of files to match \
+                                         order of figures in the file.')
+"""
+args = parser.parse_args()
 
 suffix = ['jpg', 'png', 'gif', 'pdf', 'eps', 'ps']
 
 try:
-    texfile = open(sys.argv[1])
+    texfile = open(args.texfile)
 except:
-    sys.stderr.write("Error: couldn't open a file for reading.\n\n")
-    sys.stderr.write("Usage: " + sys.argv[0] + " file.tex\n\n")
+    sys.stderr.write("Error: couldn't open " + args.texfile +
+                     "for reading.\n\n")
     sys.exit(1)
 
 imglist = []
@@ -50,6 +62,14 @@ if imglist:
     for img in imglist:
         sys.stdout.write(img + ", ")
     sys.stdout.write("\n\n")
+    """
+    if args.reorder:
+        sys.stdout.write("To rename figures to match order in text: \n")
+        for i, img in enumerate(imglist):
+            sys.stdout.write("\tmv " + img + " fig" + str(i) + "." +
+                             img.rsplit('.')[1] + "\n")
+    """
+
 else:
     sys.stderr.write("Found no images to be included in TeX file.\n")
 if rmlist:
