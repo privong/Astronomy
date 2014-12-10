@@ -8,7 +8,7 @@ import sys
 import os
 
 
-suffix = ['jpg', 'png', 'gif', 'pdf']
+suffix = ['jpg', 'png', 'gif', 'pdf', 'eps', 'ps']
 
 try:
     texfile = open(sys.argv[1])
