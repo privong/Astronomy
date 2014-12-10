@@ -13,7 +13,9 @@ suffix = ['jpg', 'png', 'gif', 'pdf', 'eps', 'ps']
 try:
     texfile = open(sys.argv[1])
 except:
-    sys.stderr.write("Error, couldn't open " + sys.argv[1] + " for reading.\n")
+    sys.stderr.write("Error: couldn't open a file for reading.\n\n")
+    sys.stderr.write("Usage: " + sys.argv[0] + " file.tex\n\n")
+    sys.exit(1)
 
 imglist = []
 rmlist = []
