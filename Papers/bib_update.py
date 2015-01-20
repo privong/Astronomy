@@ -83,7 +83,7 @@ parser = argparse.ArgumentParser(description="Update arXiv entries in a bibtex \
                                  file with subsequently published papers.")
 parser.add_argument('bibfile', action='store', type=str, default=False,
                     help='BibTeX file')
-parser.add_argument('--confirm', action='store_true', default=False,
+parser.add_argument('--confirm', '-c', action='store_true', default=False,
                     help='If passed, confirm each entry.')
 args = parser.parse_args()
 
