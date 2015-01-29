@@ -256,13 +256,13 @@ def PosMatch(pos1,pos2,name1=None,name2=None,posTol=60.*_u.arcsec):
   """
 
   # homogenize positions
-  if type(pos1[0]) is str:
+  if type(pos1[0]) is str or type(pos1[0]) is _np.string_:
     pos1[0]=SegtoDecimal(pos1[0],RA=True)
-  if type(pos1[1]) is str:
+  if type(pos1[1]) is str or type(pos1[1]) is _np.string_:
     pos1[1]=SegtoDecimal(pos1[1],RA=False)
-  if type(pos2[0]) is str:
+  if type(pos2[0]) is str or type(pos2[0]) is _np.string_:
     pos2[0]=SegtoDecimal(pos2[0],RA=True)
-  if type(pos2[1]) is str:
+  if type(pos2[1]) is str or type(pos2[1]) is _np.string_:
     pos2[1]=SegtoDecimal(pos2[1],RA=False)
 
   # determine posTol character and homogenize
