@@ -258,14 +258,25 @@ def PosMatch(pos1,pos2,name1=None,name2=None,posTol=60.*_u.arcsec):
   # homogenize positions
   if type(pos1[0]) is str or type(pos1[0]) is _np.string_:
     pos1[0]=SegtoDecimal(pos1[0],RA=True)
+  elif not(type(pos1[0]) is _u.quantity.Quantity):
+    pos1[0] *= _u.deg
   if type(pos1[1]) is str or type(pos1[1]) is _np.string_:
     pos1[1]=SegtoDecimal(pos1[1],RA=False)
+  elif not(type(pos1[1]) is _u.quantity.Quantity):
+    pos1[1] *= _u.deg
   if type(pos2[0]) is str or type(pos2[0]) is _np.string_:
     pos2[0]=SegtoDecimal(pos2[0],RA=True)
+  elif not(type(pos2[0]) is _u.quantity.Quantity):
+    pos2[0] *= _u.deg
   if type(pos2[1]) is str or type(pos2[1]) is _np.string_:
     pos2[1]=SegtoDecimal(pos2[1],RA=False)
+  elif not(type(pos2[1]) is _u.quantity.Quantity):
+    pos2[1] *= _u.deg
 
   # determine posTol character and homogenize
+  if not(type(posTol) is _u.quantity.Quantity):
+    _sys.stderr.write("WARNING: No units given for posTol, assuming arcsec.\n")
+    posTol *= u.arcsec
 
   if angDist(pos1,pos2) < posTol:
     return True
