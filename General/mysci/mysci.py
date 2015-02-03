@@ -276,7 +276,7 @@ def PosMatch(pos1,pos2,name1=None,name2=None,posTol=60.*_u.arcsec):
   # determine posTol character and homogenize
   if not(type(posTol) is _u.quantity.Quantity):
     _sys.stderr.write("WARNING: No units given for posTol, assuming arcsec.\n")
-    posTol *= u.arcsec
+    posTol *= _u.arcsec
 
   if angDist(pos1,pos2) < posTol:
     return True
