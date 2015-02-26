@@ -78,6 +78,11 @@ def checkRef(entry, confirm=False):
                 return entry
         return False
 
+def aref(entry, confirm=False):
+    """
+    Check ADS for a preprint associated with a published article.
+    """
+
 
 parser = argparse.ArgumentParser(description="Update arXiv entries in a bibtex \
                                  file with subsequently published papers.")
@@ -85,6 +90,9 @@ parser.add_argument('bibfile', action='store', type=str, default=False,
                     help='BibTeX file')
 parser.add_argument('--confirm', '-c', action='store_true', default=False,
                     help='If passed, confirm each entry.')
+parser.add_argument('--arXiv', '-a', action='store_true', default=False,
+                    help='For published entries, Search ADS for an arXiv \
+                          entries if not present.')
 args = parser.parse_args()
 
 if os.path.isfile(args.bibfile):
@@ -99,7 +107,9 @@ else:
 shutil.copy2(args.bibfile, args.bibfile + 'ads_updater.bak')
 
 upcount = 0
+acount = 0
 match = False
+aphsearch = False
 j = 0
 for j in range(len(bp.entries)):
     thisref = bp.entries[j]
@@ -107,9 +117,13 @@ for j in range(len(bp.entries)):
         if 'journal' in thisref.keys():
             if re.search('arxiv', thisref['journal'], re.IGNORECASE):
                 match = True
+            elif args.arXiv:
+                aphserach = True
         elif 'Journal' in thisref.keys():
             if re.search('arxiv', thisref['Journal'], re.IGNORECASE):
                 match = True
+            elif args.arXiv:
+                aphserach = True
         else:
             if 'arxivid' in thisref.keys():
                 match = True
@@ -128,14 +142,33 @@ for j in range(len(bp.entries)):
                 sys.stdout.write(thisref['id'] +
                                  " updated. Please verify changes.\n")
                 newbib = to_bibtex(bp)
-                # replace bibtex file as we go, every 10 fixes :)
-                if upcount % 20 == 0:
+                if upcount + acount % 20 == 0:
                     outf = codecs.open(args.bibfile, 'w', 'utf-8')
                     outf.write(newbib)
                     outf.close()
 
             else:
                 sys.stdout.write("No new version found.\n")
+
+        if aphsearch:
+            aphsearch = False
+            sys.stdout.write('No preprint associated with ' + thisref['id'] +
+                             ', checking for a preprint.')
+            res = aref(thisref, args.confirm)
+            if res:
+                acount += 1
+                bp.entries[j] = res
+                sys.stdout.write(thisref['id'] +
+                                 " updated with a preprint. Please verify \
+                                 changes.\n")
+                newbib = to_bibtex(bp)
+                if upcount + acount % 20 == 0:
+                    outf = codecs.open(args.bibfile, 'w', 'utf-8')
+                    outf.write(newbib)
+                    outf.close()
+
+            else:
+                sys.stdout.write("No preprint found.\n")
 
 outf = codecs.open(args.bibfile, 'w', 'utf-8')
 try:
