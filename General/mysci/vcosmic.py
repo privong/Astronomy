@@ -4,7 +4,7 @@ import numpy as np
 import astropy.units as u
 import mysci
 
-def vcosmic(vh,inpRA,inpDec):
+def vcosmic(vh, inpRA, inpDec):
     """
     vcosmic: Compute a "cosmic velocity", correcting for the Virgo Cluster, 
     the Great Attractor and the Shapley Supercluster.
@@ -13,7 +13,7 @@ def vcosmic(vh,inpRA,inpDec):
     model.
 
     Angles and positions should be in radians or degrees, and velocities in km/s
-    All values should be provided using astropy.units quantities., 
+    All values should be provided using astropy.units quantities.
     J2000 assumed.
     """
 
@@ -57,13 +57,27 @@ def vcosmic(vh,inpRA,inpDec):
 
     # correct for infall velocities
     # reformat attractor constants
-    racl = [mysci.VirgoCluster['RA'],mysci.GreatAttractor['RA'],mysci.ShapleySupercluster['RA']]
-    deccl = [mysci.VirgoCluster['Dec'],mysci.GreatAttractor['Dec'],mysci.ShapleySupercluster['Dec']]
-    vlgcl = [mysci.VirgoCluster['vlgcl'],mysci.GreatAttractor['vlgcl'],mysci.ShapleySupercluster['vlgcl']]
-    vfid = [mysci.VirgoCluster['vfid'],mysci.GreatAttractor['vfid'],mysci.ShapleySupercluster['vfid']]
-    radius = [mysci.VirgoCluster['radius'],mysci.GreatAttractor['radius'],mysci.ShapleySupercluster['radius']]
-    vmin = [mysci.VirgoCluster['vmin'],mysci.GreatAttractor['vmin'],mysci.ShapleySupercluster['vmin']]
-    vmax = [mysci.VirgoCluster['vmax'],mysci.GreatAttractor['vmax'],mysci.ShapleySupercluster['vmax']]
+    racl = [mysci.VirgoCluster['RA'],
+            mysci.GreatAttractor['RA'],
+            mysci.ShapleySupercluster['RA']]
+    deccl = [mysci.VirgoCluster['Dec'],
+             mysci.GreatAttractor['Dec'],
+             mysci.ShapleySupercluster['Dec']]
+    vlgcl = [mysci.VirgoCluster['vlgcl'],
+             mysci.GreatAttractor['vlgcl'],
+             mysci.ShapleySupercluster['vlgcl']]
+    vfid = [mysci.VirgoCluster['vfid'],
+            mysci.GreatAttractor['vfid'],
+            mysci.ShapleySupercluster['vfid']]
+    radius = [mysci.VirgoCluster['radius'],
+              mysci.GreatAttractor['radius'],
+              mysci.ShapleySupercluster['radius']]
+    vmin = [mysci.VirgoCluster['vmin'],
+            mysci.GreatAttractor['vmin'],
+            mysci.ShapleySupercluster['vmin']]
+    vmax = [mysci.VirgoCluster['vmax'],
+            mysci.GreatAttractor['vmax'],
+            mysci.ShapleySupercluster['vmax']]
     for i in range (3):
         x = np.sin(np.pi*u.rad/2.-inpDec)*np.cos(inpRA)
         y = np.sin(np.pi*u.rad/2.-inpDec)*np.sin(inpRA)
