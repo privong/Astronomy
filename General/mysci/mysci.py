@@ -279,7 +279,47 @@ def HImass(flux,DL):
 ###############################################################################
 
 ###############################################################################
-# Scaper Functions
+# Scraper Functions
+
+def nedQuery(name):
+    """
+    nedQuery(): Return information on a galaxy from a NED Query
+    
+    Arguments
+    name: galaxy name
+
+    Returns:
+    dictionary with:
+        - Cordinates (J2000)
+        - redshift
+        - nans for angular size (not provided in this short NED query)
+    """
+
+    urlbase = 'http://ned.ipac.caltech.edu/cgi-bin/objsearch?of=ascii_bar&extend=no&hconst=73&omegam=0.27&omegav=0.73&corr_z=1&out_csys=Equatorial&out_equinox=J2000.0&objname='
+
+    out = {'RA': _np.nan*_u.deg,
+           'Dec': _np.nan*_u.deg,
+           'z': _np.nan,
+           'angsize': {'major': _np.nan*_u.arcmin,
+                       'minor': _np.nan*_u.arcmin,
+                       'PA': _np.nan*_u.deg}}
+
+    buf = _cStringIO.StringIO()
+    c = _pycurl.Curl()
+    c.setopt(c.URL, urlbase + name)
+    c.setopt(c.WRITEFUNCTION, buf.write)
+    c.perform()
+    results = buf.getvalue().split('\n')
+    results = results[14:]
+    if _re.search('Error', results[0]):
+        _sys.stderr.write(source + results[0])
+    else: 
+        data = results[-2].split('|')
+        out['RA'] = float(data[2]) * _u.deg
+        out['Dec'] = float(data[3]) * _u.deg
+        out['z'] = float(data[6])
+
+    return out
 
 def simbadQuery(name):
     """
@@ -290,7 +330,7 @@ def simbadQuery(name):
     
     Returns:
     dictionary with:
-        - IRCS coordinates (J2000)
+        - ICRS coordinates (J2000)
         - redshift
         - angular size
     """
