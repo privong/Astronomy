@@ -281,9 +281,9 @@ def HImass(flux,DL):
 ###############################################################################
 # Scraper Functions
 
-def nedQuery(name):
+def queryNED(name):
     """
-    nedQuery(): Return information on a galaxy from a NED Query
+    queryNED(): Return information on a galaxy from a NED Query
     
     Arguments
     name: galaxy name
@@ -321,9 +321,9 @@ def nedQuery(name):
 
     return out
 
-def simbadQuery(name):
+def querySIMBAD(name):
     """
-    simbadQuery(): Return information on a galaxy from a simbad query
+    querySIMBAD(): Return information on a galaxy from a simbad query
     
     Arguments
     name: galaxy name
