@@ -13,6 +13,8 @@ import numpy as _np
 from astropy.io import fits as _pyfits
 import astropy.units as _u
 import astropy.io.votable as _vot
+import cStringIO as _cStringIO
+import pycurl as _pycurl
 
 # Solar System Measurements, given as a dictionary
 # mass - g, radius - cm, period - yr, semi-major axis - cm, eccentrcity
@@ -274,6 +276,62 @@ def HImass(flux,DL):
     return (2.36e5*(DL/_u.Mpc)**2*flux/(_u.Jy*_u.km/_u.s)).decompose()*_u.MsolMass
 
 # End Useful functions
+###############################################################################
+
+###############################################################################
+# Scaper Functions
+
+def simbadQuery(name):
+    """
+    simbadQuery(): Return information on a galaxy from a simbad query
+    
+    Arguments
+    name: galaxy name
+    
+    Returns:
+    dictionary with:
+        - IRCS coordinates (J2000)
+        - redshift
+        - angular size
+    """
+    
+    urlbase = "http://simbad.u-strasbg.fr/simbad/sim-id?output.format=ASCII&Ident="
+    out = {'RA': _np.nan*_u.deg,
+           'Dec': _np.nan*_u.deg,
+           'z': _np.nan,
+           'angsize': {'major': _np.nan*_u.arcmin,
+                       'minor': _np.nan*_u.arcmin,
+                       'PA': _np.nan*_u.deg}}
+
+    buf = _cStringIO.StringIO()
+    c = _pycurl.Curl()
+    c.setopt(c.URL, urlbase + name)
+    c.setopt(c.WRITEFUNCTION, buf.write)
+    c.perform()
+    results = buf.getvalue().split('\n')
+    if _re.search('Identifier not found', results[0]):
+        _sys.stderr.write(source + " not found in SIMBAD.")
+    elif _re.search('No known catalog', results[0]):
+        _sys.stderr.write(source + " catalog error.")
+    else:
+        for line in results:
+            if _re.search('Identifiers', line):
+                break
+            elif _re.search('ICRS', line):
+                line = line.split(':')[1].split(' (')[0].split()
+                out['RA'] = line[0] + ':' + line[1] + ':' + line[2]
+                out['Dec'] = line[3] + ':' + line[4] + ':' + line[5]
+            elif _re.search('Redshift', line):
+                out['z'] = _np.float(line.split(':')[1].split(' [')[0])
+            elif _re.search('Angular size', line):
+                pos = [float(x) for x in line.split(':')[1].split(' (')[0].split()]
+                out['angsize']['major'] = pos[0] * _u.arcmin
+                out['angsize']['minor'] = pos[1] * _u.arcmin
+                out['angsize']['PA'] = pos[2] * _u.deg
+
+    return out
+
+# End scraper functions
 ###############################################################################
 
 ###############################################################################
