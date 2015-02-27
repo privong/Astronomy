@@ -312,7 +312,7 @@ def queryNED(name):
     results = buf.getvalue().split('\n')
     results = results[14:]
     if _re.search('Error', results[0]):
-        _sys.stderr.write(source + results[0])
+        _sys.stderr.write(name + results[0])
     else: 
         data = results[-2].split('|')
         out['RA'] = float(data[2]) * _u.deg
@@ -350,9 +350,9 @@ def querySIMBAD(name):
     c.perform()
     results = buf.getvalue().split('\n')
     if _re.search('Identifier not found', results[0]):
-        _sys.stderr.write(source + " not found in SIMBAD.")
+        _sys.stderr.write(name + " not found in SIMBAD.")
     elif _re.search('No known catalog', results[0]):
-        _sys.stderr.write(source + " catalog error.")
+        _sys.stderr.write(name + " catalog error.")
     else:
         for line in results:
             if _re.search('Identifiers', line):
