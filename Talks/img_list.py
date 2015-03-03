@@ -13,6 +13,8 @@ parser = argparse.ArgumentParser(description='Scan a TeX file and a directory \
                                               Optionally, suggest a renmaing \
                                               of files to match figure order.')
 parser.add_argument('texfile', type=str, help='TeX file to scan.')
+parser.add_argument('--images', '-i', type=str, default='.',
+                    help='Directory containing images.')
 """
 parser.add_argument('-r', '--reorder', action='store_true',
                     default=False, help='Suggest renaming of files to match \
@@ -41,7 +43,7 @@ for line in texfile:
             if not(img in imglist):
                 imglist.append(img)
 
-for filename in os.listdir('.'):
+for filename in os.listdir(args.images):
     nomatch = True
     i = 0
     while nomatch:
@@ -76,7 +78,7 @@ if rmlist:
     sys.stdout.write("The unused images can be removed with this command:\n")
     sys.stdout.write("rm ")
     for img in rmlist:
-        sys.stdout.write(img + ' ')
+        sys.stdout.write(args.images + '/' + img + ' ')
     sys.stdout.write("\n\n")
 else:
     sys.stderr.write("No unused images found.\n\n")
