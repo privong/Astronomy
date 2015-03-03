@@ -24,6 +24,9 @@ args = parser.parse_args()
 
 suffix = ['jpg', 'png', 'gif', 'pdf', 'eps', 'ps']
 
+if not(args.images[-1] == '/'):
+    args.images = args.images + '/'
+
 try:
     texfile = open(args.texfile)
 except:
@@ -49,10 +52,10 @@ for filename in os.listdir(args.images):
     while nomatch:
         if re.search(suffix[i], filename):
             nomatch = False
-            if not(filename.split('\/')[-1] in imglist):
+            if not((args.images + filename).split('\/')[-1] in imglist):
                 if not(re.search(sys.argv[1].split('.tex')[0],
-                                 filename.split('\/')[-1])):
-                    rmlist.append(filename.split('\/')[-1])
+                                 (args.images + filename).split('\/')[-1])):
+                    rmlist.append((args.images + filename).split('\/')[-1])
         i += 1
         if i >= len(suffix):
             break
@@ -78,7 +81,7 @@ if rmlist:
     sys.stdout.write("The unused images can be removed with this command:\n")
     sys.stdout.write("rm ")
     for img in rmlist:
-        sys.stdout.write(args.images + '/' + img + ' ')
+        sys.stdout.write(img + ' ')
     sys.stdout.write("\n\n")
 else:
     sys.stderr.write("No unused images found.\n\n")
