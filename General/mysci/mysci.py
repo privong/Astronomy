@@ -191,7 +191,10 @@ def DecimaltoSeg(deci,RA=False):
     T1=int(_np.floor(deci))
     T2=int(_np.floor(60.*(deci-T1)))
     T3=60*(60.*(deci-T1)-T2)
-    seg=_string.join([str(sign*T1),str(T2),str(T3)],":")
+    if T1 == 0 and sign==-1:
+        seg=_string.join(['-0',str(T2),str(T3)],":")
+    else:
+        seg=_string.join([str(sign*T1),str(T2),str(T3)],":")
     
     return seg
 
