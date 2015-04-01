@@ -38,11 +38,11 @@ for entry in args.fitsfiles:
             elif re.search('DARK', myfits[0].header['ESO DPR TYPE']):
                 dark.write(entry + ' DARK\n')
             elif re.search('FLAT,LAMP',myfits[0].header['ESO DPR TYPE']):
-                flat.write(entry + ' FLAT,LAMP\n')
+                flat.write(entry + ' FLAT\n')
             elif re.search('FLAT,SKY', myfits[0].header['ESO DPR TYPE']):
-                skyflat.write(entry + ' FLAT,SKY\n')
+                skyflat.write(entry + ' SKYFLAT\n')
             elif re.search('WAVE', myfits[0].header['ESO DPR TYPE']):
-                wave.write(entry + ' WAVE\n')
+                wave.write(entry + ' ARC\n')
                 lsf.write(entry + ' ARC\n')
             elif re.search('WAVE,MASK', myfits[0].header['ESO DPR TYPE']):
                 mask.write(entry + ' WAVE,MASK\n')
