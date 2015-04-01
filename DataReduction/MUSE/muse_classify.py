@@ -20,6 +20,7 @@ dark = open('dark.sof', 'w')
 flat = open('flat.sof', 'w')
 skyflat = open('skyflat.sof', 'w')
 wave = open('wave.sof', 'w')
+lsf = open('lsf.sof', 'w')
 mask = open('mask.sof', 'w')
 std = open('std.sof', 'w')
 astro = open('astrometry.sof', 'w')
@@ -42,6 +43,7 @@ for entry in args.fitsfiles:
                 skyflat.write(entry + ' FLAT,SKY\n')
             elif re.search('WAVE', myfits[0].header['ESO DPR TYPE']):
                 wave.write(entry + ' WAVE\n')
+                lsf.write(entry + ' ARC\n')
             elif re.search('WAVE,MASK', myfits[0].header['ESO DPR TYPE']):
                 mask.write(entry + ' WAVE,MASK\n')
             elif re.search('STD', myfits[0].header['ESO DPR TYPE']):
@@ -65,6 +67,7 @@ dark.close()
 flat.close()
 skyflat.close()
 wave.close()
+lsf.close()
 mask.close()
 std.close()
 astro.close()
