@@ -56,9 +56,9 @@ for entry in args.fitsfiles:
                 sys.stderr.write(entry + ' not recognized as a calib file.\n')
         elif myfits[0].header['ESO DPR CATG'] == 'SCIENCE':
             if myfits[0].header['ESO DPR TYPE'] == 'SKY':
-                sky.write(entry + 'SKY\n')
+                sky.write(entry + ' SKY\n')
             elif myfits[0].header['ESO DPR TYPE'] == 'OBJECT':
-                obj.write(entry + 'OBJECT\n')
+                obj.write(entry + ' OBJECT\n')
             else:
                 sys.stderr.write(entry + ' not recognized as a science file.\n')
 
