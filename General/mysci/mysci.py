@@ -444,7 +444,7 @@ def Telload(file, Tel='none', mode='readonly', quiet=True):
 
     if Tel == 'none':
         _sys.stderr.write('No telescope specified, running fitsopen()\n')
-        ff=fitsopen(file, mode=mode, quiet=quiet)
+        ff = fitsopen(file, mode=mode, quiet=quiet)
         return ff
     elif Tel == 'VATT':
         if not(quiet):
@@ -452,7 +452,8 @@ def Telload(file, Tel='none', mode='readonly', quiet=True):
         # load both fits extensions (and re-transpose to put them in the orig format)
         # 2nd one needs to be flipped since it's reading out the other way
         ext1 = fitsopen(file, mode=mode, quiet=quiet, ext=1, trim=1).transpose()
-        ext2 = np.fliplr(fitsopen(file, mode=mode, quiet=quiet, ext=2, trim=1).transpose())
+        ext2 = _np.fliplr(fitsopen(file, mode=mode, quiet=quiet,
+                          ext=2, trim=1).transpose())
 
         # concatenate the two halves of the image
         ff = _np.concatenate((ext1, ext2), axis=1)
