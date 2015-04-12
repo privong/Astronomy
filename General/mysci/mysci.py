@@ -308,7 +308,9 @@ def queryNED(name):
            'angsize': {'major': _np.nan*_u.arcmin,
                        'minor': _np.nan*_u.arcmin,
                        'PA': _np.nan*_u.deg}}
-
+    
+    # NED sometimes doesn't like '+' in the source name, so be kind:
+    name = _string.join(name.split('+'), '%2B')
     buf = _cStringIO.StringIO()
     c = _pycurl.Curl()
     c.setopt(c.URL, urlbase + name)
