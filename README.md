@@ -26,5 +26,6 @@ Scripts in this repo may require one or more of:
 * [ads](https://github.com/andycasey/ads)
 * PyPDF2
 * bibtexparser
+* pycurl
 
 These scripts were developed with python 2.7.x. They may not be python3 compatible.

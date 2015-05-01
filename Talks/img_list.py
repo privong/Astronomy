@@ -13,6 +13,8 @@ parser = argparse.ArgumentParser(description='Scan a TeX file and a directory \
                                               Optionally, suggest a renmaing \
                                               of files to match figure order.')
 parser.add_argument('texfile', type=str, help='TeX file to scan.')
+parser.add_argument('--images', '-i', type=str, default='.',
+                    help='Directory containing images.')
 """
 parser.add_argument('-r', '--reorder', action='store_true',
                     default=False, help='Suggest renaming of files to match \
@@ -21,6 +23,9 @@ parser.add_argument('-r', '--reorder', action='store_true',
 args = parser.parse_args()
 
 suffix = ['jpg', 'png', 'gif', 'pdf', 'eps', 'ps']
+
+if not(args.images[-1] == '/'):
+    args.images = args.images + '/'
 
 try:
     texfile = open(args.texfile)
@@ -41,16 +46,16 @@ for line in texfile:
             if not(img in imglist):
                 imglist.append(img)
 
-for filename in os.listdir('.'):
+for filename in os.listdir(args.images):
     nomatch = True
     i = 0
     while nomatch:
         if re.search(suffix[i], filename):
             nomatch = False
-            if not(filename.split('\/')[-1] in imglist):
+            if not((args.images + filename).split('\/')[-1] in imglist):
                 if not(re.search(sys.argv[1].split('.tex')[0],
-                                 filename.split('\/')[-1])):
-                    rmlist.append(filename.split('\/')[-1])
+                                 (args.images + filename).split('\/')[-1])):
+                    rmlist.append((args.images + filename).split('\/')[-1])
         i += 1
         if i >= len(suffix):
             break

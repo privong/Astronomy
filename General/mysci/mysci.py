@@ -13,6 +13,9 @@ import numpy as _np
 from astropy.io import fits as _pyfits
 import astropy.units as _u
 import astropy.io.votable as _vot
+import cStringIO as _cStringIO
+import pycurl as _pycurl
+
 
 # Solar System Measurements, given as a dictionary
 # mass - g, radius - cm, period - yr, semi-major axis - cm, eccentrcity
@@ -90,30 +93,30 @@ VirgoCluster = {'RA': 187.71186*_u.deg,
                 'radius': 0.17453*_u.rad,
                 'vmin': 600*_u.km/_u.s,
                 'vmax': 2300*_u.km/_u.s}
-GreatAttractor={'RA': 200.73470*_u.deg,
-                'Dec': -44.26105*_u.deg,
-                'vlgcl': 4380*_u.km/_u.s,
-                'vfid': 400.*_u.km/_u.s,
-                'radius': 0.17453*_u.rad,
-                'vmin': 2600*_u.km/_u.s,
-                'vmax': 6600*_u.km/_u.s}
-ShapleySupercluster={'RA': 203.20597*_u.deg,
-                     'Dec': -31.25658*_u.deg,
-                     'vlgcl': 13600*_u.km/_u.s,
-                     'vfid': 85.*_u.km/_u.s,
-                     'radius': 0.20944*_u.rad,
-                     'vmin': 10000*_u.km/_u.s,
-                     'vmax': 16000*_u.km/_u.s}
+GreatAttractor = {'RA': 200.73470*_u.deg,
+                  'Dec': -44.26105*_u.deg,
+                  'vlgcl': 4380*_u.km/_u.s,
+                  'vfid': 400.*_u.km/_u.s,
+                  'radius': 0.17453*_u.rad,
+                  'vmin': 2600*_u.km/_u.s,
+                  'vmax': 6600*_u.km/_u.s}
+ShapleySupercluster = {'RA': 203.20597*_u.deg,
+                       'Dec': -31.25658*_u.deg,
+                       'vlgcl': 13600*_u.km/_u.s,
+                       'vfid': 85.*_u.km/_u.s,
+                       'radius': 0.20944*_u.rad,
+                       'vmin': 10000*_u.km/_u.s,
+                       'vmax': 16000*_u.km/_u.s}
 
 # Rest frequencies of astrophysically interesting (to me) lines
-restfreq={'HI':1420405751.77*_u.Hz,
-          'CO(1-0)':115271201800.*_u.Hz,
-          '13CO(1-0)':110201.35400e6*_u.Hz,
-          'C18O(1-0)':109782.17600e6*_u.Hz,
-          'HCN(1-0)':88631.60100e6*_u.Hz,
-          'HCO+(1-0)':89188.52600e6*_u.Hz,
-          'HNC(1-0)':90.66356e9*_u.Hz,
-          'CCH':87.325e9*_u.Hz}
+restfreq={'HI': 1420405751.77*_u.Hz,
+          'CO(1-0)': 115271201800.*_u.Hz,
+          '13CO(1-0)': 110201.35400e6*_u.Hz,
+          'C18O(1-0)': 109782.17600e6*_u.Hz,
+          'HCN(1-0)': 88631.60100e6*_u.Hz,
+          'HCO+(1-0)': 89188.52600e6*_u.Hz,
+          'HNC(1-0)': 90.66356e9*_u.Hz,
+          'CCH': 87.325e9*_u.Hz}
 # End Astronomical Constants/Values
 ###############################################################################
 
@@ -127,7 +130,7 @@ restfreq={'HI':1420405751.77*_u.Hz,
 # - Velocity definitions (optical, radio, relativistic)
 # - pyfits import, transpose the data to RA,Dec,Spectral,[Stokes] (see http://www.cv.nrao.edu/~aleroy/pytut/topic2/intro_fits_files.py)
 
-def SegtoDecimal(seg,RA=False):
+def SegtoDecimal(seg, RA=False):
     """
     Input a segidecimal angle (can't be hours!), return a decimal value
     
@@ -136,9 +139,9 @@ def SegtoDecimal(seg,RA=False):
 
     """
     # split the string
-    if _re.search(":",seg):
+    if _re.search(":", seg):
         seg = seg.split(":")
-    elif _re.search("h",seg):
+    elif _re.search("h", seg):
         temp = seg.split("h")
         seg = []
         seg.append(temp[0])
@@ -146,7 +149,7 @@ def SegtoDecimal(seg,RA=False):
         seg.append(temp[0])
         temp = temp[1].split('s')[0]
         seg.append(temp)
-    elif _re.search("d",seg):
+    elif _re.search("d", seg):
         temp = seg.split("d")
         seg = []
         seg.append(temp[0])
@@ -169,31 +172,34 @@ def SegtoDecimal(seg,RA=False):
     if RA and float(seg[0]) > 24.:
         _sys.stderr.write("RA is greater than 24 hours. Are you sure you're passing the correct arguments?\n")
         return _np.nan
-    deci = float(seg[0])+sign*(float(seg[1])/60.+float(seg[2])/3600.)    
+    deci = float(seg[0]) + sign * (float(seg[1]) / 60. + float(seg[2]) /3600.)
     if RA:
         deci *= 15
 
-    return deci*_u.deg
+    return deci * _u.deg
 
-def DecimaltoSeg(deci,RA=False):
+def DecimaltoSeg(deci, RA=False):
     """
 
     Convert deci to a segidecimal string. If RA=True, then it's also converted to
     hours:min:seconds. Otherwise it is left as degrees:arcminutes:arcseconds.
 
     """
-    sign=int(_np.sign(deci))
-    deci=deci/sign
+    sign = int(_np.sign(deci))
+    deci = deci/sign
     if RA:
-        deci=deci/15.
-    T1=int(_np.floor(deci))
-    T2=int(_np.floor(60.*(deci-T1)))
-    T3=60*(60.*(deci-T1)-T2)
-    seg=_string.join([str(sign*T1),str(T2),str(T3)],":")
+        deci = deci/15.
+    T1 = int(_np.floor(deci))
+    T2 = int(_np.floor(60.*(deci-T1)))
+    T3 = 60 * (60. * (deci - T1) - T2)
+    if T1 == 0 and sign == -1:
+        seg = _string.join(['-0', str(T2), str(T3)], ":")
+    else:
+        seg = _string.join([str(sign*T1), str(T2), str(T3)], ":")
     
     return seg
 
-def RedshiftLine(z,restlam=None,restnu=None):
+def RedshiftLine(z, restlam=None, restnu=None):
     """
 
     Computes the wavelength and/or frequency of a redshifted line.
@@ -203,14 +209,14 @@ def RedshiftLine(z,restlam=None,restnu=None):
     If neither are defined, the function returns nan.
     """
     if restlam:
-        return restlam*(1.+z)
+        return restlam * ( 1. + z)
     if restnu:
-        return restnu/(1.+z)
+        return restnu / (1. + z)
     else:
         _sys.stderr.write("Error: frequency not specified. Returning nan.\n")
         return nan
 
-def fitsopen(file,mode='readonly',ext=0,trim=0,quiet=True):
+def fitsopen(file, mode='readonly', ext=0, trim=0, quiet=True):
     """
 
     Opens a fits file using pyfits (with an optional specification of the mode).
@@ -227,22 +233,23 @@ def fitsopen(file,mode='readonly',ext=0,trim=0,quiet=True):
 
     # make sure the file exists
     if _os.path.isfile(file):
-        frame=_pyfits.open(file,mode=mode)
+        frame = _pyfits.open(file, mode=mode)
         # we should really make sure we have enough extensions to open the one we
         # want, but i'll leave that for later. :)
-        idata=frame[ext].data.transpose()
+        idata = frame[ext].data.transpose()
         if trim:
-            trimsec=frame[ext].header['TRIMSEC'] #should really check this exists...
+            trimsec = frame[ext].header['TRIMSEC'] #should really check this exists...
             # split it
-            range=[int(s) for s in _re.findall(r'\d+',trimsec)]
-            idata=idata[range[0]-1:range[1],range[2]-1:range[3]]
+            range = [int(s) for s in _re.findall(r'\d+', trimsec)]
+            idata = idata[range[0]-1:range[1], range[2]-1:range[3]]
         frame.close()
     else:
-        _sys.stderr.write('Error: '+file+' not found.')
+        _sys.stderr.write('Error: ' + file + ' not found.')
         return -1
 
     if not(quiet):
-        print file+" HDU("+str(ext)+") opened successfully with dimensions "+str(idata.shape)
+        print file + " HDU(" + str(ext) + \
+              ") opened successfully with dimensions " + str(idata.shape)
 
     return idata
 
@@ -250,20 +257,20 @@ def quadsum(values):
     """
     Take a list and return the quadrature sum of the elements.
     """
-    tot=0.*values[0]**2
+    tot = 0. * values[0]**2
     for item in values:
-        tot+=item**2
+        tot += item**2
     return _np.sqrt(tot)
 
-def angDist(pos1,pos2):
+def angDist(pos1, pos2):
     """
     Calculate the angular distance between two points. Require decimal positions
     """
-    numer=_np.sqrt((_np.cos(pos2[0])*_np.sin(_np.abs(pos1[1]-pos2[1])))**2+(_np.cos(pos1[0])*_np.sin(pos2[0])-_np.sin(pos1[0])*_np.cos(pos2[0])*_np.cos(_np.abs(pos1[1]-pos2[1])))**2)
-    denom=_np.sin(pos1[0])*_np.sin(pos2[0])+_np.cos(pos1[0])*_np.cos(pos2[0])*_np.cos(_np.abs(pos1[1]-pos2[1]))
-    return _np.arctan2(numer,denom)
+    numer = _np.sqrt((_np.cos(pos2[0]) * _np.sin(_np.abs(pos1[1] - pos2[1])))**2 + (_np.cos(pos1[0]) * _np.sin(pos2[0]) - _np.sin(pos1[0]) * _np.cos(pos2[0]) * _np.cos(_np.abs(pos1[1] - pos2[1])))**2)
+    denom = _np.sin(pos1[0]) * _np.sin(pos2[0]) + _np.cos(pos1[0]) * _np.cos(pos2[0]) * _np.cos(_np.abs(pos1[1] - pos2[1]))
+    return _np.arctan2(numer, denom)
 
-def HImass(flux,DL):
+def HImass(flux, DL):
     """
     HImass(flux,DL)
 
@@ -271,15 +278,113 @@ def HImass(flux,DL):
     luminosity distance (Mpc). Units encouraged.
     """
 
-    return (2.36e5*(DL/_u.Mpc)**2*flux/(_u.Jy*_u.km/_u.s)).decompose()*_u.MsolMass
+    return (2.36e5 * (DL / _u.Mpc)**2 * flux / (_u.Jy*_u.km/_u.s)).decompose() * _u.MsolMass
 
 # End Useful functions
 ###############################################################################
 
 ###############################################################################
+# Scraper Functions
+
+def queryNED(name):
+    """
+    queryNED(): Return information on a galaxy from a NED Query
+    
+    Arguments
+    name: galaxy name
+
+    Returns:
+    dictionary with:
+        - Cordinates (J2000)
+        - redshift
+        - nans for angular size (not provided in this short NED query)
+    """
+
+    urlbase = 'http://ned.ipac.caltech.edu/cgi-bin/objsearch?of=ascii_bar&extend=no&hconst=73&omegam=0.27&omegav=0.73&corr_z=1&out_csys=Equatorial&out_equinox=J2000.0&objname='
+
+    out = {'RA': _np.nan*_u.deg,
+           'Dec': _np.nan*_u.deg,
+           'z': _np.nan,
+           'angsize': {'major': _np.nan*_u.arcmin,
+                       'minor': _np.nan*_u.arcmin,
+                       'PA': _np.nan*_u.deg}}
+    
+    # NED sometimes doesn't like '+' in the source name, so be kind:
+    name = _string.join(name.split('+'), '%2B')
+    buf = _cStringIO.StringIO()
+    c = _pycurl.Curl()
+    c.setopt(c.URL, urlbase + name)
+    c.setopt(c.WRITEFUNCTION, buf.write)
+    c.perform()
+    results = buf.getvalue().split('\n')
+    results = results[14:]
+    if _re.search('Error', results[0]):
+        _sys.stderr.write(name + ' ' + results[0] + '\n')
+    else: 
+        data = results[-2].split('|')
+        out['RA'] = float(data[2]) * _u.deg
+        out['Dec'] = float(data[3]) * _u.deg
+        out['z'] = float(data[6])
+
+    return out
+
+def querySIMBAD(name):
+    """
+    querySIMBAD(): Return information on a galaxy from a simbad query
+    
+    Arguments
+    name: galaxy name
+    
+    Returns:
+    dictionary with:
+        - ICRS coordinates (J2000)
+        - redshift
+        - angular size
+    """
+    
+    urlbase = "http://simbad.u-strasbg.fr/simbad/sim-id?output.format=ASCII&Ident="
+    out = {'RA': _np.nan*_u.deg,
+           'Dec': _np.nan*_u.deg,
+           'z': _np.nan,
+           'angsize': {'major': _np.nan*_u.arcmin,
+                       'minor': _np.nan*_u.arcmin,
+                       'PA': _np.nan*_u.deg}}
+
+    buf = _cStringIO.StringIO()
+    c = _pycurl.Curl()
+    c.setopt(c.URL, urlbase + name)
+    c.setopt(c.WRITEFUNCTION, buf.write)
+    c.perform()
+    results = buf.getvalue().split('\n')
+    if _re.search('Identifier not found', results[0]):
+        _sys.stderr.write(name + " not found in SIMBAD.\n")
+    elif _re.search('No known catalog', results[0]):
+        _sys.stderr.write(name + " catalog error.\n")
+    else:
+        for line in results:
+            if _re.search('Identifiers', line):
+                break
+            elif _re.search('ICRS', line):
+                line = line.split(':')[1].split(' (')[0].split()
+                out['RA'] = line[0] + ':' + line[1] + ':' + line[2]
+                out['Dec'] = line[3] + ':' + line[4] + ':' + line[5]
+            elif _re.search('Redshift', line):
+                out['z'] = _np.float(line.split(':')[1].split(' [')[0])
+            elif _re.search('Angular size', line):
+                pos = [float(x) for x in line.split(':')[1].split(' (')[0].split()]
+                out['angsize']['major'] = pos[0] * _u.arcmin
+                out['angsize']['minor'] = pos[1] * _u.arcmin
+                out['angsize']['PA'] = pos[2] * _u.deg
+
+    return out
+
+# End scraper functions
+###############################################################################
+
+###############################################################################
 # Catalog Functions
 
-def PosMatch(pos1,pos2,name1=None,name2=None,posTol=60.*_u.arcsec):
+def PosMatch(pos1, pos2, name1=None, name2=None, posTol=60.*_u.arcsec):
     """
     Position matching function for catalogs. 
 
@@ -293,19 +398,19 @@ def PosMatch(pos1,pos2,name1=None,name2=None,posTol=60.*_u.arcsec):
 
     # homogenize positions
     if type(pos1[0]) is str or type(pos1[0]) is _np.string_:
-        pos1[0]=SegtoDecimal(pos1[0],RA=True)
+        pos1[0] = SegtoDecimal(pos1[0], RA=True)
     elif not(type(pos1[0]) is _u.quantity.Quantity):
         pos1[0] *= _u.deg
     if type(pos1[1]) is str or type(pos1[1]) is _np.string_:
-        pos1[1]=SegtoDecimal(pos1[1],RA=False)
+        pos1[1] = SegtoDecimal(pos1[1], RA=False)
     elif not(type(pos1[1]) is _u.quantity.Quantity):
         pos1[1] *= _u.deg
     if type(pos2[0]) is str or type(pos2[0]) is _np.string_:
-        pos2[0]=SegtoDecimal(pos2[0],RA=True)
+        pos2[0] = SegtoDecimal(pos2[0], RA=True)
     elif not(type(pos2[0]) is _u.quantity.Quantity):
         pos2[0] *= _u.deg
     if type(pos2[1]) is str or type(pos2[1]) is _np.string_:
-        pos2[1]=SegtoDecimal(pos2[1],RA=False)
+        pos2[1] = SegtoDecimal(pos2[1], RA=False)
     elif not(type(pos2[1]) is _u.quantity.Quantity):
         pos2[1] *= _u.deg
 
@@ -314,7 +419,7 @@ def PosMatch(pos1,pos2,name1=None,name2=None,posTol=60.*_u.arcsec):
         _sys.stderr.write("WARNING: No units given for posTol, assuming arcsec.\n")
         posTol *= _u.arcsec
 
-    if angDist(pos1,pos2) < posTol:
+    if angDist(pos1, pos2) < posTol:
         return True
     else:
         return False    
@@ -329,7 +434,7 @@ def PosMatch(pos1,pos2,name1=None,name2=None,posTol=60.*_u.arcsec):
 #
 # Wrappers for various things. May require functions listed above
 
-def Telload(file,Tel='none',mode='readonly',quiet=True):
+def Telload(file, Tel='none', mode='readonly', quiet=True):
     """
 
     Wrapper function for fitsopen(). Will load and appropriately arrange a fits
@@ -339,23 +444,24 @@ def Telload(file,Tel='none',mode='readonly',quiet=True):
         VATT (VATT 4k CCD)
     """
 
-    if Tel=='none':
+    if Tel == 'none':
         _sys.stderr.write('No telescope specified, running fitsopen()\n')
-        ff=fitsopen(file,mode=mode,quiet=quiet)
+        ff = fitsopen(file, mode=mode, quiet=quiet)
         return ff
-    elif Tel=='VATT':
+    elif Tel == 'VATT':
         if not(quiet):
             print "Loading FITS file for the VATT"
         # load both fits extensions (and re-transpose to put them in the orig format)
         # 2nd one needs to be flipped since it's reading out the other way
-        ext1=fitsopen(file,mode=mode,quiet=quiet,ext=1,trim=1).transpose()
-        ext2=np.fliplr(fitsopen(file,mode=mode,quiet=quiet,ext=2,trim=1).transpose())
+        ext1 = fitsopen(file, mode=mode, quiet=quiet, ext=1, trim=1).transpose()
+        ext2 = _np.fliplr(fitsopen(file, mode=mode, quiet=quiet,
+                          ext=2, trim=1).transpose())
 
         # concatenate the two halves of the image
-        ff=_np.concatenate((ext1,ext2),axis=1)
+        ff = _np.concatenate((ext1, ext2), axis=1)
 
         return ff
-    elif Tel=="90Prime":
+    elif Tel == "90Prime":
         if not(quiet):
             print "Loading FITS file for the Bok 90Prime imager."
         # Bok 90Prime images have 17 HDU objects. 1 for the overall file and 1 for
@@ -364,22 +470,22 @@ def Telload(file,Tel='none',mode='readonly',quiet=True):
         # in the same way?
 
         # first, figure out how many HDUs there are...
-        frame=_pyfits.open(file)
-        nHDU=len(frame)-1 # ditch the overall HDU
+        frame = _pyfits.open(file)
+        nHDU = len(frame) - 1 # ditch the overall HDU
         frame.close()
         # load the first frame to get us started
-        ext1=fitsopen(file,mode=mode,quiet=quiet,ext=1,trim=0)
-        shape=ext1.shape
-        ext1=ext1.reshape((1,shape[0],shape[1]))
-        ext2=fitsopen(file,mode=mode,quiet=quiet,ext=2,trim=0)
-        shape=ext2.shape
-        ext2=ext2.reshape((1,shape[0],shape[1]))
-        ff=_np.concatenate((ext1,ext2),axis=0)
-        for hdu in range(3,nHDU+1,1):
-            extt=fitsopen(file,mode=mode,quiet=quiet,ext=hdu,trim=0)
-            shape=extt.shape
-            extt=extt.reshape((1,shape[0],shape[1]))
-            ff=_np.concatenate((ff,extt),axis=0)
+        ext1 = fitsopen(file, mode=mode, quiet=quiet, ext=1, trim=0)
+        shape = ext1.shape
+        ext1 = ext1.reshape((1, shape[0], shape[1]))
+        ext2 = fitsopen(file, mode=mode, quiet=quiet, ext=2, trim=0)
+        shape = ext2.shape
+        ext2 = ext2.reshape((1, shape[0], shape[1]))
+        ff = _np.concatenate((ext1, ext2), axis=0)
+        for hdu in range(3, nHDU+1, 1):
+            extt = fitsopen(file, mode=mode, quiet=quiet, ext=hdu, trim=0)
+            shape = extt.shape
+            extt = extt.reshape((1, shape[0], shape[1]))
+            ff = _np.concatenate((ff, extt), axis=0)
         return ff
 
 # End Wrapper Functions
@@ -388,7 +494,7 @@ def Telload(file,Tel='none',mode='readonly',quiet=True):
 ################################################################################
 # CSV functions
 
-def CSVtoDict(infile,usecols=None,delimiter=',',haveunits=False, dtype=None,
+def CSVtoDict(infile, usecols=None, delimiter=',', haveunits=False, dtype=None,
               keycol=False):
     """
     Opens infile and converts it to a dictionary.
@@ -400,7 +506,7 @@ def CSVtoDict(infile,usecols=None,delimiter=',',haveunits=False, dtype=None,
     returned dictionary.
 
     """
-    vals=_np.genfromtxt(infile, usecols=usecols, delimiter=delimiter,
+    vals = _np.genfromtxt(infile, usecols=usecols, delimiter=delimiter,
                         dtype=dtype)
     key = []
     cols = []
@@ -423,7 +529,7 @@ def CSVtoDict(infile,usecols=None,delimiter=',',haveunits=False, dtype=None,
             line = line.split(delimiter)
             key.append(line[0])
     infile.close()
-    out={}
+    out = {}
     if keycol is False:     # first column of CSV file becomes the dict keys
         for i in range(len(key)):
             out[key[i]] = {}
@@ -446,7 +552,7 @@ def CSVtoDict(infile,usecols=None,delimiter=',',haveunits=False, dtype=None,
 ################################################################################
 # VOTable functions
 
-def VOtoDict(votab,printstruc=False):
+def VOtoDict(votab, printstruc=False):
     """
 
     When passed a votab object, return a dictionary with the votab.
@@ -458,27 +564,27 @@ def VOtoDict(votab,printstruc=False):
 
     """
 
-    dump={}
-    i=j=0
+    dump = {}
+    i = j = 0
     for resource in votab.resources:
-        dump[j]={}
+        dump[j] = {}
         for table in resource.tables:
             # parse away, me hearties!
             if table.name:
-                dkey=table.name
+                dkey = table.name
             else:
-                dkey=i
-            i+=1
-            dump[j][dkey]={}
+                dkey = i
+            i += 1
+            dump[j][dkey] = {}
             for entry in table.array:
-                dump[j][dkey][entry[0]]={}
-                for l in range(1,len(entry)):
-                    dump[j][dkey][entry[0]][table.fields[l].name]=entry[l]
+                dump[j][dkey][entry[0]] = {}
+                for l in range(1, len(entry)):
+                    dump[j][dkey][entry[0]][table.fields[l].name] = entry[l]
                     if table.fields[l].unit:
-                        dump[j][dkey][entry[0]][table.fields[l].name]*=table.fields[l].unit
-        j+=1
-    while len(dump.keys())==1:
-        dump=dump[dump.keys()[0]]
+                        dump[j][dkey][entry[0]][table.fields[l].name] *= table.fields[l].unit
+        j += 1
+    while len(dump.keys()) == 1:
+        dump = dump[dump.keys()[0]]
 
     if printstruc:
         DictStruct(dump)
@@ -491,7 +597,7 @@ def VOtoDict(votab,printstruc=False):
 ################################################################################
 # Specific VOTable tasks
 
-def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
+def WriteSpecVOTMeas(outdict=None, outfile=None, **kwargs):
     """
     Take a dictionary and write it to a VOTable.
 
@@ -519,19 +625,19 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
 
     if not 'measline' in outdict[outdict.keys()[0]].keys():
         _sys.stderr.write("WriteSpecVOTMeas Warning: no 'measline' dictionary entry. Will be writing a single table.\n")
-        havemeasline=False
+        havemeasline = False
     else:
-        havemeasline=True
+        havemeasline = True
 
-    newtable=_vot.tree.VOTableFile()
-    resource=_vot.tree.Resource()
+    newtable = _vot.tree.VOTableFile()
+    resource = _vot.tree.Resource()
     newtable.resources.append(resource)
 
     if kwargs is None:
         # put in some generic header inforation
-        kwargs['author']='privong/mysci.py'
-        kwargs['email']='None'
-        kwargs['reference']='None'
+        kwargs['author'] = 'privong/mysci.py'
+        kwargs['email'] = 'None'
+        kwargs['reference'] = 'None'
 
     #info=_vot.tree.Info()
     #newtable.infos.append(info)
@@ -539,68 +645,72 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
     #    newtable.infos.extend([_vot.tree.Info(newtable,name=key,datatype='char',arraysize='*',value=(kwargs[key]))])
 
     # create a 'Source Information' table
-    srcTab=_vot.tree.Table(newtable)
-    srcTab.ID='Src'
-    srcTab.name='Source Information'
+    srcTab = _vot.tree.Table(newtable)
+    srcTab.ID = 'Src'
+    srcTab.name = 'Source Information'
     resource.tables.append(srcTab)
-    srcTab.fields.extend([_vot.tree.Field(newtable,name="Source",datatype='char',arraysize='*',ID="Source")])
-    srcTab.fields.extend([_vot.tree.Field(newtable,name="srcID",datatype="int")])
+    srcTab.fields.extend([_vot.tree.Field(newtable, name="Source",
+                                          datatype='char', arraysize='*',
+                                          ID="Source")])
+    srcTab.fields.extend([_vot.tree.Field(newtable, name="srcID",
+                                          datatype="int")])
     for i in sorted(outdict[outdict.keys()[0]].keys()):
-        if i!='measline':
+        if i != 'measline':
             if type(outdict[outdict.keys()[0]][i]) is _u.quantity.Quantity:
-                srcTab.fields.extend([_vot.tree.Field(newtable,name=i,
-		datatype="float",
-		unit=outdict[outdict.keys()[0]][i].unit)])
+                srcTab.fields.extend([_vot.tree.Field(newtable, name=i,
+                                                      datatype="float",
+                                                      unit=outdict[outdict.keys()[0]][i].unit)])
             elif type(outdict[outdict.keys()[0]][i]) is float:
-                srcTab.fields.extend([_vot.tree.Field(newtable,name=i,
-		datatype="float")])
+                srcTab.fields.extend([_vot.tree.Field(newtable, name=i,
+                                                      datatype="float")])
             else:
-                srcTab.fields.extend([_vot.tree.Field(newtable,name=i,
-		datatype='char',
-		arraysize='*')]) #ype(outdict[outdict.keys()[0]][i])))])
+                srcTab.fields.extend([_vot.tree.Field(newtable, name=i,
+                                                      datatype='char',
+                                                      arraysize='*')]) #ype(outdict[outdict.keys()[0]][i])))])
     srcTab.create_arrays(len(outdict.keys()))
     # create tables for the measurements
-    measTab={}
+    measTab = {}
     for i in sorted(outdict[outdict.keys()[0]]['measline'].keys()):
-        measTab[i]=_vot.tree.Table(newtable)
-        measTab[i].ID='line'+str(i)
-        measTab[i].name=outdict[outdict.keys()[0]]['measline'][i]['lineID']
+        measTab[i] = _vot.tree.Table(newtable)
+        measTab[i].ID = 'line' + str(i)
+        measTab[i].name = outdict[outdict.keys()[0]]['measline'][i]['lineID']
         resource.tables.append(measTab[i])
-        measTab[i].fields.extend([_vot.tree.Field(newtable,name='srcID',datatype='int',ID='srcID')])
+        measTab[i].fields.extend([_vot.tree.Field(newtable, name='srcID',
+                                                  datatype='int', ID='srcID')])
         for j in sorted(outdict[outdict.keys()[0]]['measline'][i].keys()):
             if type(outdict[outdict.keys()[0]]['measline'][i][j]) is _u.quantity.Quantity:
-                measTab[i].fields.extend([_vot.tree.Field(newtable,name=j,
-		datatype="float",
-		unit=(outdict[outdict.keys()[0]]['measline'][i][j]).unit)])
+                measTab[i].fields.extend([_vot.tree.Field(newtable, name=j,
+                                                          datatype="float",
+                                                          unit=(outdict[outdict.keys()[0]]['measline'][i][j]).unit)])
             elif type(outdict[outdict.keys()[0]]['measline'][i][j]) is float:
-                measTab[i].fields.extend([_vot.tree.Field(newtable,name=j,
-		datatype="float")])
+                measTab[i].fields.extend([_vot.tree.Field(newtable, name=j,
+                                                          datatype="float")])
             else:
-                measTab[i].fields.extend([_vot.tree.Field(newtable,name=j,
-		datatype='char',
-		arraysize='*')])
+                measTab[i].fields.extend([_vot.tree.Field(newtable, name=j,
+                                                          datatype='char',
+                                                          arraysize='*')])
         measTab[i].create_arrays(len(outdict.keys()))
 
     srcID=0
     for src in sorted(outdict.keys()):
-        srcinfo=(src,srcID)
+        srcinfo = (src,srcID)
         for key in sorted(outdict[src].keys()):
-            if key=='measline':
+            if key == 'measline':
                 for line in sorted(measTab.keys()):
-                    lineinfo=(srcID,)
+                    lineinfo = (srcID,)
                     for key2 in sorted(outdict[src]['measline'][line].keys()):
                         if type(outdict[src]['measline'][line][key2]) is _u.quantity.Quantity:
-                            lineinfo=lineinfo+(outdict[src]['measline'][line][key2].value,)
+                            lineinfo = lineinfo + (outdict[src]['measline'][line][key2].value,)
                         else:
-                            lineinfo=lineinfo+(outdict[src]['measline'][line][key2],)
-                    measTab[line].array[srcID]=lineinfo
+                            lineinfo = lineinfo + (outdict[src]['measline'][line][key2],)
+                    measTab[line].array[srcID] = lineinfo
             else:
                 if type(outdict[src][key]) is _u.quantity.Quantity:
-                    srcinfo=srcinfo+(outdict[src][key].value,)
+                    srcinfo = srcinfo+(outdict[src][key].value,)
                 else:
-                    srcinfo=srcinfo+(outdict[src][key],)
-        srcTab.array[srcID]=srcinfo
-        srcID+=1
+                    srcinfo = srcinfo + (outdict[src][key],)
+        srcTab.array[srcID] = srcinfo
+        srcID += 1
 
     newtable.to_xml(outfile)
 
@@ -612,7 +722,7 @@ def WriteSpecVOTMeas(outdict=None,outfile=None,**kwargs):
 ################################################################################
 # Convenience functions
 
-def DictStruct(d,depth=0,Print=True):
+def DictStruct(d, depth=0, Print=True):
     """
 
     Print the structure of a dictionary.
@@ -625,17 +735,17 @@ def DictStruct(d,depth=0,Print=True):
 
     """
 
-    if type(d)==dict:
-        if depth==0:
+    if type(d) == dict:
+        if depth == 0:
             if Print: _sys.stdout.write("Dictionary has the following key structure:\n")
         for key in d.keys():
             for i in range(depth):
-                if depth>0 and i==depth-1:
+                if depth > 0 and i == depth-1:
                     if Print: _sys.stdout.write("|")
                 else:
                     if Print: _sys.stdout.write(" ")
-            if Print: _sys.stdout.write(str(key)+"\n")
-            DictStruct(d[key],depth=depth+1,Print=Print)
+            if Print: _sys.stdout.write(str(key) + "\n")
+            DictStruct(d[key], depth=depth+1, Print=Print)
 
 # End Convenience functions
 ################################################################################
