@@ -106,8 +106,10 @@ def aref(entry, confirm=False):
                 except:
                     pass
         except:
-            return False
-    return False
+            entry['arxivsearched'] = 'True'
+            return entry
+    entry['arxivsearched'] = 'True'
+    return entry
 
 parser = argparse.ArgumentParser(description="Update arXiv entries in a bibtex \
                                  file with subsequently published papers.")
@@ -175,12 +177,14 @@ for j in range(len(bp.entries)):
             else:
                 sys.stdout.write("No new version found.\n")
 
-        if aphsearch and thisref['year'] >= '1991':
+        if aphsearch and \
+           not('arxivsearched' in thisref.keys()) and \
+           thisref['year'] >= '1991':
             aphsearch = False
             sys.stdout.write('No preprint associated with ' + thisref['id'] +
                              ', checking...\n')
             res = aref(thisref, args.confirm)
-            if res:
+            if res and not('arxivsearched' in thisref.keys()):
                 acount += 1
                 bp.entries[j] = res
                 sys.stdout.write(thisref['id'] +
@@ -190,7 +194,8 @@ for j in range(len(bp.entries)):
                     outf = codecs.open(args.bibfile, 'w', 'utf-8')
                     outf.write(newbib)
                     outf.close()
-
+            elif 'arxivsearched' in thisref.keys():
+                sys.stdout.write("No preprint found. Will not search again.\n")
             else:
                 sys.stdout.write("No preprint found.\n")
 
