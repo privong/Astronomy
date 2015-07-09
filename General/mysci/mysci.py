@@ -13,7 +13,10 @@ import numpy as _np
 from astropy.io import fits as _pyfits
 import astropy.units as _u
 import astropy.io.votable as _vot
-import cStringIO as _cStringIO
+try:
+    from cStringIO import StringIO as _BytesIO
+except ImportError:
+    from io import BytesIO as _BytesIO
 import pycurl as _pycurl
 
 
@@ -193,9 +196,9 @@ def DecimaltoSeg(deci, RA=False):
     T2 = int(_np.floor(60.*(deci-T1)))
     T3 = 60 * (60. * (deci - T1) - T2)
     if T1 == 0 and sign == -1:
-        seg = _string.join(['-0', str(T2), str(T3)], ":")
+        seg = ':'.join(['-0', str(T2), str(T3)])
     else:
-        seg = _string.join([str(sign*T1), str(T2), str(T3)], ":")
+        seg = ':'.join([str(sign*T1), str(T2), str(T3)])
     
     return seg
 
@@ -248,8 +251,8 @@ def fitsopen(file, mode='readonly', ext=0, trim=0, quiet=True):
         return -1
 
     if not(quiet):
-        print file + " HDU(" + str(ext) + \
-              ") opened successfully with dimensions " + str(idata.shape)
+        print(file + " HDU(" + str(ext) + \
+              ") opened successfully with dimensions " + str(idata.shape))
 
     return idata
 
@@ -310,13 +313,13 @@ def queryNED(name):
                        'PA': _np.nan*_u.deg}}
     
     # NED sometimes doesn't like '+' in the source name, so be kind:
-    name = _string.join(name.split('+'), '%2B')
-    buf = _cStringIO.StringIO()
+    name = '%2B'.join(name.split('+'))
+    buf = _BytesIO()
     c = _pycurl.Curl()
     c.setopt(c.URL, urlbase + name)
     c.setopt(c.WRITEFUNCTION, buf.write)
     c.perform()
-    results = buf.getvalue().split('\n')
+    results = buf.getvalue().decode('UTF-8').split('\n')
     results = results[14:]
     if _re.search('Error', results[0]):
         _sys.stderr.write(name + ' ' + results[0] + '\n')
@@ -350,12 +353,12 @@ def querySIMBAD(name):
                        'minor': _np.nan*_u.arcmin,
                        'PA': _np.nan*_u.deg}}
 
-    buf = _cStringIO.StringIO()
+    buf = _BitesIO()
     c = _pycurl.Curl()
     c.setopt(c.URL, urlbase + name)
     c.setopt(c.WRITEFUNCTION, buf.write)
     c.perform()
-    results = buf.getvalue().split('\n')
+    results = buf.getvalue().decode('UTF-8').split('\n')
     if _re.search('Identifier not found', results[0]):
         _sys.stderr.write(name + " not found in SIMBAD.\n")
     elif _re.search('No known catalog', results[0]):
@@ -450,7 +453,7 @@ def Telload(file, Tel='none', mode='readonly', quiet=True):
         return ff
     elif Tel == 'VATT':
         if not(quiet):
-            print "Loading FITS file for the VATT"
+            print("Loading FITS file for the VATT")
         # load both fits extensions (and re-transpose to put them in the orig format)
         # 2nd one needs to be flipped since it's reading out the other way
         ext1 = fitsopen(file, mode=mode, quiet=quiet, ext=1, trim=1).transpose()
@@ -463,7 +466,7 @@ def Telload(file, Tel='none', mode='readonly', quiet=True):
         return ff
     elif Tel == "90Prime":
         if not(quiet):
-            print "Loading FITS file for the Bok 90Prime imager."
+            print("Loading FITS file for the Bok 90Prime imager.")
         # Bok 90Prime images have 17 HDU objects. 1 for the overall file and 1 for
         # each amplifier
         # stack these into a 3D array and return it? handle the calibration files
