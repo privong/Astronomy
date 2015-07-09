@@ -50,11 +50,11 @@ def Idkit_regions(imagelist,poslist,XML=False):
       pos.append({"RA":objs[0],"Dec":objs[1],"code":objs[2],"vel":1,"vcen":float(objs[3]),"vlow":float(objs[4]),"vhigh":float(objs[5])})
     else:
       # what were they thinking?
-      print "Skipping invalid line: "
-      print obj
+      print("Skipping invalid line: ")
+      print(obj)
   posfile.close()
 
-  print pos
+  print(pos)
 
   # read in the list of projections we have and make region files for all
   # (this doesn't assume images are the same size, scale, etc)
@@ -66,7 +66,7 @@ def Idkit_regions(imagelist,poslist,XML=False):
     # figure out which projection we're looking at
     if re.search("XY",proj):
       # sky plane projection, XML file of RA and Dec
-      print "Found sky plane projection (XY)"
+      print("Found sky plane projection (XY)")
       outfile=open(proot+fsuffix,'w')
       Idkit_header(outfile,XML=XML)
       for obj in pos:
@@ -77,13 +77,13 @@ def Idkit_regions(imagelist,poslist,XML=False):
       outfile.close()
     elif re.search("XV",proj):
       # velocity vs RA
-      print "Found PV diagram (XV)"
+      print("Found PV diagram (XV)")
       outfile=open(proot+fsuffix,'w')
       Idkit_header(outfile,XML=XML)
       for obj in pos:
         # loop over objects in memory, write to an xml file
 	if obj['vel']!=0:
-          print obj
+          print(obj)
           if XML: Idkit_XMLobj(coords,outfile,'XV',obj)
           else: Idkit_CRTFobj(coords,outfile,'XV',obj)
           #else: sys.stderr.write('Lines not supported by CASA region files, skipping XV information.\n')
@@ -91,7 +91,7 @@ def Idkit_regions(imagelist,poslist,XML=False):
       outfile.close()
     elif re.search("VY",proj):
       # Dec vs velocity
-      print "Found PV diagram (VY)"
+      print("Found PV diagram (VY)")
       outfile=open(proot+fsuffix,'w')
       Idkit_header(outfile,XML=XML)
       for obj in pos:
@@ -103,7 +103,7 @@ def Idkit_regions(imagelist,poslist,XML=False):
       Idkit_footer(outfile,XML=XML)
       outfile.close()
     else:
-      print "ERROR: unknown projection type for file "+proj+". Ignoring and moving to next file."
+      print("ERROR: unknown projection type for file "+proj+". Ignoring and moving to next file.")
     ia.close()
   
 
@@ -208,7 +208,7 @@ def Idkit_XMLobj(coords,outfile,proj,obj):
     # drop the RA coordinate
     (pRA,pDec,pVel1,pStokes)=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),coords.velocitytofrequency(value=obj['vlow'],doppler='optical',velunit='km/s'),'I'])['numeric']
     pVel2=coords.topixel([obj['RA'],'.'.join(obj['Dec'].split(':')),coords.velocitytofrequency(value=obj['vhigh'],doppler='optical',velunit='km/s'),'I'])['numeric'][2]
-    print (pVel1,pVel2)
+    print((pVel1,pVel2))
     outfile.write('   <field type="bool" name="isworld" >0</field>\n')
     outfile.write('   <field type="doubleArray" name="coordinates" >\n')
     outfile.write('    <array shape="5" >\n')

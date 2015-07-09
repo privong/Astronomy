@@ -94,5 +94,5 @@ for file1 in files:
       match=0
 
     if match:
-      print file
+      print(file)
 

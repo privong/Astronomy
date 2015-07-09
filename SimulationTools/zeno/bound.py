@@ -35,6 +35,6 @@ plt.xlabel('Radius')
 plt.ylabel('Energy (Potential + Kinetic)')
 if args.savefig:
     plt.savefig(args.savefig)
-    print "Plot saved to: " + args.savefig
+    print("Plot saved to: " + args.savefig)
 else:
     plt.show()

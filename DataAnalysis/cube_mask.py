@@ -62,13 +62,13 @@ parser.add_argument('-spatial', type=int, default=0,
 args = parser.parse_args()
 
 if args.cube:
-    print "Generating mask for "+args.cube+"."
+    print("Generating mask for "+args.cube+".")
 else:
     sys.stderr.write("ERROR: You must specify a data cube.\n\n")
     sys.exit(-1)
 
 if args.rms:
-    print "Using RMS noise of "+str(args.rms)+" (in the units of the cube)."
+    print("Using RMS noise of "+str(args.rms)+" (in the units of the cube).")
 else:
     sys.stderr.write("ERROR: You must specify a RMS noise value.\n\n")
     sys.stderr.write("Eventually I'll get around to allowing the program \
@@ -76,12 +76,12 @@ else:
     sys.exit(-1)
 
 if args.SN == 1:
-    print "No SN specified, accepting all pixels."
+    print("No SN specified, accepting all pixels.")
 if args.SNJ == -1:
-    print "Not taking into account pixels adjacent in frequency space."
+    print("Not taking into account pixels adjacent in frequency space.")
 if args.spatial:
-    print "Pixels must have at least "+str(args.spatial)+" adjacent pixels \
-          exceeding SN of "+str(args.SNJ)
+    print("Pixels must have at least "+str(args.spatial)+" adjacent pixels \
+          exceeding SN of "+str(args.SNJ))
 
 # let's get a move on
 if os.path.isfile(args.cube):

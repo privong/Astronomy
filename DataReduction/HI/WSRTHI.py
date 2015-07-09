@@ -44,53 +44,53 @@ def WSRTHI(viz, calname, source, refant="RT4", flagRT5=True, FLAGGING=True,
         tvis = string.rsplit(viz[i],'.',1)
         if (tvis[1]=="UVF"):
             if not(os.path.isdir('./'+tvis[0]+'.ms')) or not(os.path.isdir('./'+tvis[0]+'.MS')):
-                print "Importing UVFITS file "+viz[i]
+                print("Importing UVFITS file "+viz[i])
                 # MS file hasn't been imported yet, so do it
                 importuvfits(fitsfile=viz[i], vis=tvis[0]+'.ms')
                 # now need to edit the "ANTENNAS" table to copy the station name to the "name" column.
-                print "Fixing WSRT antenna names..."
+                print("Fixing WSRT antenna names...")
                 tb.open(tvis[0]+'.ms/ANTENNA', nomodify=False)
                 antenna=tb.getcol("STATION")
                 tb.putcol("NAME", antenna)
                 tb.close()
             viz[i]=tvis[0]+'.ms'
 
-    print "Processing WSRT observation contained in MS files: "
+    print("Processing WSRT observation contained in MS files: ")
     for vis in viz:
-        print vis
+        print(vis)
 
     if (FLAGGING):
-        print "---- Initial Flagging ----"
+        print("---- Initial Flagging ----")
 
         # start by flagging autocorrelations
-        print "Flagging autocorrelations..."
+        print("Flagging autocorrelations...")
         for vis in viz:
             flagdata(vis=vis, mode='manual', autocorr=True)
 
-        print "Flagging shadowed antennas..."
+        print("Flagging shadowed antennas...")
         for vis in viz:
             flagdata(vis=vis, mode='shadow')
 
         if (flagRT5):
-            print "Flagging antenna RT5 (APERTIF testing)"
+            print("Flagging antenna RT5 (APERTIF testing)")
             for vis in viz:
                 flagdata(vis=vis, flagbackup=True, mode="manual",
                             antenna="RT5")
 
-        print "Flagging channels on the edges of the bandpass."
+        print("Flagging channels on the edges of the bandpass.")
         for vis in viz:
             flagdata(vis=vis, flagbackup=True, mode="manual",
                         spw="0:0~5;850~1023")
 
     if (GENCAL):
-        print "---- Generating Calibration Tables ----"
+        print("---- Generating Calibration Tables ----")
 
 
         # set the intitial flux density scale
-        print "Setting flux density scale"
+        print("Setting flux density scale")
         setjyout = setjy(vis=viz[0], scalebychan=True, usescratch=True)
-        print "Flux of "+setjyout['0']['fieldName']+" set to "+ \
-                str(setjyout['0']['0']['fluxd'][0])
+        print("Flux of "+setjyout['0']['fieldName']+" set to "+ \
+                str(setjyout['0']['0']['fluxd'][0]))
 
         # integration based phase calibration
         gaincal(vis=viz[0], caltable=caltable[0], field="", spw="", 
@@ -165,7 +165,7 @@ def WSRTHI(viz, calname, source, refant="RT4", flagRT5=True, FLAGGING=True,
                 parang=False)
 
     if (APPLYCAL):
-        print "---- Applying Calibration to the data ----"
+        print("---- Applying Calibration to the data ----")
 
         # apply to the primary calibrator
         applycal(vis=viz[0], field="", spw="", selectdata=False, timerange="",
@@ -186,11 +186,11 @@ def WSRTHI(viz, calname, source, refant="RT4", flagRT5=True, FLAGGING=True,
                     gainfield=[''], interp=['nearest',  'nearest',  'nearest'],
                     spwmap=[], parang=False, calwt=True)
 
-        print "Finished applying calibrations to the raw data."
+        print("Finished applying calibrations to the raw data.")
 
     # if requested, combine the two MS sets
     if (MSCAT):
-        print "---- Concatenating Calibrated Measurement Sets ----"
+        print("---- Concatenating Calibrated Measurement Sets ----")
         concat(vis=[viz[1], viz[2]], concatvis=source+'.ms')
         nvis=source+'.ms'
     else:
@@ -199,9 +199,9 @@ def WSRTHI(viz, calname, source, refant="RT4", flagRT5=True, FLAGGING=True,
     # image the data cube
     if (IMAGE):
         if (os.path.isdir('./'+source+'.ms')):
-            print "---- Imaging concatenated, calibrated measurement set ----"
+            print("---- Imaging concatenated, calibrated measurement set ----")
         else:
-            print "---- Imaging calibrated data set ----"
+            print("---- Imaging calibrated data set ----")
         clean(vis=nvis, imagename=source, selectdata=False, mode='channel',
                 imsize=[256, 256], cell='6arcsec', niter=100000,
                 threshold='4mJy', interactive=False, multiscale=[],
@@ -209,12 +209,12 @@ def WSRTHI(viz, calname, source, refant="RT4", flagRT5=True, FLAGGING=True,
 
     # do a generic continuum subtraction
     if (CONTSUB):
-        print "---- Performing Continuum Subtraction ----"
+        print("---- Performing Continuum Subtraction ----")
         uvcontsub(vis=nvis, fitspw="0:50~375;650~800", fitorder=0,
                     want_cont=True)
     nvis=source+'.ms'
     if (CONTSUBIMG):
-        print "---- Imaging Continuum Subtracted Data ----"
+        print("---- Imaging Continuum Subtracted Data ----")
         # image the continuum subtracted data
         clean(vis=nvis+'.contsub', imagename=source+'.contsub',
                 selectdata=False, mode='channel', interpolation='nearest',
@@ -227,16 +227,16 @@ def WSRTHI(viz, calname, source, refant="RT4", flagRT5=True, FLAGGING=True,
                 threshold='4mJy', interactive=False, multiscale=[],
                 spw='0:6~849', usescratch=True)
 
-    print "The following operations were performed on the data:"
-    print "Flagging: "+str(FLAGGING)
+    print("The following operations were performed on the data:")
+    print("Flagging: "+str(FLAGGING))
     if (FLAGGING):
-        print "\tRT5: "+str(flagRT5)
-    print "Generate Calibration Tables: "+str(GENCAL)
-    print "Apply calibration to the data: "+str(APPLYCAL)
-    print "Measurement set concatenation: "+str(MSCAT)
-    print "Dataset imaged: "+str(IMAGE)
-    print "Continuum subtracted: "+str(CONTSUB)
-    print "Continuum subtracted data imaged: "+str(CONTSUBIMG)+" and smoothed by +"+str(FSMO)+" channels."
+        print("\tRT5: "+str(flagRT5))
+    print("Generate Calibration Tables: "+str(GENCAL))
+    print("Apply calibration to the data: "+str(APPLYCAL))
+    print("Measurement set concatenation: "+str(MSCAT))
+    print("Dataset imaged: "+str(IMAGE))
+    print("Continuum subtracted: "+str(CONTSUB))
+    print("Continuum subtracted data imaged: "+str(CONTSUBIMG)+" and smoothed by +"+str(FSMO)+" channels.")
 
 
     return 0

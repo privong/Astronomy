@@ -203,6 +203,6 @@ if args.Etot:
 plt.title(args.logfile+' - Energy')
 if args.savefig:
     plt.savefig(args.savefig)
-    print "Plot saved to: "+args.savefig
+    print("Plot saved to: "+args.savefig)
 else:
     plt.show()

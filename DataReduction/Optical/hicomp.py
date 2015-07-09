@@ -46,8 +46,8 @@ def hicomp(files, compfile=False, hrange=(0, 65000), corrfac=1):
         frame2.close()
         if not(comp):
             frame.close()
-        print "Saving figure #" + str(j) + ", " + file.split('.fits')[0] + \
-              '.png'
+        print("Saving figure #" + str(j) + ", " + file.split('.fits')[0] + \
+              '.png')
         plt.savefig(file.split('.fits')[0] + '.png', format='png')
         j = j+1
 

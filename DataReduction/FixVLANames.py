@@ -8,8 +8,8 @@ import string
 
 def FixVLANames(vis):
 
-    print "Changing antenna NAME column to modified name column for %s." % \
-          (vis)
+    print("Changing antenna NAME column to modified name column for %s." % \
+          (vis))
     newname = []
     # open the table of antenna names
     tb.open(vis + '/ANTENNA', nomodify=False)

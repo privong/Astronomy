@@ -76,6 +76,6 @@ plt.title(args.title)
 plt.minorticks_on()
 if args.savefig:
   plt.savefig(args.savefig)
-  print "Plot saved to "+args.savefig+".\n"
+  print("Plot saved to "+args.savefig+".\n")
 else:
   plt.show()
