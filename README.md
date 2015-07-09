@@ -28,4 +28,4 @@ Scripts in this repo may require one or more of:
 * bibtexparser
 * pycurl
 
-These scripts were developed with python 2.7.x. They may not be python3 compatible.
+As of 09 July 2015, most of these scripts were developed/tested in python 2.7.x, but written in a way that _should_ be python3 compatible, but that compatibility has not always been tested. Moving forward, I will be using python3 exclusively.
