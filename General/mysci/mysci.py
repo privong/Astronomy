@@ -136,7 +136,7 @@ restfreq={'HI': 1420405751.77*_u.Hz,
 def SegtoDecimal(seg, RA=False):
     """
     Input a segidecimal angle (can't be hours!), return a decimal value
-    
+
     seg is a string, with the values separated by a colon
     RA=False if it's an angle, RA=True if it's hours,mins,seconds
 
@@ -199,7 +199,7 @@ def DecimaltoSeg(deci, RA=False):
         seg = ':'.join(['-0', str(T2), str(T3)])
     else:
         seg = ':'.join([str(sign*T1), str(T2), str(T3)])
-    
+
     return seg
 
 def RedshiftLine(z, restlam=None, restnu=None):
@@ -292,7 +292,7 @@ def HImass(flux, DL):
 def queryNED(name):
     """
     queryNED(): Return information on a galaxy from a NED Query
-    
+
     Arguments
     name: galaxy name
 
@@ -311,7 +311,7 @@ def queryNED(name):
            'angsize': {'major': _np.nan*_u.arcmin,
                        'minor': _np.nan*_u.arcmin,
                        'PA': _np.nan*_u.deg}}
-    
+
     # NED sometimes doesn't like '+' in the source name, so be kind:
     name = '%2B'.join(name.split('+'))
     buf = _BytesIO()
@@ -319,32 +319,33 @@ def queryNED(name):
     c.setopt(c.URL, urlbase + name)
     c.setopt(c.WRITEFUNCTION, buf.write)
     c.perform()
-    results = buf.getvalue().decode('UTF-8').split('\n')
-    results = results[14:]
-    if _re.search('Error', results[0]):
-        _sys.stderr.write(name + ' ' + results[0] + '\n')
-    else: 
-        data = results[-2].split('|')
-        out['RA'] = float(data[2]) * _u.deg
-        out['Dec'] = float(data[3]) * _u.deg
-        out['z'] = float(data[6])
+    if c.getinfo(_pycurl.HTTP_CODE) == 200:
+        results = buf.getvalue().decode('UTF-8').split('\n')
+        results = results[14:]
+        if _re.search('Error', results[0]):
+            _sys.stderr.write(name + ' ' + results[0] + '\n')
+        else:
+            data = results[-2].split('|')
+            out['RA'] = float(data[2]) * _u.deg
+            out['Dec'] = float(data[3]) * _u.deg
+            out['z'] = float(data[6])
 
     return out
 
 def querySIMBAD(name):
     """
     querySIMBAD(): Return information on a galaxy from a simbad query
-    
+
     Arguments
     name: galaxy name
-    
+
     Returns:
     dictionary with:
         - ICRS coordinates (J2000)
         - redshift
         - angular size
     """
-    
+
     urlbase = "http://simbad.u-strasbg.fr/simbad/sim-id?output.format=ASCII&Ident="
     out = {'RA': _np.nan*_u.deg,
            'Dec': _np.nan*_u.deg,
@@ -353,31 +354,32 @@ def querySIMBAD(name):
                        'minor': _np.nan*_u.arcmin,
                        'PA': _np.nan*_u.deg}}
 
-    buf = _BitesIO()
+    buf = _BytesIO()
     c = _pycurl.Curl()
     c.setopt(c.URL, urlbase + name)
     c.setopt(c.WRITEFUNCTION, buf.write)
     c.perform()
     results = buf.getvalue().decode('UTF-8').split('\n')
-    if _re.search('Identifier not found', results[0]):
-        _sys.stderr.write(name + " not found in SIMBAD.\n")
-    elif _re.search('No known catalog', results[0]):
-        _sys.stderr.write(name + " catalog error.\n")
-    else:
-        for line in results:
-            if _re.search('Identifiers', line):
-                break
-            elif _re.search('ICRS', line):
-                line = line.split(':')[1].split(' (')[0].split()
-                out['RA'] = line[0] + ':' + line[1] + ':' + line[2]
-                out['Dec'] = line[3] + ':' + line[4] + ':' + line[5]
-            elif _re.search('Redshift', line):
-                out['z'] = _np.float(line.split(':')[1].split(' [')[0])
-            elif _re.search('Angular size', line):
-                pos = [float(x) for x in line.split(':')[1].split(' (')[0].split()]
-                out['angsize']['major'] = pos[0] * _u.arcmin
-                out['angsize']['minor'] = pos[1] * _u.arcmin
-                out['angsize']['PA'] = pos[2] * _u.deg
+    if c.getinfo(_pycurl.HTTP_CODE) == 200:
+        if _re.search('Identifier not found', results[0]):
+            _sys.stderr.write(name + " not found in SIMBAD.\n")
+        elif _re.search('No known catalog', results[0]):
+            _sys.stderr.write(name + " catalog error.\n")
+        else:
+            for line in results:
+                if _re.search('Identifiers', line):
+                    break
+                elif _re.search('ICRS', line):
+                    line = line.split(':')[1].split(' (')[0].split()
+                    out['RA'] = line[0] + ':' + line[1] + ':' + line[2]
+                    out['Dec'] = line[3] + ':' + line[4] + ':' + line[5]
+                elif _re.search('Redshift', line):
+                    out['z'] = _np.float(line.split(':')[1].split(' [')[0])
+                elif _re.search('Angular size', line):
+                    pos = [float(x) for x in line.split(':')[1].split(' (')[0].split()]
+                    out['angsize']['major'] = pos[0] * _u.arcmin
+                    out['angsize']['minor'] = pos[1] * _u.arcmin
+                    out['angsize']['PA'] = pos[2] * _u.deg
 
     return out
 
@@ -389,7 +391,7 @@ def querySIMBAD(name):
 
 def PosMatch(pos1, pos2, name1=None, name2=None, posTol=60.*_u.arcsec):
     """
-    Position matching function for catalogs. 
+    Position matching function for catalogs.
 
     Parameters:
         - pos1,pos2: positions, 2 element, Seg or decimal
@@ -425,7 +427,7 @@ def PosMatch(pos1, pos2, name1=None, name2=None, posTol=60.*_u.arcsec):
     if angDist(pos1, pos2) < posTol:
         return True
     else:
-        return False    
+        return False
 
     return -1
 
@@ -605,7 +607,7 @@ def WriteSpecVOTMeas(outdict=None, outfile=None, **kwargs):
     Take a dictionary and write it to a VOTable.
 
     Output VOTable will have a 'Source Information' table with top-level
-    information, plus additional tables for each entry in the (required) 
+    information, plus additional tables for each entry in the (required)
     'measline' sub-dictionary.
 
     This function uses any astropy.units information from the first entry it
