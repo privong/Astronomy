@@ -281,7 +281,7 @@ def HImass(flux, DL):
     luminosity distance (Mpc). Units encouraged.
     """
 
-    return (2.36e5 * (DL / _u.Mpc)**2 * flux / (_u.Jy*_u.km/_u.s)).decompose() * _u.MsolMass
+    return (2.36e5 * (DL / _u.Mpc)**2 * flux / (_u.Jy*_u.km/_u.s)).decompose() * _u.solMass
 
 # End Useful functions
 ###############################################################################
