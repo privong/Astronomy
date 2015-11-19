@@ -12,6 +12,7 @@ import string as _string
 import numpy as _np
 from astropy.io import fits as _pyfits
 import astropy.units as _u
+import astropy.constants as _cons
 import astropy.io.votable as _vot
 try:
     from cStringIO import StringIO as _BytesIO
@@ -282,6 +283,21 @@ def HImass(flux, DL):
     """
 
     return (2.36e5 * (DL / _u.Mpc)**2 * flux / (_u.Jy*_u.km/_u.s)).decompose() * _u.solMass
+
+def Lprime(flux, DL, z, nuobs):
+    """
+    Lprime
+
+    Returns the L' luminosity for a mm line, in units of K km s^-1 pc^2
+
+    Inputs:
+    - flux: line flux in Jy km/s
+    - DL: luminosity distance
+    - z: redshift
+    - nuobs: Observed frequency
+    """
+    prefac = _cons.c**2/(2.*_cons.k_B)
+    return (prefac * flux * DL**2 * (1 + z)**(-3) / nuobs**2).to('K km pc^2 /s')
 
 # End Useful functions
 ###############################################################################
