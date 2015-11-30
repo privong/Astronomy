@@ -354,6 +354,7 @@ def querySIMBAD(name):
                        'minor': _np.nan*_u.arcmin,
                        'PA': _np.nan*_u.deg}}
 
+    name = '%2B'.join(name.split('+'))
     buf = _BytesIO()
     c = _pycurl.Curl()
     c.setopt(c.URL, urlbase + name)
@@ -369,17 +370,21 @@ def querySIMBAD(name):
             for line in results:
                 if _re.search('Identifiers', line):
                     break
-                elif _re.search('ICRS', line):
+                elif _re.search('ICRS', line) and _re.search('Coordinates', line):
                     line = line.split(':')[1].split(' (')[0].split()
                     out['RA'] = line[0] + ':' + line[1] + ':' + line[2]
                     out['Dec'] = line[3] + ':' + line[4] + ':' + line[5]
                 elif _re.search('Redshift', line):
                     out['z'] = _np.float(line.split(':')[1].split(' [')[0])
                 elif _re.search('Angular size', line):
-                    pos = [float(x) for x in line.split(':')[1].split(' (')[0].split()]
-                    out['angsize']['major'] = pos[0] * _u.arcmin
-                    out['angsize']['minor'] = pos[1] * _u.arcmin
-                    out['angsize']['PA'] = pos[2] * _u.deg
+                    try:
+                        pos = [float(x) for x in line.split(':')[1].split(' (')[0].split()]
+                        out['angsize']['major'] = pos[0] * _u.arcmin
+                        out['angsize']['minor'] = pos[1] * _u.arcmin
+                        out['angsize']['PA'] = pos[2] * _u.deg
+                    except:
+                        _sys.stderr.write(name + ' has missing position information:\n')
+                        _sys.stderr.write(line + '\n')
 
     return out
 
