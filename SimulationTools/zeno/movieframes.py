@@ -30,6 +30,8 @@ parser.add_argument('-sbulge', action='store_true', default=False,
                     help='Select stellar bulge particles')
 parser.add_argument('-gdisk', action='store_true', default=False,
                     help='Select gas disk particles')
+parser.add_argument('-all', action='store_true', default=False,
+                    help='Select all particles')
 parser.add_argument('--zoom', action='store', default=False,
                     help='Zoom in (<1) or out (>1) by the factor specified')
 parser.add_argument('--angle', action='store', default=False,
@@ -69,19 +71,23 @@ if args.gdisk:
     type.append('0x66')
     suffix = suffix + '-gdisk'
 
-if multiple == -1:
+if multiple == -1 and not(args.all):
     sys.stderr.write('Ummmm... you need to pick at least one type of particle to make an image of...\n\n')
     sys.exit(-1)
 
 # generate the sieve argument
-sieve = 'type=='+type[0]
-if multiple > 0:
-    sieve = ''
-    for h in type:
-        if not(sieve == ''):
-            sieve = sieve + ' || type==' + h
-        else:
-            sieve = 'type==' + h
+if args.all:
+    sieve='1'
+    suffix = '-all'
+else:
+    isieve = 'type=='+type[0]
+    if multiple > 0:
+        sieve = ''
+        for h in type:
+            if not(sieve == ''):
+                sieve = sieve + ' || type==' + h
+            else:
+                sieve = 'type==' + h
 
 snaps = args.snaps
 # the first file is special, since it has the bodytype info!
