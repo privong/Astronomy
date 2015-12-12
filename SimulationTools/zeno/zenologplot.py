@@ -9,7 +9,7 @@ import re
 import argparse
 import os
 import matplotlib.pyplot as plt
-import numpy
+import numpy as np
 
 
 parser = argparse.ArgumentParser(description='Process zeno sphcode logs and \
@@ -82,19 +82,19 @@ lhead = 0
 # read the meat of the data and write it out, continuing until the end
 # this records: time, Nstep, freqmax, freqavg, Etot, Eint, Ekin, Epot, Erad,
 #        |Jtot|, |Vcom|, and CPUtot
-time = numpy.array([])
-Nstep = numpy.array([])
-freqmax = numpy.array([])
-freqavg = numpy.array([])
-Etot = numpy.array([])
-Ekin = numpy.array([])
-Epot = numpy.array([])
-VirR = numpy.array([])
-Jtot = numpy.array([])
-Vcom = numpy.array([])
+time = np.array([])
+Nstep = np.array([])
+freqmax = np.array([])
+freqavg = np.array([])
+Etot = np.array([])
+Ekin = np.array([])
+Epot = np.array([])
+VirR = np.array([])
+Jtot = np.array([])
+Vcom = np.array([])
 if args.sph:
-    Erad = numpy.array([])
-    Eint = numpy.array([])
+    Erad = np.array([])
+    Eint = np.array([])
     while 1:
         tline = infile.readline()
         if not tline:
@@ -102,29 +102,29 @@ if args.sph:
         if re.search('Etot', tline):
             # get the next line and add other information to the stack
             tline = infile.readline().split()
-            time = numpy.append(time, float(tline[0]))
-            Etot = numpy.append(Etot, float(tline[1]))
-            Eint = numpy.append(Eint, float(tline[2]))
-            Ekin = numpy.append(Ekin, float(tline[3]))
-            Epot = numpy.append(Epot, float(tline[4]))
-            Erad = numpy.append(Erad, float(tline[5]))
-            Jtot = numpy.append(Jtot, float(tline[6]))
-            Vcom = numpy.append(Vcom, float(tline[7]))
+            time = np.append(time, float(tline[0]))
+            Etot = np.append(Etot, float(tline[1]))
+            Eint = np.append(Eint, float(tline[2]))
+            Ekin = np.append(Ekin, float(tline[3]))
+            Epot = np.append(Epot, float(tline[4]))
+            Erad = np.append(Erad, float(tline[5]))
+            Jtot = np.append(Jtot, float(tline[6]))
+            Vcom = np.append(Vcom, float(tline[7]))
 elif args.tree:
     savenext = False
     for line in infile:
         if savenext:
             tline = line.split()
-            time = numpy.append(time, float(tline[0]))
-            Etot = numpy.append(Etot, float(tline[1]))
-            Ekin = numpy.append(Ekin, float(tline[2]))
-            Epot = numpy.append(Epot, float(tline[3]))
-            VirR = numpy.append(VirR, float(tline[4]))
-            Vcom = numpy.append(Vcom, float(tline[5]))
+            time = np.append(time, float(tline[0]))
+            Etot = np.append(Etot, float(tline[1]))
+            Ekin = np.append(Ekin, float(tline[2]))
+            Epot = np.append(Epot, float(tline[3]))
+            VirR = np.append(VirR, float(tline[4]))
+            Vcom = np.append(Vcom, float(tline[5]))
             if len(tline[6].split('.')) == 2:
-                Jtot = numpy.append(Jtot, float(tline[6]))
+                Jtot = np.append(Jtot, float(tline[6]))
             else:
-                Jtot = numpy.append(Jtot, float(tline[6][:6]))
+                Jtot = np.append(Jtot, float(tline[6][:6]))
             savenext = False
         elif re.search('T\+U', line):
             savenext = True
@@ -136,8 +136,8 @@ if len(time) == len(Etot)+1:
     time = time[:-1]
 
 if args.density:
-    rhoavg = numpy.array([])
-    t = numpy.array([])
+    rhoavg = np.array([])
+    t = np.array([])
     if not(os.path.exists(args.density)):
         sys.stderr.write('ERROR: density file "' + args.density +
                          '" does not exist. skipping.\n')
@@ -146,8 +146,8 @@ if args.density:
         infile = open(args.density, 'r')
         for line in infile:
             if not(re.match("#", line)):
-                t = numpy.append(t, float(line.split()[0]))
-                rhoavg = numpy.append(rhoavg, float(line.split()[2]))
+                t = np.append(t, float(line.split()[0]))
+                rhoavg = np.append(rhoavg, float(line.split()[2]))
         infile.close()
         # normalize the density to the max value
         rhoavg = rhoavg/rhoavg.max()
