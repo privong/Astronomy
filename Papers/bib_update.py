@@ -207,4 +207,5 @@ except:
 outf.close()
 
 sys.stdout.write(str(upcount) + ' reference(s) updated with journal articles.\n')
-sys.stdout.write(str(acount) + ' reference(s) updated with preprints.\n')
+if args.arXiv:
+    sys.stdout.write(str(acount) + ' reference(s) updated with preprints.\n')
