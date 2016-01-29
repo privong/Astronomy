@@ -70,12 +70,12 @@ def checkRef(entry, confirm=False):
                     except:
                         pass
                     entry['adsurl'] = 'http://adsabs.harvard.edu/abs/' + i.bibcode
-                    if not(re.search(i.year, entry['id'])):
+                    if not(re.search(i.year, entry['ID'])):
                         sys.stderr.write("Warning: Updating year of: " +
-                                         entry['id'] +
+                                         entry['ID'] +
                                          " to reflect publication year (" +
                                          i.year + ").\n")
-                        entry['id'] = entry['id'].split('2')[0] + i.year
+                        entry['ID'] = entry['ID'].split('2')[0] + i.year
                     return entry
         except:
             sys.stderr.write("API issue")
@@ -140,7 +140,7 @@ aphsearch = False
 j = 0
 for j in range(len(bp.entries)):
     thisref = bp.entries[j]
-    if thisref['type'] == 'article':  # not interested in anything else
+    if thisref['ENTRYTYPE'] == 'article':  # not interested in anything else
         if 'journal' in thisref.keys():
             if re.search('arxiv', thisref['journal'], re.IGNORECASE):
                 match = True
@@ -155,18 +155,18 @@ for j in range(len(bp.entries)):
             if 'arxivid' in thisref.keys():
                 match = True
             else:
-                sys.stdout.write(thisref['id'] + \
+                sys.stdout.write(thisref['ID'] + \
                                  ' does not have a journal entry or arXiv ID.\n')
 
         if match:
             match = False   # reset
-            sys.stdout.write('Searching for update to ' + thisref['id'] +
+            sys.stdout.write('Searching for update to ' + thisref['ID'] +
                              '...')
             res = checkRef(thisref, args.confirm)
             if res:
                 upcount += 1
                 bp.entries[j] = res
-                sys.stdout.write(thisref['id'] +
+                sys.stdout.write(thisref['ID'] +
                                  " updated. Please verify changes.\n")
                 newbib = to_bibtex(bp)
                 if upcount + acount % 20 == 0:
@@ -181,13 +181,13 @@ for j in range(len(bp.entries)):
            not('arxivsearched' in thisref.keys()) and \
            thisref['year'] >= '1991':
             aphsearch = False
-            sys.stdout.write('No preprint associated with ' + thisref['id'] +
+            sys.stdout.write('No preprint associated with ' + thisref['ID'] +
                              ', checking...\n')
             res = aref(thisref, args.confirm)
             if res and not('arxivsearched' in thisref.keys()):
                 acount += 1
                 bp.entries[j] = res
-                sys.stdout.write(thisref['id'] +
+                sys.stdout.write(thisref['ID'] +
                                  " updated with a preprint. Please verify changes.\n")
                 newbib = to_bibtex(bp)
                 if upcount + acount % 20 == 0:
