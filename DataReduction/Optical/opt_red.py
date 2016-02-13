@@ -82,7 +82,8 @@ for file1 in args.files:
                     filters.append(thisfil)
                 flats.append((cfile, thisfil))
             else:
-                sys.stderr.write(cfile+' - unknown image type, ignoring.\n')
+                sys.stderr.write(cfile+' - unknown image type ("' + 
+                                 frame[0].header[IMGKEY] + '"), ignoring.\n')
             frame.close()
 
 sys.stderr.write(str(len(args.files)) + ' files inspected.\n')
