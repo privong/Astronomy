@@ -66,17 +66,17 @@ for file1 in args.files:
         if os.path.isfile(cfile):
             frame = pyfits.open(cfile)
             thisfil = 0
-            if re.match('zero', frame[0].header[IMGKEY]) or \
-               re.match('bias', frame[0].header[IMGKEY]):
+            if re.match('zero', frame[0].header[IMGKEY], re.IGNORECASE) or \
+               re.match('bias', frame[0].header[IMGKEY], re.IGNORECASE):
                 bias.append(cfile)
-            elif re.match('dark', frame[0].header[IMGKEY]):
+            elif re.match('dark', frame[0].header[IMGKEY], re.IGNORECASE):
                 darks.append(cfile)
-            elif re.match('object', frame[0].header[IMGKEY]):
+            elif re.match('object', frame[0].header[IMGKEY], re.IGNORECASE):
                 thisfil = frame[0].header["FILTER"]
                 if not(thisfil in filters):
                     filters.append(thisfil)
                 objects.append((cfile, thisfil))
-            elif re.match('flat', frame[0].header[IMGKEY]):
+            elif re.match('flat', frame[0].header[IMGKEY], re.IGNORECASE):
                 thisfil = frame[0].header["FILTER"]
                 if not(thisfil in filters):
                     filters.append(thisfil)
