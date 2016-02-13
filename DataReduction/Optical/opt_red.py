@@ -21,25 +21,24 @@ import mysci
 import argparse
 
 
-parser = argparse.ArgumentParser(description='Pipeline to generate master bias
-                                 and flat frames, then apply those master
-                                 calibration files to a batch of science
-                                 observations.')
+parser = argparse.ArgumentParser(description='Pipeline to generate master \
+bias and flat frames, then apply those master calibration files to a batch \
+of science observations.')
 parser.add_argument('files', nargs='*', help='files to process')
 parser.add_argument('-t', '--telescope', action='store', default='none',
                     help='Specify telescope type', choices=['VATT', '90Prime'])
 parser.add_argument('-p', '--plot', action='store_true',
-                    help='Plot diagnostics to the screen and pause before
-                          continuing?')
+                    help='Plot diagnostics to the screen and pause before \
+continuing?')
 parser.add_argument('--masterbias', action='store',
-                    help='Use this master bias file instead of generating a
-                          new one')
+                    help='Use this master bias file instead of generating a \
+new one')
 parser.add_argument('--masterflat', action='store',
-                    help='Use this master flat file instead of generating a
-                          new one')
+                    help='Use this master flat file instead of generating a \
+new one')
 parser.add_argument('-v', '--verbose', action='store_true', default=False,
-                    help='Provide additional output. Mostly useful for
-                          debugging.')
+                    help='Provide additional output. Mostly useful for \
+debugging.')
 args = parser.parse_args()
 
 # keywords to move from original files to the derived calibration files
@@ -92,8 +91,8 @@ sys.stderr.write(')\n\n')
 
 if args.masterbias:
     if not(os.path.isfile(args.masterbias)):
-        sys.stderr.write('ERROR: specified master bias file does not exist.
-                         Exiting.\n\n')
+        sys.stderr.write('ERROR: specified master bias file does not exist. \
+Exiting.\n\n')
         sys.exit(-1)
     else:
         sys.stderr.write('Using user-specified master bias: ' +
@@ -190,8 +189,8 @@ else:   # make a master bias
     sys.stderr.write('\n')
     del bframes
 
-sys.stderr.write('\n\n\nNOTE: We are ignoring dark frames at the
-                 moment!!!!!\n\n\n')
+sys.stderr.write('\n\n\nNOTE: We are ignoring dark frames at the \
+moment!!!!!\n\n\n')
 
 # See if there are any dark frames, make a master dark.
 """
@@ -278,8 +277,8 @@ for filter in filters:
     # if we're dealing with a single fits extension, create a new file
     if mflat.ndim < 2:
         if args.verbose:
-            sys.stderr.write('Singe extention data,
-                             creating a new fits file.\n')
+            sys.stderr.write('Single extension data, \
+creating a new fits file.\n')
         frame = pyfits.PrimaryHDU(mflat)
         sflat = pyfits.open(image[0])
         for kw in kprop:
@@ -294,8 +293,8 @@ for filter in filters:
     # otherwise we insert this new data into a copy of the old fits file
     else:
         if args.verbose:
-            sys.stderr.write('Multiextension data, copying off an
-                             existing image\n')
+            sys.stderr.write('Multiextension data, copying off an \
+existing image\n')
         shutil.copy(image[0], mfname)
         frame = pyfits.open(mfname, mode='update')
         frame[0].header['IMAGETYP'] = 'masterflat'
