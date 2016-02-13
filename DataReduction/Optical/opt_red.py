@@ -26,7 +26,8 @@ bias and flat frames, then apply those master calibration files to a batch \
 of science observations.')
 parser.add_argument('files', nargs='*', help='files to process')
 parser.add_argument('-t', '--telescope', action='store', default='none',
-                    help='Specify telescope type', choices=['VATT', '90Prime'])
+                    help='Specify telescope type',
+                    choices=['VATT', '90Prime', 'Swope'])
 parser.add_argument('-p', '--plot', action='store_true',
                     help='Plot diagnostics to the screen and pause before \
 continuing?')
@@ -53,6 +54,11 @@ filters = []    # list of filters used
 flats = []    # flat frames (will be a 2D array, file ID and filter ID)
 objects = []    # object frames (2D array, as above)
 
+if args.telescope == 'Swope':
+    IMGKEY = 'EXPTYPE'
+else:
+    IMGKEY = 'IMAGETYP'
+
 # sort files by type
 for file1 in args.files:
     file1 = glob.glob(file1)
@@ -60,17 +66,17 @@ for file1 in args.files:
         if os.path.isfile(cfile):
             frame = pyfits.open(cfile)
             thisfil = 0
-            if re.match('zero', frame[0].header["IMAGETYP"]) or \
-               re.match('bias', frame[0].header["IMAGETYP"]):
+            if re.match('zero', frame[0].header[IMGKEY]) or \
+               re.match('bias', frame[0].header[IMGKEY]):
                 bias.append(cfile)
-            elif re.match('dark', frame[0].header["IMAGETYP"]):
+            elif re.match('dark', frame[0].header[IMGKEY]):
                 darks.append(cfile)
-            elif re.match('object', frame[0].header["IMAGETYP"]):
+            elif re.match('object', frame[0].header[IMGKEY]):
                 thisfil = frame[0].header["FILTER"]
                 if not(thisfil in filters):
                     filters.append(thisfil)
                 objects.append((cfile, thisfil))
-            elif re.match('flat', frame[0].header["IMAGETYP"]):
+            elif re.match('flat', frame[0].header[IMGKEY]):
                 thisfil = frame[0].header["FILTER"]
                 if not(thisfil in filters):
                     filters.append(thisfil)
