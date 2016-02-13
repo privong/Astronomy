@@ -56,27 +56,27 @@ objects = []    # object frames (2D array, as above)
 # sort files by type
 for file1 in args.files:
     file1 = glob.glob(file1)
-    for file in file1:
-        if os.path.isfile(file):
-            frame = pyfits.open(file)
+    for cfile in file1:
+        if os.path.isfile(cfile):
+            frame = pyfits.open(cfile)
             thisfil = 0
             if re.match('zero', frame[0].header["IMAGETYP"]) or \
                re.match('bias', frame[0].header["IMAGETYP"]):
-                bias.append(file)
+                bias.append(cfile)
             elif re.match('dark', frame[0].header["IMAGETYP"]):
-                darks.append(file)
+                darks.append(cfile)
             elif re.match('object', frame[0].header["IMAGETYP"]):
                 thisfil = frame[0].header["FILTER"]
                 if not(thisfil in filters):
                     filters.append(thisfil)
-                objects.append((file, thisfil))
+                objects.append((cfile, thisfil))
             elif re.match('flat', frame[0].header["IMAGETYP"]):
                 thisfil = frame[0].header["FILTER"]
                 if not(thisfil in filters):
                     filters.append(thisfil)
-                flats.append((file, thisfil))
+                flats.append((cfile, thisfil))
             else:
-                sys.stderr.write(file+' - unknown image type, ignoring.\n')
+                sys.stderr.write(cfile+' - unknown image type, ignoring.\n')
             frame.close()
 
 sys.stderr.write(str(len(args.files)) + ' files inspected.\n')
