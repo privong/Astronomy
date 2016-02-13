@@ -468,10 +468,13 @@ def Telload(file, Tel='none', mode='readonly', quiet=True):
 
     Currently supported (Tel=)
         VATT (VATT 4k CCD)
+        90Prime (Bok 90Prime Imager)
+        Swope (CCD Imager)
     """
 
     if Tel == 'none':
-        _sys.stderr.write('No telescope specified, running fitsopen()\n')
+        if not(quiet):
+            _sys.stderr.write('No telescope specified, running fitsopen()\n')
         ff = fitsopen(file, mode=mode, quiet=quiet)
         return ff
     elif Tel == 'VATT':
@@ -487,6 +490,10 @@ def Telload(file, Tel='none', mode='readonly', quiet=True):
         ff = _np.concatenate((ext1, ext2), axis=1)
 
         return ff
+    elif Tel == 'Swope':
+        if not(quiet):
+            print("Loading FITS file for the Swope imager.")
+        ff = fitsopen(file, mode=mode, quiet=quiet)
     elif Tel == "90Prime":
         if not(quiet):
             print("Loading FITS file for the Bok 90Prime imager.")
