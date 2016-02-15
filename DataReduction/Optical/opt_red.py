@@ -3,10 +3,6 @@
 # opt_red.py
 #
 # Batch optical reduction for a single night of data
-#
-# To do:
-# - allow user to specify telescope on the command line
-# - Enable selection of which flat fields be used to make the master flat
 
 from astropy.io import fits as pyfits
 import numpy as np
