@@ -21,10 +21,19 @@ import mysci
 import argparse
 
 
-def imageCombine(imgnames, frametype, verbose=False):
+def imageCombine(imgnames, frametype, sigma=3, subimage=None, normed=False,
+                 verbose=False):
     """
     Take a list of images, perform a specified combination operation and
     return the final image. Optionally provide diagnostic feedback.
+
+    Arguments:
+      imgnames: ist or tuple of images to combine
+      frametype: type of image, for the file name and output
+      sigma: what sigma to use for sigma-clipping (default: 3)
+      subimage: image to subtract from all frames before processing
+      normed: normalize output file to 1? (default: False)
+      verbse: extra diagnostic output
     """
     
     mean = []
@@ -34,6 +43,8 @@ def imageCombine(imgnames, frametype, verbose=False):
     for image in imgnames:
         idata = mysci.Telload(image, Tel=args.telescope,
                               quiet=not(args.verbose))
+        if not(subimage is None):
+            idata = idata - subimage
         if cframes.ndim < 2:
             cframes = idata.copy()
         else:
@@ -59,7 +70,13 @@ def imageCombine(imgnames, frametype, verbose=False):
         plt.legend()
         plt.show()
     # right now take all the frames, need to add selective frame-ignoring
+    totmean = np.mean(cframes)
+    totstddev = np.std(cframes)
+    cframes = np.ma.masked_where((cframes - totmean) > (sigma * totstddev), cframes)
     mframe = np.mean(cframes, axis=2)
+    mframe = np.array(mframe.tolist())
+    if normed:
+        mframe = mframe / np.mean(mframe)
     if args.verbose:
         sys.stderr.write(str(cframes.shape) + '\n')
         sys.stderr.write(str(mframe.shape) + '\n')
@@ -249,7 +266,8 @@ for filtername in filters:
     for image in flats:
         if re.match(filtername, image[1]):
             thisfiltfiles.append(image[0])
-    imageCombine(thisfiltfiles, "flat_"+filtername, verbose=args.verbose)
+    imageCombine(thisfiltfiles, "flat_"+filtername, normed=True,
+                 subimage=mbias, verbose=args.verbose)
 
 # now process the individual object frames, going by filter
 sys.stderr.write('\n\nProcessing object frames (bias and flat correction)\n')
