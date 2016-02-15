@@ -220,7 +220,7 @@ def RedshiftLine(z, restlam=None, restnu=None):
         _sys.stderr.write("Error: frequency not specified. Returning nan.\n")
         return nan
 
-def fitsopen(file, mode='readonly', ext=0, trim=0, quiet=True):
+def fitsopen(fname, mode='readonly', ext=0, trim=0, quiet=True):
     """
 
     Opens a fits file using pyfits (with an optional specification of the mode).
@@ -236,8 +236,8 @@ def fitsopen(file, mode='readonly', ext=0, trim=0, quiet=True):
     """
 
     # make sure the file exists
-    if _os.path.isfile(file):
-        frame = _pyfits.open(file, mode=mode)
+    if _os.path.isfile(fname):
+        frame = _pyfits.open(fname, mode=mode)
         # we should really make sure we have enough extensions to open the one we
         # want, but i'll leave that for later. :)
         idata = frame[ext].data.transpose()
@@ -248,11 +248,11 @@ def fitsopen(file, mode='readonly', ext=0, trim=0, quiet=True):
             idata = idata[range[0]-1:range[1], range[2]-1:range[3]]
         frame.close()
     else:
-        _sys.stderr.write('Error: ' + file + ' not found.')
+        _sys.stderr.write('Error: ' + fname + ' not found.')
         return -1
 
     if not(quiet):
-        print(file + " HDU(" + str(ext) + \
+        print(fname + " HDU(" + str(ext) + \
               ") opened successfully with dimensions " + str(idata.shape))
 
     return idata
@@ -460,7 +460,7 @@ def PosMatch(pos1, pos2, name1=None, name2=None, posTol=60.*_u.arcsec):
 #
 # Wrappers for various things. May require functions listed above
 
-def Telload(file, Tel='none', mode='readonly', quiet=True):
+def Telload(fname, Tel='none', mode='readonly', quiet=True):
     """
 
     Wrapper function for fitsopen(). Will load and appropriately arrange a fits
@@ -475,15 +475,15 @@ def Telload(file, Tel='none', mode='readonly', quiet=True):
     if Tel == 'none':
         if not(quiet):
             _sys.stderr.write('No telescope specified, running fitsopen()\n')
-        ff = fitsopen(file, mode=mode, quiet=quiet)
+        ff = fitsopen(fname, mode=mode, quiet=quiet)
         return ff
     elif Tel == 'VATT':
         if not(quiet):
             print("Loading FITS file for the VATT")
         # load both fits extensions (and re-transpose to put them in the orig format)
         # 2nd one needs to be flipped since it's reading out the other way
-        ext1 = fitsopen(file, mode=mode, quiet=quiet, ext=1, trim=1).transpose()
-        ext2 = _np.fliplr(fitsopen(file, mode=mode, quiet=quiet,
+        ext1 = fitsopen(fname, mode=mode, quiet=quiet, ext=1, trim=1).transpose()
+        ext2 = _np.fliplr(fitsopen(fname, mode=mode, quiet=quiet,
                           ext=2, trim=1).transpose())
 
         # concatenate the two halves of the image
@@ -493,7 +493,7 @@ def Telload(file, Tel='none', mode='readonly', quiet=True):
     elif Tel == 'Swope':
         if not(quiet):
             print("Loading FITS file for the Swope imager.")
-        ff = fitsopen(file, mode=mode, quiet=quiet)
+        ff = fitsopen(fname, mode=mode, quiet=quiet)
     elif Tel == "90Prime":
         if not(quiet):
             print("Loading FITS file for the Bok 90Prime imager.")
@@ -503,19 +503,19 @@ def Telload(file, Tel='none', mode='readonly', quiet=True):
         # in the same way?
 
         # first, figure out how many HDUs there are...
-        frame = _pyfits.open(file)
+        frame = _pyfits.open(fname)
         nHDU = len(frame) - 1 # ditch the overall HDU
         frame.close()
         # load the first frame to get us started
-        ext1 = fitsopen(file, mode=mode, quiet=quiet, ext=1, trim=0)
+        ext1 = fitsopen(fname, mode=mode, quiet=quiet, ext=1, trim=0)
         shape = ext1.shape
         ext1 = ext1.reshape((1, shape[0], shape[1]))
-        ext2 = fitsopen(file, mode=mode, quiet=quiet, ext=2, trim=0)
+        ext2 = fitsopen(fname, mode=mode, quiet=quiet, ext=2, trim=0)
         shape = ext2.shape
         ext2 = ext2.reshape((1, shape[0], shape[1]))
         ff = _np.concatenate((ext1, ext2), axis=0)
         for hdu in range(3, nHDU+1, 1):
-            extt = fitsopen(file, mode=mode, quiet=quiet, ext=hdu, trim=0)
+            extt = fitsopen(fname, mode=mode, quiet=quiet, ext=hdu, trim=0)
             shape = extt.shape
             extt = extt.reshape((1, shape[0], shape[1]))
             ff = _np.concatenate((ff, extt), axis=0)
