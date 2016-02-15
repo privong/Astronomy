@@ -476,7 +476,6 @@ def Telload(fname, Tel='none', mode='readonly', quiet=True):
         if not(quiet):
             _sys.stderr.write('No telescope specified, running fitsopen()\n')
         ff = fitsopen(fname, mode=mode, quiet=quiet)
-        return ff
     elif Tel == 'VATT':
         if not(quiet):
             print("Loading FITS file for the VATT")
@@ -489,7 +488,6 @@ def Telload(fname, Tel='none', mode='readonly', quiet=True):
         # concatenate the two halves of the image
         ff = _np.concatenate((ext1, ext2), axis=1)
 
-        return ff
     elif Tel == 'Swope':
         if not(quiet):
             print("Loading FITS file for the Swope imager.")
@@ -519,7 +517,8 @@ def Telload(fname, Tel='none', mode='readonly', quiet=True):
             shape = extt.shape
             extt = extt.reshape((1, shape[0], shape[1]))
             ff = _np.concatenate((ff, extt), axis=0)
-        return ff
+
+    return ff
 
 # End Wrapper Functions
 ###############################################################################
