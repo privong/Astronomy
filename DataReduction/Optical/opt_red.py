@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 #
 # opt_red.py
 #
@@ -83,7 +83,7 @@ def imageCombine(imgnames, frametype, sigma=3, subimage=None, normed=False,
     fname = 'master' + frametype + '.fits'
     if os.path.isfile(fname):
         sys.stderr.write('Deleting existing ' + fname + '\n')
-        raw_input('PRESS ENTER TO CONTINUE')
+        input('PRESS ENTER TO CONTINUE')
         os.remove(fname)
     if len(mframe.shape) < 3:
         # copy header from an existing frame, add comments saying which
@@ -286,7 +286,7 @@ for filter in filters:
             fname = rootn + '-bsub_flat.fits'
             if os.path.isfile(fname):
                 sys.stderr.write('Deleting existing ' + fname+'\n')
-                raw_input('PRESS ENTER TO CONTINUE')
+                input('PRESS ENTER TO CONTINUE')
                 os.remove(fname)
             sys.stderr.write('\t' + image[0] + '. Writing as ' + fname+'.\t')
             shutil.copy(image[0], fname)
