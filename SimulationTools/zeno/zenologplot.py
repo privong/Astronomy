@@ -70,7 +70,8 @@ elif not(args.Etot) and \
      not(args.Ekin) and \
      not(args.Epot) and \
      not(args.Eint) and \
-     not(args.Erad):
+     not(args.Erad) and \
+     not(args.VirR):
     sys.stderr.write('uhhh, you didn\'t request anything to plot... try:\n')
     sys.stderr.write(sys.argv[0] + ' --help\n')
     sys.stderr.write('to see your options.\n\n')
