@@ -21,7 +21,7 @@ if args.processed:
     sys.stdout.write('Assuming files contain processed calibrations.\n')
     # frames needed for science post-processing
     files = [
-#             'ASTROMETRY_REFERENCE',
+             'ASTROMETRY_REFERENCE',
              'ASTROMETRY_WCS',
              'BADPIX_TABLE',
              'EXTINCT_TABLE',
@@ -30,6 +30,7 @@ if args.processed:
              'LSF_PROFILE',
              'MASTER_BIAS',
              'MASTER_FLAT',
+             'MASTER_DARK',
              'STD_RESPONSE',
              'STD_TELLURIC',
              'STD_FLUX_TABLE',
@@ -95,7 +96,7 @@ and object frames with the following commands:\n\n')
     sys.stdout.write('Then add the PIXTABLE_SKY files to sky.sof, append "PIXTABLE_SKY", and run:\n\n')
     sys.stdout.write('OMP_NUM_THREADS=4 esorex --log-file=makesky.log muse_create_sky sky.sof\n\n')
     sys.stdout.write('Finally add the PIXTABLE_OBJECT files to scipost.sof, append "PIXTABLE_OBJECT", and run:\n\n')
-    sys.stdout.write('OMP_NUM_THREADS=4 --log=scipost.log muse_scipost scipost.sof\n\n')
+    sys.stdout.write('OMP_NUM_THREADS=4 esorex --log-file=scipost.log muse_scipost scipost.sof\n\n')
 
 else:
     sys.stdout.write('Cataloging files using raw calibration frames.\n')
