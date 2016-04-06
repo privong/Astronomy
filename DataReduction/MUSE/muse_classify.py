@@ -159,3 +159,5 @@ else:
     sky.close()
     obj.close()
     illum.close()
+
+    sys.stdout.write('Finished sorting the raw files.\n')
