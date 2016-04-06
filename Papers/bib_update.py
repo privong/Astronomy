@@ -34,15 +34,15 @@ def checkRef(entry, confirm=False):
         try:
             for i in res:
                 try:    # only want things that are published
-                    print i.pub
+                    print(i.pub)
                     if re.search('arxiv', i.pub, re.IGNORECASE):
                         continue
                 except:
                     continue
                 if confirm:
-                    print entry['author'].split(',')[0], entry['title'], \
-                          entry['year']
-                    print i.author[0], i.title[0], i.year
+                    print(entry['author'].split(',')[0], entry['title'], \
+                          entry['year'])
+                    print(i.author[0], i.title[0], i.year)
                     sel = raw_input('Is this a match (y/n)? ')
                 else:
                     sel = 'y'
