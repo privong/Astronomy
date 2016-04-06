@@ -61,6 +61,9 @@ if args.processed:
         myfits = fits.open(entry)
         try:
             curr = myfits[0].header['HIERARCH ESO PRO CATG']
+        except:
+            curr = False
+        if curr:
             if curr in skyf:
                 sky.write(entry + ' ' + curr + '\n')
             elif curr in preproc:
@@ -68,18 +71,18 @@ if args.processed:
                 objp.write(entry + ' ' + curr + '\n')
             elif curr in files:
                 spost.write(entry + ' ' + curr + '\n')
+        try:
+            curr = myfits[0].header['ESO DPR CATG']
         except:
-            sys.stdout.write('Trying non-processed type.\n')
-            try:
-    
-                curr = myfits[0].header['ESO DPR TYPE']
-                if curr == 'SCIENCE':
-                    if myfits[0].header['ESO DPR TYPE'] == 'SKY':
-                        sky.write(entry + ' SKY\n')
-                    elif myfits[0].header['ESO DPR TYPE'] == 'OBJECT':
-                        spost.write(entry + ' OBJECT\n')
-            except:
-                sys.stdout.write('Unknown file type.\n')
+            curr = False
+        if curr and re.search('SCIENCE', curr):
+            curr = myfits[0].header['ESO DPR TYPE']
+            if re.search('SKY', curr):
+                #sky.write(entry + ' SKY\n')
+                skyp.write(entry + ' SKY\n')
+            elif re.search('OBJECT', curr):
+                #spost.write(entry + ' OBJECT\n')
+                objp.write(entry + ' OBJECT\n')
     objp.close()
     spost.close()
     sky.close()
