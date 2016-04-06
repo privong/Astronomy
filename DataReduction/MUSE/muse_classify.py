@@ -93,7 +93,7 @@ and object frames with the following commands:\n\n')
     sys.stdout.write('OMP_NUM_THREADS=4 esorex --log-file=sky-pre.log muse_scibasic --nifu=-1 --merge sky-pre.sof\n\n')
     sys.stdout.write('OMP_NUM_THREADS=4 esorex --log-file=object-pre.log muse_scibasic --nifu=-1 --merge object-pre.sof\n\n')
     sys.stdout.write('Then add the PIXTABLE_SKY files to the sky.sof file and run:\n\n')
-    sys.stdout.write('OMP_NUM_THREADS=4 esorex --log-file=makesky.log muse_create_sky sky.osf\n\n')
+    sys.stdout.write('OMP_NUM_THREADS=4 esorex --log-file=makesky.log muse_create_sky sky.sof\n\n')
     sys.stdout.write('Finally add the PIXTABLE_OBJECT files to scipost.sof and run:\n\n')
     sys.stdout.write('OMP_NUM_THREADS=4 --log=scipost.log muse_scipost scipost.sof\n\n')
 
