@@ -1,8 +1,10 @@
 # Astronomy
 
-This contains various astronomy scripts I've written for my data analysis and processing. Some of them may be more widely useful. However, I provide no guarantee that they will even run, much less provide useable results.
+This contains various astronomy scripts I've written for my data analysis and processing.
+Some of them may be more widely useful.
+However, I provide no guarantee that they will even run, much less provide useable results.
 
-If you use these scripts or derivates of them in publications, I would appreciate a mention in the acknowledgements as well as a (digital) copy of the paper.
+If you use these scripts or derivates of them in support of data reduction, analysis, or publications, I would appreciate a mention in the acknowledgements as well as a (digital) copy of the paper.
 
 ## Directories
 
@@ -28,4 +30,5 @@ Scripts in this repo may require one or more of:
 * bibtexparser
 * pycurl
 
-As of 09 July 2015, most of these scripts were developed/tested in python 2.7.x, but written in a way that _should_ be python3 compatible, but that compatibility has not always been tested. Moving forward, I will be using python3 exclusively.
+As of 09 July 2015, most of these scripts were developed/tested in python 2.7.x, but written in a way that _should_ be python3 compatible, but that compatibility has not always been tested.
+Moving forward, I will be using python3 exclusively (subject to availability of necessary libraries).
