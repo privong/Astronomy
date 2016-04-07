@@ -142,10 +142,11 @@ def SegtoDecimal(seg, RA=False):
     RA=False if it's an angle, RA=True if it's hours,mins,seconds
 
     """
-    # split the string
+    # colon separated (RA or Dec)
     if _re.search(":", seg):
         seg = seg.split(":")
-    elif _re.search("h", seg):
+    # h m s separated (should only be RA)
+    elif RA and _re.search("h", seg):
         temp = seg.split("h")
         seg = []
         seg.append(temp[0])
@@ -153,7 +154,8 @@ def SegtoDecimal(seg, RA=False):
         seg.append(temp[0])
         temp = temp[1].split('s')[0]
         seg.append(temp)
-    elif _re.search("d", seg):
+    # d m s separated (should only be Dec)
+    elif not(RA) and _re.search("d", seg):
         temp = seg.split("d")
         seg = []
         seg.append(temp[0])
@@ -161,7 +163,15 @@ def SegtoDecimal(seg, RA=False):
         seg.append(temp[0])
         temp = temp[1].split('s')[0]
         seg.append(temp)
-    else:			# to cover whitespace separated values
+    # period-separated (Dec, CASA format)
+    elif not(RA) and len(seg.split('.')) > 2:
+        temp = seg.split('.')
+        seg = []
+        seg.append(temp[0])
+        seg.append(temp[1])
+        seg.append('.'.join(temp[2:]) # re-attach seconds of Dec
+    # whitespace separated (RA or Dec)
+    else:
         seg = seg.split()
     if float(seg[0]) == 0:
         if seg[0][0] == '-':
