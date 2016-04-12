@@ -80,7 +80,7 @@ if args.all:
     sieve='1'
     suffix = '-all'
 else:
-    isieve = 'type=='+type[0]
+    sieve = 'type=='+type[0]
     if multiple > 0:
         sieve = ''
         for h in type:
