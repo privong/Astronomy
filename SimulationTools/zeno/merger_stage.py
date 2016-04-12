@@ -66,47 +66,50 @@ if args.Lscl != 1.0:
 
 ax1.plot(time, sep)
 
-# get local minima
-minima = argrelextrema(sep, np.less, order=args.minorder)[0]
-if args.eps:
-    sys.stderr.write('Ignoring "passes" below the smoothing limit.\n')
-    minima = np.delete(minima, np.nonzero((sep[minima] <
-                                           args.eps)*sep[minima]))
-plt.scatter(time[minima], sep[minima])
-if args.tnow:
-    plt.vlines(args.tnow, 0, 8*args.Lscl)
-
-# get the merger point
-if args.eps:
-    mtime = time[(sep <= args.eps).nonzero()[0][0]]
-
-# re-scale this to merger stage defined by the time between sucessive passages
-iprev = 0
-npass = 0
-ntime = time*1
-for i in minima:
-    ntime[iprev:i] = npass + (time[iprev:i]-time[iprev])/(time[i+1]-time[iprev])
-    if args.tnow and args.tnow < time[i+1] and args.tnow > time[iprev]:
-        tnowscl = npass + (args.tnow-time[iprev])/(time[i+1]-time[iprev])
-        print("Merger stage of this object: %f" % (tnowscl))
-    iprev = i
-    npass += 1
-
-ax2 = ax1.twiny()
-if args.Lscl != 1.0:
-    ax2.set_ylim([0, 3.5*args.Lscl])
-else:
-    ax2.set_ylim([0, 3.5])
-# put tick marks at the minima
-ax2.xaxis.set_ticks(np.concatenate([time[minima][:4], [mtime]], axis=0))
-labels = [str(i) for i in np.arange(1, 4)]
-labels.append('0m')
-ax2.xaxis.set_ticklabels(labels, rotation=90)
-ax2.minorticks_on()
-# for (loc,label) in (ax2.xaxis.get_ticklines(),ax2.xaxis.get_ticklabels()):
-
-ax2.set_xlabel('Merger Stage')
-ax2.plot(time, sep)
+if args.tstage:
+    # get local minima
+    minima = argrelextrema(sep, np.less, order=args.minorder)[0]
+    if args.eps:
+        sys.stderr.write('Ignoring "passes" below the smoothing limit.\n')
+        minima = np.delete(minima, np.nonzero((sep[minima] <
+                                               args.eps)*sep[minima]))
+    plt.scatter(time[minima], sep[minima])
+    if args.tnow:
+        plt.vlines(args.tnow, 0, 8*args.Lscl)
+    
+    # get the merger point
+    if args.eps:
+        mtime = time[(sep <= args.eps).nonzero()[0][0]]
+    else:
+        mtime = time
+    
+    # re-scale this to merger stage defined by the time between sucessive passages
+    iprev = 0
+    npass = 0
+    ntime = time*1
+    for i in minima:
+        ntime[iprev:i] = npass + (time[iprev:i]-time[iprev])/(time[i+1]-time[iprev])
+        if args.tnow and args.tnow < time[i+1] and args.tnow > time[iprev]:
+            tnowscl = npass + (args.tnow-time[iprev])/(time[i+1]-time[iprev])
+            print("Merger stage of this object: %f" % (tnowscl))
+        iprev = i
+        npass += 1
+    
+    ax2 = ax1.twiny()
+    if args.Lscl != 1.0:
+        ax2.set_ylim([0, 3.5*args.Lscl])
+    else:
+        ax2.set_ylim([0, 3.5])
+    # put tick marks at the minima
+    ax2.xaxis.set_ticks(np.concatenate([time[minima][:4], [mtime]], axis=0))
+    labels = [str(i) for i in np.arange(1, 4)]
+    labels.append('0m')
+    ax2.xaxis.set_ticklabels(labels, rotation=90)
+    ax2.minorticks_on()
+    # for (loc,label) in (ax2.xaxis.get_ticklines(),ax2.xaxis.get_ticklabels()):
+    
+    ax2.set_xlabel('Merger Stage')
+    ax2.plot(time, sep)
 
 if args.savefig:
     plt.savefig(args.savefig)
