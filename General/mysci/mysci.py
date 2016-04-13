@@ -169,7 +169,7 @@ def SegtoDecimal(seg, RA=False):
         seg = []
         seg.append(temp[0])
         seg.append(temp[1])
-        seg.append('.'.join(temp[2:]) # re-attach seconds of Dec
+        seg.append('.'.join(temp[2:])) # re-attach seconds of Dec
     # whitespace separated (RA or Dec)
     else:
         seg = seg.split()
