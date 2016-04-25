@@ -14,7 +14,7 @@ If you use these scripts or derivates of them in support of data reduction, anal
 * `General/`		general use files, other scripts may depend on files in here
 * `Observing/`		scripts related to observation planning and execution.
 * `Papers/`			Paper writing and bibliography management tools.
-* `SimulationTools/`	Scripts related to analyzing outputs of simulations. Currently this includes the Zeno N-body/SPH code (http://www.ifa.hawaii.edu/faculty/barnes/zeno/).
+* `SimulationTools/`	Scripts related to analyzing outputs of simulations. This is now [its own repo](https://github.com/privong/SimulationTools). Currently this includes the Zeno N-body/SPH code (http://www.ifa.hawaii.edu/faculty/barnes/zeno/).
 * `Talks/`			Tools to assist with managing talks written in LaTeX/beamer.
 
 ## Dependencies
