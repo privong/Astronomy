@@ -2,6 +2,8 @@
 #
 # bound.py
 # Plot the orbital energy of a particle versus radius
+#
+# Unfinished/untested concept script. use at your own risk.
 
 import sys
 import argparse
@@ -13,7 +15,7 @@ VERSION = '0.1.1'
 VERSIONDATE = '11 October 2014'
 
 # takes output from the following:
-# cat s010-A_??00.dat | snapsift - - sieve='type!=0x41' | snapset - - auxvx='sqrt(x*x+y*y+z*z)' auxvy='0.5*sqrt(vx*vx+vy*vy+vz*vz)+phi' produce=AuxVec | snaplist - fields=AuxVec
+# cat s010-A_??00.dat | snapsift - - sieve='type!=0x41' | snapset - - auxvx='sqrt(x*x+y*y+z*z)' auxvy='0.5*(vx*vx+vy*vy+vz*vz)+phi' produce=AuxVec | snaplist - fields=AuxVec
 
 parser = argparse.ArgumentParser(description='Plot particle energy versus \
                                               radius.')
