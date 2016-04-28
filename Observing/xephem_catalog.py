@@ -4,7 +4,7 @@
 #
 # Take a csv or tsv catalog and convert it into an xephem .edb catalog
 #
-# Copyright (c) 2015 George C. Privon
+# Copyright (c) 2015–2016 George C. Privon
 
 import numpy as np
 import argparse
@@ -46,14 +46,15 @@ for entry in data:
     if entry[0] == '#':
         continue
     entry = entry.split()
-    outf.write(entry[args.cols[0]] + ',')
-    outf.write('f|G,')
-    outf.write(entry[args.cols[1]] + ',')
-    outf.write(entry[args.cols[2]] + ',')
-    try:
-        outf.write(entry[arcs.cols[3]] + ',')
-    except:
-        outf.write('6,')
-    outf.write(args.equinox + '\n')
+    if len(entry) > 0:
+        outf.write(entry[args.cols[0]] + ',')
+        outf.write('f|G,')
+        outf.write(entry[args.cols[1]] + ',')
+        outf.write(entry[args.cols[2]] + ',')
+        try:
+            outf.write(entry[arcs.cols[3]] + ',')
+        except:
+            outf.write('6,')
+        outf.write(args.equinox + '\n')
 
 outf.close()
