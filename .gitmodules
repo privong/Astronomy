@@ -4,3 +4,12 @@
 [submodule "PaperTools"]
 	path = PaperTools
 	url = git@github.com:privong/PaperTools.git
+[submodule "ObservingTools"]
+	path = ObservingTools
+	url = git@github.com:privong/ObservingTools.git
+[submodule "TalkTools"]
+	path = TalkTools
+	url = git@github.com:privong/TalkTools.git
+[submodule "ArchiveTools"]
+	path = ArchiveTools
+	url = git@github.com:privong/ArchiveTools.git

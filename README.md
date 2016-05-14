@@ -8,14 +8,14 @@ If you use these scripts or derivates of them in support of data reduction, anal
 
 ## Directories
 
-* `Archives/`		Pulling data from online archives
+* --ArchivesTools/--		Pulling data from online archives. This is now [its own repo](https://github.com/privong/ArchiveTools).
 * `DataAnalysis/`		assist with processing/analysis of reduced data
 * `DataReduction/`		data reduction scripts (often pipelines)
 * `General/`		general use files, other scripts may depend on files in here
-* `Observing/`		scripts related to observation planning and execution.
-* --`PaperTools/`--			Paper writing and bibliography management tools. This now [its own repo](https://github.com/privong/PaperTools)
-* --`SimulationTools/`--	Scripts related to analyzing outputs of simulations. This is now [its own repo](https://github.com/privong/SimulationTools). Currently this includes the Zeno N-body/SPH code (http://www.ifa.hawaii.edu/faculty/barnes/zeno/).
-* `Talks/`			Tools to assist with managing talks written in LaTeX/beamer.
+* --ObservingTools--		scripts related to observation planning and execution. This is now [its own repo](https://github.com/privong/ObservingTools).
+* --PaperTools/--			Paper writing and bibliography management tools. This is now [its own repo](https://github.com/privong/PaperTools).
+* --SimulationTools/--	Scripts related to analyzing outputs of simulations. This is now [its own repo](https://github.com/privong/SimulationTools). Currently this includes the Zeno N-body/SPH code (http://www.ifa.hawaii.edu/faculty/barnes/zeno/).
+* --Talks/--			Tools to assist with managing talks written in LaTeX/beamer. This is now [its own repo](https://github.com/privong/TalkTools).
 
 ## Dependencies
 
