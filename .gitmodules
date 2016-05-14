@@ -1,3 +1,6 @@
 [submodule "SimulationTools"]
 	path = SimulationTools
 	url = git@github.com:privong/SimulationTools.git
+[submodule "PaperTools"]
+	path = PaperTools
+	url = git@github.com:privong/PaperTools.git
