@@ -310,6 +310,27 @@ def Lprime(flux, DL, z, nuobs):
     prefac = _cons.c**2/(2.*_cons.k_B)
     return (prefac * flux * DL**2 * (1 + z)**(-3) / nuobs**2).to('K km pc^2 /s')
 
+
+def busy(x, p):
+    """
+    Busy function, from Westmeier+2013
+    
+    x - ordinate array
+    p - parameters, in order:
+        - a (scaling factor)
+        - b1, b2 (steepness of line flanks)
+        - w (half-width of profile)
+        - xe, xp (centroid of erf, polynomial)
+        - c (scale factor of polynomial trough)
+        - n (order of polynomial)
+    """
+    from scipy.special import erf
+
+    return p[0] / 4 * \
+           (erf(p[1] * (p[3] + x - p[4])) + 1 ) * \
+           (erf(p[2] * (p[3] - x + p[4])) + 1 ) * \
+           (p[6] * _np.abs(x - p[5])**p[7] + 1)
+
 # End Useful functions
 ###############################################################################
 
