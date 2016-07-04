@@ -8,14 +8,19 @@ If you use these scripts or derivates of them in support of data reduction, anal
 
 ## Directories
 
-* --ArchivesTools/--		Pulling data from online archives. This is now [its own repo](https://github.com/privong/ArchiveTools).
+In the past, this repo was a monolithic collection of various astronomy tools.
+At some point, I decided it made more sense for things to live in their own repos (so, if someone was only interested in simulations, they could download only the [SimulationTools](https://github.com/privong/SimulationTools) repo).
+Not all of the directories have been farmed out into their own repos, but this will eventually happen.
+For now, this repository will be maintained as a "single pull" option, including those other repositories as submodules.
+
+* *ArchivesTools/*		Pulling data from online archives. This is now [its own repo](https://github.com/privong/ArchiveTools).
 * `DataAnalysis/`		assist with processing/analysis of reduced data
 * `DataReduction/`		data reduction scripts (often pipelines)
 * `General/`		general use files, other scripts may depend on files in here
-* --ObservingTools--		scripts related to observation planning and execution. This is now [its own repo](https://github.com/privong/ObservingTools).
-* --PaperTools/--			Paper writing and bibliography management tools. This is now [its own repo](https://github.com/privong/PaperTools).
-* --SimulationTools/--	Scripts related to analyzing outputs of simulations. This is now [its own repo](https://github.com/privong/SimulationTools). Currently this includes the Zeno N-body/SPH code (http://www.ifa.hawaii.edu/faculty/barnes/zeno/).
-* --Talks/--			Tools to assist with managing talks written in LaTeX/beamer. This is now [its own repo](https://github.com/privong/TalkTools).
+* *ObservingTools*		scripts related to observation planning and execution. This is now [its own repo](https://github.com/privong/ObservingTools).
+* *PaperTools/*			Paper writing and bibliography management tools. This is now [its own repo](https://github.com/privong/PaperTools).
+* *SimulationTools/*	Scripts related to analyzing outputs of simulations. This is now [its own repo](https://github.com/privong/SimulationTools). Currently this includes the Zeno N-body/SPH code (http://www.ifa.hawaii.edu/faculty/barnes/zeno/).
+* *Talks/*			Tools to assist with managing talks written in LaTeX/beamer. This is now [its own repo](https://github.com/privong/TalkTools).
 
 ## Dependencies
 
