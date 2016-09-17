@@ -8,7 +8,6 @@
 import sys as _sys
 import os as _os
 import re as _re
-import string as _string
 import numpy as _np
 from astropy.io import fits as _pyfits
 import astropy.units as _u
@@ -28,46 +27,46 @@ ssys = {'sun':   {'mass':1.99e33*_u.g,
                   'period':0*_u.year,
                   'sma':0*_u.cm,
                   'e':0},
-	'mercury':   {'mass': 3.303e26*_u.g,
-                  'radius': 2.439e8*_u.cm,
-                  'period': 2.4085e-1*_u.year,
-                  'sma': 5.7909e12*_u.cm,
-                  'e': 0.205622},
-	'venus':     {'mass': 4.870e27*_u.g,
-                  'radius': 6.050e8*_u.cm,
-                  'period': 6.1521e-1*_u.year,
-                  'sma': 1.0821e13*_u.cm,
-                  'e': 0.006783},
-	'earth':     {'mass': 5.976e27*_u.g,
-                  'radius': 6.378e8*_u.cm,
-                  'period': 1.00004e0*_u.year,
-                  'sma': 1.4959e13*_u.cm,
-                  'e': 0.016684},
-	'mars':      {'mass': 6.418e26*_u.g,
-                  'radius': 3.397e8*_u.cm,
-                  'period': 1.88089e0*_u.year,
-                  'sma': 2.2794e13*_u.cm,
-                  'e': 0.093404},
-	'jupiter':   {'mass': 1.899e30*_u.g,
-                  'radius': 7.140e9*_u.cm,
-                  'period': 1.18622e1*_u.year,
-                  'sma': 7.7859e13*_u.cm,
-                  'e': 0.047826},
-	'saturn':    {'mass': 5.686e29*_u.g,
-                  'radius': 6.000e9*_u.cm,
-                  'period': 2.94577e1*_u.year,
-                  'sma': 1.4324e14*_u.cm,
-                  'e': 0.052754},
-	'uranus':    {'mass': 8.66e28*_u.g,
-                  'radius': 2.615e9*_u.cm,
-                  'period': 8.40139e1*_u.year,
-                  'sma': 2.8878e14*_u.cm,
-                  'e': 0.050363},
-	'neptune':   {'mass': 1.030e29*_u.g,
-                  'radius': 2.43e9*_u.cm,
-                  'period': 1.64793e2*_u.year,
-                  'sma': 4.5188e14*_u.cm,
-                  'e': 0.004014}}
+	    'mercury':   {'mass': 3.303e26*_u.g,
+                      'radius': 2.439e8*_u.cm,
+                      'period': 2.4085e-1*_u.year,
+                      'sma': 5.7909e12*_u.cm,
+                      'e': 0.205622},
+	    'venus':     {'mass': 4.870e27*_u.g,
+                      'radius': 6.050e8*_u.cm,
+                      'period': 6.1521e-1*_u.year,
+                      'sma': 1.0821e13*_u.cm,
+                      'e': 0.006783},
+	    'earth':     {'mass': 5.976e27*_u.g,
+                      'radius': 6.378e8*_u.cm,
+                      'period': 1.00004e0*_u.year,
+                      'sma': 1.4959e13*_u.cm,
+                      'e': 0.016684},
+	    'mars':      {'mass': 6.418e26*_u.g,
+                      'radius': 3.397e8*_u.cm,
+                      'period': 1.88089e0*_u.year,
+                      'sma': 2.2794e13*_u.cm,
+                      'e': 0.093404},
+    	'jupiter':   {'mass': 1.899e30*_u.g,
+                      'radius': 7.140e9*_u.cm,
+                      'period': 1.18622e1*_u.year,
+                      'sma': 7.7859e13*_u.cm,
+                      'e': 0.047826},
+    	'saturn':    {'mass': 5.686e29*_u.g,
+                      'radius': 6.000e9*_u.cm,
+                      'period': 2.94577e1*_u.year,
+                      'sma': 1.4324e14*_u.cm,
+                      'e': 0.052754},
+    	'uranus':    {'mass': 8.66e28*_u.g,
+                      'radius': 2.615e9*_u.cm,
+                      'period': 8.40139e1*_u.year,
+                      'sma': 2.8878e14*_u.cm,
+                      'e': 0.050363},
+    	'neptune':   {'mass': 1.030e29*_u.g,
+                      'radius': 2.43e9*_u.cm,
+                      'period': 1.64793e2*_u.year,
+                      'sma': 4.5188e14*_u.cm,
+                      'e': 0.004014}}
 # interesting stars (distances in cm)
 stars = {'proximacentauri':  {'distance': 4.0143e18*_u.cm},	# wikipedia
          'barnardsstar':     {'distance': 5.6428e18*_u.cm},	# wikipedia
@@ -77,9 +76,9 @@ stars = {'proximacentauri':  {'distance': 4.0143e18*_u.cm},	# wikipedia
 R_MW = 4.62e22*_u.cm		# cm		Milky Way Radius
 M_MW = 1.4e45*_u.g		# g		Milky Way Mass
 # galcenter coordinates in (RA and Dec in J2000)
-galcenter={'RA': 282.749599*_u.deg,
-           'Dec': 27.46024*_u.deg,
-           'galLon': 0.57596*_u.rad}
+galcenter = {'RA': 282.749599*_u.deg,
+             'Dec': 27.46024*_u.deg,
+             'galLon': 0.57596*_u.rad}
 
 # Attractor locations (from Mould+ 2000 ApJ, 529, 786)
 # Converted from B1950 to J2000
@@ -113,15 +112,16 @@ ShapleySupercluster = {'RA': 203.20597*_u.deg,
                        'vmax': 16000*_u.km/_u.s}
 
 # Rest frequencies of astrophysically interesting (to me) lines
-restfreq={'HI': 1420405751.77*_u.Hz,
-          'CO(1-0)': 115271201800.*_u.Hz,
-          '13CO(1-0)': 110201.35400e6*_u.Hz,
-          'C18O(1-0)': 109782.17600e6*_u.Hz,
-          'HCN(1-0)': 88631.60100e6*_u.Hz,
-          'HCO+(1-0)': 89188.52600e6*_u.Hz,
-          'HNC(1-0)': 90.66356e9*_u.Hz,
-          'CS(1-0)': 48.99095e9*_u.Hz,
-          'CCH': 87.325e9*_u.Hz}
+restfreq = {'HI': 1420405751.77*_u.Hz,
+            'CO(1-0)': 115271201800.*_u.Hz,
+            '13CO(1-0)': 110201.35400e6*_u.Hz,
+            'C18O(1-0)': 109782.17600e6*_u.Hz,
+            'HCN(1-0)': 88631.60100e6*_u.Hz,
+            'HCO+(1-0)': 89188.52600e6*_u.Hz,
+            'HNC(1-0)': 90.66356e9*_u.Hz,
+            'CS(1-0)': 48.99095e9*_u.Hz,
+            'CCH': 87.325e9*_u.Hz}
+
 # End Astronomical Constants/Values
 ###############################################################################
 
@@ -133,7 +133,8 @@ restfreq={'HI': 1420405751.77*_u.Hz,
 # - Jy/beam <-> K
 # - Velocity system conversions (LSR, Bary/heliocentric)
 # - Velocity definitions (optical, radio, relativistic)
-# - pyfits import, transpose the data to RA,Dec,Spectral,[Stokes] (see http://www.cv.nrao.edu/~aleroy/pytut/topic2/intro_fits_files.py)
+# - pyfits import, transpose the data to RA,Dec,Spectral,[Stokes]
+#   (see http://www.cv.nrao.edu/~aleroy/pytut/topic2/intro_fits_files.py)
 
 def SegtoDecimal(seg, RA=False):
     """
@@ -185,7 +186,8 @@ def SegtoDecimal(seg, RA=False):
         _sys.stderr.write("Uh, RA has a negative value. That's weird. Returning nan.\n")
         return _np.nan
     if RA and float(seg[0]) > 24.:
-        _sys.stderr.write("RA is greater than 24 hours. Are you sure you're passing the correct arguments?\n")
+        _sys.stderr.write("RA is greater than 24 hours. \
+Are you sure you're passing the correct arguments?\n")
         return _np.nan
     deci = float(seg[0]) + sign * (float(seg[1]) / 60. + float(seg[2]) /3600.)
     if RA:
@@ -224,12 +226,12 @@ def RedshiftLine(z, restlam=None, restnu=None):
     If neither are defined, the function returns nan.
     """
     if restlam:
-        return restlam * ( 1. + z)
+        return restlam * (1. + z)
     if restnu:
         return restnu / (1. + z)
     else:
         _sys.stderr.write("Error: frequency not specified. Returning nan.\n")
-        return nan
+        return _np.nan
 
 def fitsopen(fname, mode='readonly', ext=0, trim=0, quiet=True):
     """
@@ -262,7 +264,7 @@ def fitsopen(fname, mode='readonly', ext=0, trim=0, quiet=True):
         _sys.stderr.write('Error: ' + fname + ' not found.')
         return -1
 
-    if not(quiet):
+    if not quiet:
         print(fname + " HDU(" + str(ext) + \
               ") opened successfully with dimensions " + str(idata.shape))
 
@@ -281,8 +283,14 @@ def angDist(pos1, pos2):
     """
     Calculate the angular distance between two points. Require decimal positions
     """
-    numer = _np.sqrt((_np.cos(pos2[0]) * _np.sin(_np.abs(pos1[1] - pos2[1])))**2 + (_np.cos(pos1[0]) * _np.sin(pos2[0]) - _np.sin(pos1[0]) * _np.cos(pos2[0]) * _np.cos(_np.abs(pos1[1] - pos2[1])))**2)
-    denom = _np.sin(pos1[0]) * _np.sin(pos2[0]) + _np.cos(pos1[0]) * _np.cos(pos2[0]) * _np.cos(_np.abs(pos1[1] - pos2[1]))
+    numer = _np.sqrt((_np.cos(pos2[0]) * _np.sin(_np.abs(pos1[1] - \
+                      pos2[1])))**2 + \
+                     (_np.cos(pos1[0]) * _np.sin(pos2[0]) - \
+                      _np.sin(pos1[0]) * _np.cos(pos2[0]) * \
+                      _np.cos(_np.abs(pos1[1] - pos2[1])))**2)
+    denom = _np.sin(pos1[0]) * _np.sin(pos2[0]) + \
+            _np.cos(pos1[0]) * _np.cos(pos2[0]) * \
+            _np.cos(_np.abs(pos1[1] - pos2[1]))
     return _np.arctan2(numer, denom)
 
 def HImass(flux, DL):
@@ -314,7 +322,7 @@ def Lprime(flux, DL, z, nuobs):
 def busy(x, p):
     """
     Busy function, from Westmeier+2013
-    
+
     x - ordinate array
     p - parameters, in order:
         - a (scaling factor)
@@ -327,8 +335,8 @@ def busy(x, p):
     from scipy.special import erf
 
     return p[0] / 4 * \
-           (erf(p[1] * (p[3] + x - p[4])) + 1 ) * \
-           (erf(p[2] * (p[3] - x + p[4])) + 1 ) * \
+           (erf(p[1] * (p[3] + x - p[4])) + 1) * \
+           (erf(p[2] * (p[3] - x + p[4])) + 1) * \
            (p[6] * _np.abs(x - p[5])**p[7] + 1)
 
 # End Useful functions
@@ -442,13 +450,12 @@ def querySIMBAD(name):
 ###############################################################################
 # Catalog Functions
 
-def PosMatch(pos1, pos2, name1=None, name2=None, posTol=60.*_u.arcsec):
+def PosMatch(pos1, pos2, posTol=60.*_u.arcsec):
     """
     Position matching function for catalogs.
 
     Parameters:
         - pos1,pos2: positions, 2 element, Seg or decimal
-        - name1,name2: tagged names (optional)
         - posTol: position tolerance (in arcsec if no units defined; default 60")
 
     Returns True if they match, False if not.
@@ -477,12 +484,7 @@ def PosMatch(pos1, pos2, name1=None, name2=None, posTol=60.*_u.arcsec):
         _sys.stderr.write("WARNING: No units given for posTol, assuming arcsec.\n")
         posTol *= _u.arcsec
 
-    if angDist(pos1, pos2) < posTol:
-        return True
-    else:
-        return False
-
-    return -1
+    return bool(angDist(pos1, pos2) < posTol)
 
 # End Catalog Functions
 ###############################################################################
@@ -515,7 +517,7 @@ def Telload(fname, Tel='none', mode='readonly', quiet=True):
         # 2nd one needs to be flipped since it's reading out the other way
         ext1 = fitsopen(fname, mode=mode, quiet=quiet, ext=1, trim=1).transpose()
         ext2 = _np.fliplr(fitsopen(fname, mode=mode, quiet=quiet,
-                          ext=2, trim=1).transpose())
+                                   ext=2, trim=1).transpose())
 
         # concatenate the two halves of the image
         ff = _np.concatenate((ext1, ext2), axis=1)
@@ -570,8 +572,10 @@ def CSVtoDict(infile, usecols=None, delimiter=',', haveunits=False, dtype=None,
     returned dictionary.
 
     """
-    vals = _np.genfromtxt(infile, usecols=usecols, delimiter=delimiter,
-                        dtype=dtype)
+    vals = _np.genfromtxt(infile,
+                          usecols=usecols,
+                          delimiter=delimiter,
+                          dtype=dtype)
     key = []
     cols = []
     units = []
@@ -687,11 +691,14 @@ def WriteSpecVOTMeas(outdict=None, outfile=None, **kwargs):
         _sys.stderr.write("WriteSpecVOTMeas Error: need to provide both the dictionary and the desired output file.\n")
         _sys.exit(-1)
 
+    """
+    # unused code for dealing with dictionaries
     if not 'measline' in outdict[outdict.keys()[0]].keys():
         _sys.stderr.write("WriteSpecVOTMeas Warning: no 'measline' dictionary entry. Will be writing a single table.\n")
         havemeasline = False
     else:
         havemeasline = True
+    """
 
     newtable = _vot.tree.VOTableFile()
     resource = _vot.tree.Resource()
@@ -755,9 +762,9 @@ def WriteSpecVOTMeas(outdict=None, outfile=None, **kwargs):
                                                           arraysize='*')])
         measTab[i].create_arrays(len(outdict.keys()))
 
-    srcID=0
+    srcID = 0
     for src in sorted(outdict.keys()):
-        srcinfo = (src,srcID)
+        srcinfo = (src, srcID)
         for key in sorted(outdict[src].keys()):
             if key == 'measline':
                 for line in sorted(measTab.keys()):
@@ -801,14 +808,18 @@ def DictStruct(d, depth=0, Print=True):
 
     if type(d) == dict:
         if depth == 0:
-            if Print: _sys.stdout.write("Dictionary has the following key structure:\n")
+            if Print:
+                _sys.stdout.write("Dictionary has the following key structure:\n")
         for key in d.keys():
             for i in range(depth):
                 if depth > 0 and i == depth-1:
-                    if Print: _sys.stdout.write("|")
+                    if Print:
+                        _sys.stdout.write("|")
                 else:
-                    if Print: _sys.stdout.write(" ")
-            if Print: _sys.stdout.write(str(key) + "\n")
+                    if Print:
+                        _sys.stdout.write(" ")
+            if Print:
+                _sys.stdout.write(str(key) + "\n")
             DictStruct(d[key], depth=depth+1, Print=Print)
 
 # End Convenience functions

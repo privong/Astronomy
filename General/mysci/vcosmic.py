@@ -6,7 +6,7 @@ import mysci as _mysci
 
 def vcosmic(vh, inpRA, inpDec):
     """
-    vcosmic: Compute a "cosmic velocity", correcting for the Virgo Cluster, 
+    vcosmic: Compute a "cosmic velocity", correcting for the Virgo Cluster,
     the Great Attractor and the Shapley Supercluster.
 
     Based on fortran code provided by J. Condon for the Mould+ 2000 3-attractor
@@ -34,26 +34,28 @@ def vcosmic(vh, inpRA, inpDec):
         glon = 0. * _u.rad
     cosglon = cosdec * cosrara0 / cosglat
     singlon = (cosdec * sinrara0 * coscdec0 + sindec * sincdec0) / cosglat
-    if cosglon!=0.:
+    if cosglon != 0.:
         glon = _np.arctan(singlon / cosglon)
     else:
-        if singlon > 0.: glon = _np.pi / 2. * _u.rad
-        if singlon < 0.: glon = 1.5 * _np.pi * _u.rad
+        if singlon > 0.:
+            glon = _np.pi / 2. * _u.rad
+        if singlon < 0.:
+            glon = 1.5 * _np.pi * _u.rad
     # resolve 180 degree ambiguity in glon
-    if cosglon < 0.: 
+    if cosglon < 0.:
         glon = glon + _np.pi * _u.rad
     glon = glon + _mysci.galcenter['galLon']
     twopi = 2. * _np.pi * _u.rad
-    if glon < 0: 
+    if glon < 0:
         glon = glon + twopi
-    if glon >= twopi: 
+    if glon >= twopi:
         glon = glon - twopi
 
     # correct from heliocentric to local group velocity
     vlg = vh - 79. * _u.km / _u.s * _np.cos(glon) * _np.cos(glat) \
             + 296. * _u.km/ _u.s * _np.sin(glon) * _np.cos(glat) \
             - 36. * _u.km / _u.s * _np.sin(glat)
-    vcosmic=vlg
+    vcorr = vlg
 
     # correct for infall velocities
     # reformat attractor constants
@@ -78,13 +80,13 @@ def vcosmic(vh, inpRA, inpDec):
     vmax = [_mysci.VirgoCluster['vmax'],
             _mysci.GreatAttractor['vmax'],
             _mysci.ShapleySupercluster['vmax']]
-    for i in range (3):
+    for i in range(3):
         x = _np.sin(_np.pi * _u.rad / 2. - inpDec) * _np.cos(inpRA)
         y = _np.sin(_np.pi * _u.rad / 2. - inpDec) * _np.sin(inpRA)
         z = _np.cos(_np.pi * _u.rad / 2. - inpDec)
         xcl = _np.sin(_np.pi * _u.rad / 2. - deccl[i]) * _np.cos(racl[i])
         ycl = _np.sin(_np.pi * _u.rad / 2. - deccl[i]) * _np.sin(racl[i])
-        zcl = _np.cos (_np.pi * _u.rad / 2. - deccl[i])
+        zcl = _np.cos(_np.pi * _u.rad / 2. - deccl[i])
         dist = (x - xcl)**2 + (y - ycl)**2 + (z - zcl)**2
         dist = _np.sqrt(dist)
         theta = 2. * _np.arcsin(dist / 2.)
@@ -92,7 +94,7 @@ def vcosmic(vh, inpRA, inpDec):
 
         # is the galaxy in the attractor core cone?
         if theta < radius[i] and vh > vmin[i] and vh < vmax[i]:
-            vcosmic = vlgcl[i]
+            vcorr = vlgcl[i]
         else:
             roa = vlg**2 + vlgcl[i]**2 - 2. * vlg * vlgcl[i] * costheta
             roa = _np.sqrt(roa)
@@ -101,6 +103,6 @@ def vcosmic(vh, inpRA, inpDec):
             vingal = vingal * vfid[i] * vlgcl[i] / roa
             vin = vinlg + vingal
             vin = -vin
-            vcosmic = vcosmic - vin
+            vcorr = vcorr - vin
 
-    return vcosmic
+    return vcorr
