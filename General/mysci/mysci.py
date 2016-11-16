@@ -18,7 +18,6 @@ try:
     from cStringIO import StringIO as _BytesIO
 except ImportError:
     from io import BytesIO as _BytesIO
-import pycurl as _pycurl
 
 
 # Solar System Measurements, given as a dictionary
@@ -341,6 +340,8 @@ def queryNED(name):
     """
     queryNED(): Return information on a galaxy from a NED Query
 
+    Note: This is now simply a wrapper around astroquery.ned.
+
     Arguments
     name: galaxy name
 
@@ -351,7 +352,13 @@ def queryNED(name):
         - nans for angular size (not provided in this short NED query)
     """
 
-    urlbase = 'http://ned.ipac.caltech.edu/cgi-bin/objsearch?of=ascii_bar&extend=no&hconst=73&omegam=0.27&omegav=0.73&corr_z=1&out_csys=Equatorial&out_equinox=J2000.0&objname='
+    from astroquery.ned import Ned
+
+    try:
+        res = Ned.query_object(name)[0]
+    except RemoteServiceError:
+        _sys.stderr.write(name + " not found in NED.\n")
+        return out
 
     out = {'RA': _np.nan*_u.deg,
            'Dec': _np.nan*_u.deg,
@@ -360,29 +367,23 @@ def queryNED(name):
                        'minor': _np.nan*_u.arcmin,
                        'PA': _np.nan*_u.deg}}
 
-    # NED sometimes doesn't like '+' in the source name, so be kind:
-    name = '%2B'.join(name.split('+'))
-    buf = _BytesIO()
-    c = _pycurl.Curl()
-    c.setopt(c.URL, urlbase + name)
-    c.setopt(c.WRITEFUNCTION, buf.write)
-    c.perform()
-    if c.getinfo(_pycurl.HTTP_CODE) == 200:
-        results = buf.getvalue().decode('UTF-8').split('\n')
-        results = results[14:]
-        if _re.search('Error', results[0]):
-            _sys.stderr.write(name + ' ' + results[0] + '\n')
-        else:
-            data = results[-2].split('|')
-            out['RA'] = float(data[2]) * _u.deg
-            out['Dec'] = float(data[3]) * _u.deg
-            out['z'] = float(data[6])
+    try:
+        out['RA'] = res['Ra(deg)'] * u.deg
+        out['Dec'] = res['Dec(deg)'] * u.deg
+    except:
+        _sys.stderr.write('Error: coordinates not available for ' + name + "\n")
+    try:
+        out['z'] = res['Redshift']
+    except:
+        _sys.stderr.write('Error: redshift not available for ' + name + "\n")
 
     return out
 
 def querySIMBAD(name):
     """
     querySIMBAD(): Return information on a galaxy from a simbad query
+
+    Note: This is now simply a wrapper around astroquery.ned.
 
     Arguments
     name: galaxy name
@@ -394,7 +395,8 @@ def querySIMBAD(name):
         - angular size
     """
 
-    urlbase = "http://simbad.u-strasbg.fr/simbad/sim-id?output.format=ASCII&Ident="
+    from astroquery.simbad import Simbad
+
     out = {'RA': _np.nan*_u.deg,
            'Dec': _np.nan*_u.deg,
            'z': _np.nan,
@@ -402,37 +404,17 @@ def querySIMBAD(name):
                        'minor': _np.nan*_u.arcmin,
                        'PA': _np.nan*_u.deg}}
 
-    name = '%2B'.join(name.split('+'))
-    buf = _BytesIO()
-    c = _pycurl.Curl()
-    c.setopt(c.URL, urlbase + name)
-    c.setopt(c.WRITEFUNCTION, buf.write)
-    c.perform()
-    results = buf.getvalue().decode('UTF-8').split('\n')
-    if c.getinfo(_pycurl.HTTP_CODE) == 200:
-        if _re.search('Identifier not found', results[0]):
-            _sys.stderr.write(name + " not found in SIMBAD.\n")
-        elif _re.search('No known catalog', results[0]):
-            _sys.stderr.write(name + " catalog error.\n")
-        else:
-            for line in results:
-                if _re.search('Identifiers', line):
-                    break
-                elif _re.search('ICRS', line) and _re.search('Coordinates', line):
-                    line = line.split(':')[1].split(' (')[0].split()
-                    out['RA'] = line[0] + ':' + line[1] + ':' + line[2]
-                    out['Dec'] = line[3] + ':' + line[4] + ':' + line[5]
-                elif _re.search('Redshift', line):
-                    out['z'] = _np.float(line.split(':')[1].split(' [')[0])
-                elif _re.search('Angular size', line):
-                    try:
-                        pos = [float(x) for x in line.split(':')[1].split(' (')[0].split()]
-                        out['angsize']['major'] = pos[0] * _u.arcmin
-                        out['angsize']['minor'] = pos[1] * _u.arcmin
-                        out['angsize']['PA'] = pos[2] * _u.deg
-                    except:
-                        _sys.stderr.write(name + ' has missing position information:\n')
-                        _sys.stderr.write(line + '\n')
+    try:
+        res = Simbad.query_object(name)[0]
+    except UserWarning:
+        _sys.stderr.write(name + " not found in SIMBAD.\n")
+        return out
+
+    try:
+        out['RA'] = res['RA)'] * u.deg
+        out['Dec'] = res['DEC'] * u.deg
+    except:
+        _sys.stderr.write('Error: coordinates not available for ' + name + "\n")
 
     return out
 
