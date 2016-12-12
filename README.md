@@ -13,11 +13,11 @@ At some point, I decided it made more sense for things to live in their own repo
 Not all of the directories have been farmed out into their own repos, but this will eventually happen.
 For now, this repository will be maintained as a "single pull" option, including those other repositories as submodules.
 
-* *ArchivesTools/*		Pulling data from online archives. This is now [its own repo](https://github.com/privong/ArchiveTools).
+* *ArchiveTools/*		Pulling data from online archives. This is now [its own repo](https://github.com/privong/ArchiveTools).
 * `DataAnalysis/`		assist with processing/analysis of reduced data
 * `DataReduction/`		data reduction scripts (often pipelines)
 * `General/`		general use files, other scripts may depend on files in here
-* *ObservingTools*		scripts related to observation planning and execution. This is now [its own repo](https://github.com/privong/ObservingTools).
+* *ObservingTools/*		scripts related to observation planning and execution. This is now [its own repo](https://github.com/privong/ObservingTools).
 * *PaperTools/*			Paper writing and bibliography management tools. This is now [its own repo](https://github.com/privong/PaperTools).
 * *SimulationTools/*	Scripts related to analyzing outputs of simulations. This is now [its own repo](https://github.com/privong/SimulationTools). Currently this includes the Zeno N-body/SPH code (http://www.ifa.hawaii.edu/faculty/barnes/zeno/).
 * *Talks/*			Tools to assist with managing talks written in LaTeX/beamer. This is now [its own repo](https://github.com/privong/TalkTools).
@@ -37,3 +37,5 @@ Scripts in this repo may require one or more of:
 
 As of 09 July 2015, most of these scripts were developed/tested in python 2.7.x, but written in a way that _should_ be python3 compatible, but that compatibility has not always been tested.
 Moving forward, I will be using python3 exclusively (subject to availability of necessary libraries).
+Scripts with `/usr/bin/env python` at the top of the file are python3 compatible (and were developed/tested with python3).
+Scripts with `/usr/bin/env python2` at the top of the file were developed in python2 and may or may not work in python3.
