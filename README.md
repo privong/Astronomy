@@ -1,5 +1,7 @@
 # Astronomy
 
+**NOTE (01 December 2020):** This repository has been archived. Any further progress will be in the individual repos described below. Most of the "General", "DataAnalysis", and "DataReduction" scripts are probably outdated.
+
 This contains various astronomy scripts I've written for my data analysis and processing.
 Some of them may be more widely useful.
 However, I provide no guarantee that they will even run, much less provide useable results.
